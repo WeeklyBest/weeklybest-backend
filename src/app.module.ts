@@ -2,8 +2,9 @@ import { Logger, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { dbConfig } from './configs';
-import { APP, CONFIG } from './constants';
+import { dbConfig } from '@/configs';
+import { APP, CONFIG } from '@/constants';
+import { modules } from '@/modules';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { APP, CONFIG } from './constants';
         configService.get(CONFIG.DB),
       inject: [ConfigService],
     }),
+    ...modules,
   ],
   controllers: [],
   providers: [Logger],
