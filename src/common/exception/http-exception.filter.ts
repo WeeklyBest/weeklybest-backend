@@ -5,7 +5,9 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
+
 import { Response } from 'express';
+
 import { ErrorResponse, ResponseEntity } from '../interface';
 
 @Catch(HttpException)
