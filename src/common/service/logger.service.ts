@@ -23,7 +23,7 @@ const logFileOptions = {
   zippedArchive: true,
 };
 
-const logFileDir = path.resolve(__dirname, '../../../../logs');
+const logFileDir = path.resolve(__dirname, '../../../logs');
 
 if (!fs.existsSync(logFileDir)) {
   fs.mkdirSync(logFileDir);
