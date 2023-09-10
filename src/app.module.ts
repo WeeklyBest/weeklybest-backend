@@ -7,7 +7,7 @@ import { APP } from './constants';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: `.env${process.env.NODE_ENV || APP.NODE_ENV.DEVELOPMENT}`,
+      envFilePath: `.env.${process.env.NODE_ENV || APP.NODE_ENV.DEVELOPMENT}`,
     }),
   ],
   controllers: [],
