@@ -35,4 +35,4 @@ jobs:
         run: heroku git:remote -a weeklybest-backend
 
       - name: Heroku 배포
-        run: git push heroku HEAD:master
+        run: git push heroku HEAD:release
