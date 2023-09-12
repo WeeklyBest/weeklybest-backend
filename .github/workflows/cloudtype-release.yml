@@ -7,14 +7,14 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: 체크아웃
         uses: actions/checkout@v2
-      - name: Connect deploy key
+      - name: Deploy key 연결
         uses: cloudtype-github-actions/connect@v1
         with:
           token: ${{ secrets.CLOUDTYPE_TOKEN }}
           ghtoken: ${{ secrets.GHP_TOKEN }}
-      - name: Deploy
+      - name: 클라우드타입 배포
         uses: cloudtype-github-actions/deploy@v1
         with:
           token: ${{ secrets.CLOUDTYPE_TOKEN }}
@@ -26,28 +26,33 @@ jobs:
             options:
               env:
                 - name: NODE_ENV
-                  var: node-env
+                  var: NODE_ENV
+                - name: HOST
+                  secret: HOST
                 - name: PORT
-                  secret: weeklybest-port
+                  secret: PORT
+                - name: CLIENT_PORT
+                  secret: CLIENT_PORT
                 - name: ADMIN_USER
-                  secret: weeklybest-admin-user
+                  secret: ADMIN_USER
                 - name: ADMIN_PASSWORD
-                  secret: weeklybest-admin-password
+                  secret: ADMIN_PASSWORD
                 - name: DB_HOST
-                  secret: db-host
+                  secret: DB_HOST
                 - name: DB_PORT
-                  secret: db-port
+                  secret: DB_PORT
                 - name: DB_DATABASE
-                  secret: db-weeklybest
+                  secret: DB_DATABASE
                 - name: DB_USERNAME
-                  secret: db-username
+                  secret: DB_USERNAME
                 - name: DB_PASSWORD
-                  secret: db-password
+                  secret: DB_PASSWORD
                 - name: COOKIE_SECRET
-                  secret: weeklybest-cookie-secret
+                  secret: COOKIE_SECRET
               build: yarn build
               start: yarn start:prod
               install: yarn
+              strategy: rolling
             context:
               git:
                 url: git@github.com:${{ github.repository }}.git
