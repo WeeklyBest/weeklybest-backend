@@ -27,7 +27,9 @@ jobs:
         run: yarn build
 
       - name: Heroku에 로그인
-        run: heroku login -i <<< "${{ secrets.HEROKU_API_KEY}}"
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY}}
+        run: heroku auth:token
 
       - name: Heroku 앱에 연결
         run: heroku git:remote -a weeklybest-backend
