@@ -1,0 +1,60 @@
+name: 클라우드타입 테스트 배포
+on:
+  push:
+    branches:
+      - release
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 체크아웃
+        uses: actions/checkout@v2
+      - name: Deploy key 연결
+        uses: cloudtype-github-actions/connect@v1
+        with:
+          token: ${{ secrets.CLOUDTYPE_TOKEN }}
+          ghtoken: ${{ secrets.GHP_TOKEN }}
+      - name: 클라우드타입 배포
+        uses: cloudtype-github-actions/deploy@v1
+        with:
+          token: ${{ secrets.CLOUDTYPE_TOKEN }}
+          project: marshot9420/weeklybest
+          stage: release
+          yaml: |
+            name: weeklybest-backend
+            app: node@18
+            options:
+              env:
+                - name: NODE_ENV
+                  var: NODE_ENV
+                - name: HOST
+                  secret: HOST
+                - name: PORT
+                  secret: PORT
+                - name: CLIENT_PORT
+                  secret: CLIENT_PORT
+                - name: ADMIN_USER
+                  secret: ADMIN_USER
+                - name: ADMIN_PASSWORD
+                  secret: ADMIN_PASSWORD
+                - name: DB_HOST
+                  secret: DB_HOST
+                - name: DB_PORT
+                  secret: DB_PORT
+                - name: DB_DATABASE
+                  secret: DB_DATABASE
+                - name: DB_USERNAME
+                  secret: DB_USERNAME
+                - name: DB_PASSWORD
+                  secret: DB_PASSWORD
+                - name: COOKIE_SECRET
+                  secret: COOKIE_SECRET
+              build: yarn build
+              start: yarn start:prod
+              install: yarn
+              strategy: rolling
+            context:
+              git:
+                url: git@github.com:${{ github.repository }}.git
+                ref: ${{ github.ref }}
+              preset: nest.js
