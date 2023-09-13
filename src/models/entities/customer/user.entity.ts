@@ -10,7 +10,7 @@ import {
 import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
 
 import { CommonEntity } from '@/common';
-import { USER } from '@/models/constants';
+import { USER } from '@/models';
 import { SNSProvider, UserRole } from '@/models/enums';
 
 @Index('email', ['email'], { unique: true })
@@ -64,17 +64,6 @@ export class User extends CommonEntity {
     length: USER.NAME.MAX_LENGTH,
   })
   name: string;
-
-  @ApiProperty({
-    description: '휴대폰 번호',
-    example: '01012345678',
-    required: true,
-  })
-  @Matches(USER.MOBILE.MATCHES, {
-    message: USER.MOBILE.MESSAGE.IS_PHONE,
-  })
-  @Column()
-  mobile: string;
 
   @Column({
     type: 'enum',

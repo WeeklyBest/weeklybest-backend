@@ -1,16 +1,16 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 
 import * as bcrypt from 'bcrypt';
 
+import { AuthConfig } from '@/configs';
+import { CONFIG } from '@/constants';
 import { User, UserRepository, UserRole } from '@/models';
 
 import { AUTH, AUTH_ERROR } from './auth.constant';
-import { JoinForm } from './dtos';
-import { ConfigService } from '@nestjs/config';
+import { JoinForm, OAuthRequest } from './dtos';
 import { IJwtPayload } from './interface';
-import { AuthConfig } from '@/configs';
-import { CONFIG } from '@/constants';
 
 @Injectable()
 export class AuthService {
@@ -21,13 +21,13 @@ export class AuthService {
   ) {}
 
   async join(joinForm: JoinForm): Promise<void> {
-    const { email, password, name, mobile } = joinForm;
+    const { email, password, name } = joinForm;
 
-    const exUser: User = await this.userRepository.findOne({
+    const existsUser: User = await this.userRepository.findOne({
       where: { email },
     });
 
-    if (exUser) {
+    if (existsUser) {
       throw new HttpException(
         AUTH_ERROR.DUPLICATE_EMAIL,
         HttpStatus.BAD_REQUEST,
@@ -40,7 +40,6 @@ export class AuthService {
           email,
           password: await bcrypt.hash(password, AUTH.SALT),
           name,
-          mobile,
           role: UserRole.USER,
         }),
       );
@@ -62,9 +61,6 @@ export class AuthService {
       );
     }
 
-    console.log(user);
-    console.log(password);
-
     const isPasswordValid = await bcrypt.compare(password, user.password);
     delete user.password;
 
@@ -74,7 +70,6 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
     }
-
     return user;
   }
 
@@ -111,6 +106,39 @@ export class AuthService {
     } catch (error) {
       throw new HttpException(
         AUTH_ERROR.JWT_ERROR,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async getOAuthUser(oAuthRequest: OAuthRequest): Promise<User> {
+    const existsUser: User = await this.userRepository.findOne({
+      where: { email: oAuthRequest.email },
+    });
+
+    if (!existsUser) return null;
+
+    this.checkOAuthInfo(existsUser, oAuthRequest);
+
+    return existsUser;
+  }
+
+  private checkOAuthInfo(user: User, { provider, snsId }: OAuthRequest) {
+    console.log(typeof user.snsId, typeof snsId);
+    if (user.provider !== provider || user.snsId != snsId) {
+      throw new HttpException(
+        AUTH_ERROR.MISMATCHED_SNS_INFO,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async oAuthJoin(oAuthRequest: OAuthRequest): Promise<User> {
+    try {
+      return this.userRepository.save(this.userRepository.create(oAuthRequest));
+    } catch (error) {
+      throw new HttpException(
+        AUTH_ERROR.JOIN_ERROR,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

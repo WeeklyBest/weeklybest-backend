@@ -21,10 +21,4 @@ export const USER = {
     MIN_LENGTH: 2,
     MAX_LENGTH: 17,
   },
-  MOBILE: {
-    MATCHES: /^01([0|1|6|7|8|9])-?(\d{3,4})-?(\d{4})$/,
-    MESSAGE: {
-      IS_PHONE: '휴대폰 번호 양식에 맞게 입력해주세요.',
-    },
-  },
 };
