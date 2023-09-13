@@ -17,11 +17,13 @@ import { API_URL, APP } from './constants';
 
 class Application {
   private logger = new Logger(Application.name);
+  private HOST: string;
   private PORT: string;
   private DEV_MODE: boolean;
 
   constructor(private app: NestExpressApplication) {
     this.app = app;
+    this.HOST = process.env.HOST;
     this.PORT = process.env.PORT;
     this.DEV_MODE = process.env.NODE_ENV === APP.NODE_ENV.DEVELOPMENT;
   }
@@ -58,7 +60,7 @@ class Application {
   }
 
   startLog() {
-    this.logger.log(`✅ Server on http://localhost:${this.PORT}`);
+    this.logger.log(`✅ Server on ${this.HOST}:${this.PORT}`);
   }
 }
 
