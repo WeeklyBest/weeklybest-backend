@@ -22,4 +22,8 @@ export const Docs: SwaggerMethodDoc<AuthController> = {
       ApiInternalServerErrorResponse({ description: '알 수 없는 서버 오류' }),
     );
   },
+
+  login(summary: string) {
+    return applyDecorators();
+  },
 };
