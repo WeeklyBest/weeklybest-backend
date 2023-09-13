@@ -40,10 +40,10 @@ export class AuthService {
           email,
           password: await bcrypt.hash(password, AUTH.SALT),
           name,
-          role: UserRole.USER,
+          role: UserRole.ADMIN,
         }),
       );
-    } catch (err) {
+    } catch (error) {
       throw new HttpException(
         AUTH_ERROR.JOIN_ERROR,
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -53,6 +53,8 @@ export class AuthService {
 
   async validateLocalUser(email: string, password: string): Promise<User> {
     const user = await this.userRepository.findWithPassword(email);
+
+    console.log(email, password);
 
     if (!user) {
       throw new HttpException(
@@ -70,6 +72,7 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
     }
+
     return user;
   }
 
