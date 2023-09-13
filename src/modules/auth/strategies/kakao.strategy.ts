@@ -1,13 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { PassportStrategy } from '@nestjs/passport';
-import { Profile, Strategy } from 'passport-kakao';
-import { STRATEGY } from '../auth.constant';
 import { ConfigService } from '@nestjs/config';
-import { AuthService } from '../auth.service';
+import { PassportStrategy } from '@nestjs/passport';
+
+import { Profile, Strategy } from 'passport-kakao';
+
 import { AuthConfig } from '@/configs';
 import { CONFIG } from '@/constants';
-import { OAuthRequest } from '../dtos';
 import { SNSProvider } from '@/models';
+
+import { STRATEGY } from '../auth.constant';
+import { AuthService } from '../auth.service';
+import { OAuthRequest } from '../dtos';
 
 @Injectable()
 export class KakaoStrategy extends PassportStrategy(Strategy, STRATEGY.KAKAO) {

@@ -12,7 +12,7 @@ import { AuthService } from './auth.service';
 import { Docs } from './controller.doc';
 import { CurrentUser } from './decorators';
 import { JoinForm, LoginResponse } from './dtos';
-import { KakaoAuthGuard, LocalAuthGuard } from './guards';
+import { KakaoAuthGuard, LocalAuthGuard, NaverAuthGuard } from './guards';
 import { IJwtPayload } from './interface';
 
 @ApiTags('인증/인가 API')
@@ -50,6 +50,20 @@ export class AuthController {
   @Get('kakao/oauth')
   @UseGuards(KakaoAuthGuard)
   async kakaoCallback(@CurrentUser() user: User, @Res() res: Response) {
+    await this.oAuthLogin(user, res);
+  }
+
+  @Docs.naver('네이버 회원가입/로그인')
+  @Get('naver')
+  @UseGuards(NaverAuthGuard)
+  naver(): void {
+    // 네이버 아이디로 로그인
+  }
+
+  @Docs.naverCallback('네이버 OAuth 콜백')
+  @Get('naver/oauth')
+  @UseGuards(NaverAuthGuard)
+  async naverCallback(@CurrentUser() user: User, @Res() res: Response) {
     await this.oAuthLogin(user, res);
   }
 
