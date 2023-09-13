@@ -45,4 +45,22 @@ export const Docs: SwaggerMethodDoc<AuthController> = {
       }),
     );
   },
+
+  kakao(summary: string) {
+    return applyDecorators(
+      ApiOperation({
+        summary,
+        description: '카카오 아이디로 회원가입/로그인을 진행합니다.',
+      }),
+    );
+  },
+
+  kakaoCallback(summary: string) {
+    return applyDecorators(
+      ApiOperation({
+        summary,
+        description: '카카오 OAuth 인증 성공 시 실행되는 콜백 API입니다.',
+      }),
+    );
+  },
 };
