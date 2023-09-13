@@ -10,7 +10,7 @@ export const USER = {
   PASSWORD: {
     MATCHES: /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/,
     MIN_LENGTH: 8,
-    MAX_LENGTH: 255,
+    MAX_LENGTH: 15,
     MESSAGE: {
       IS_PASSWORD:
         '비밀번호는 영문, 숫자, 특수문자 조합으로 이루어진 8~15 글자이어야 합니다.',

@@ -5,8 +5,8 @@ import { DataSource } from 'typeorm';
 
 import { TYPEORM_CUSTOM_REPOSITORY } from '../decorator';
 
-export class CustomRepositoryModule {
-  public static forCustomRepository<T extends new (...args: any[]) => any>(
+export class TypeOrmCustomModule {
+  public static forFeature<T extends new (...args: any[]) => any>(
     repositories: T[],
   ): DynamicModule {
     const providers: Provider[] = [];
@@ -16,7 +16,7 @@ export class CustomRepositoryModule {
 
       if (!entity) {
         throw new NotFoundException(
-          `Entity not found for repository ${repository.name}`,
+          `${repository.name} 레파지토리에 대한 엔티티를 찾을 수 없습니다.`,
         );
       }
 
@@ -37,7 +37,7 @@ export class CustomRepositoryModule {
 
     return {
       exports: providers,
-      module: CustomRepositoryModule,
+      module: TypeOrmCustomModule,
       providers,
     };
   }
