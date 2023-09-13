@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import * as bcrypt from 'bcrypt';
@@ -7,12 +8,18 @@ import { User, UserRepository, UserRole } from '@/models';
 
 import { AUTH, AUTH_ERROR } from './auth.constant';
 import { JoinForm } from './dtos';
+import { ConfigService } from '@nestjs/config';
+import { IJwtPayload } from './interface';
+import { AuthConfig } from '@/configs';
+import { CONFIG } from '@/constants';
 
 @Injectable()
 export class AuthService {
   constructor(
+    private readonly configService: ConfigService,
     @InjectRepository(User)
     private readonly userRepository: UserRepository,
+    private readonly jwtService: JwtService,
   ) {}
 
   async join(joinForm: JoinForm): Promise<void> {
@@ -68,5 +75,15 @@ export class AuthService {
     }
 
     return user;
+  }
+
+  generateAccessToken({ id }: IJwtPayload) {
+    const payload: IJwtPayload = { id };
+
+    return this.jwtService.sign(payload, {
+      secret: this.configService.get<AuthConfig>(CONFIG.AUTH).accessTokenSecret,
+      expiresIn: this.configService.get<AuthConfig>(CONFIG.AUTH)
+        .accessTokenExpiresIn,
+    });
   }
 }

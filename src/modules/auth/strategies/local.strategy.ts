@@ -4,9 +4,9 @@ import { PassportStrategy } from '@nestjs/passport';
 
 import { Strategy } from 'passport-local';
 
+import { AuthConfig } from '@/configs';
 import { CONFIG } from '@/constants';
 import { User } from '@/models';
-import { AuthConfig } from '@/configs/auth.config';
 
 import { STRATEGY } from '../auth.constant';
 import { AuthService } from '../auth.service';
