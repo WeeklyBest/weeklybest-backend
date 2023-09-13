@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AuthConfig } from '@/configs';
 import { CONFIG } from '@/constants';
-import { User } from '@/models';
+import { UserRepository } from '@/models';
 
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
@@ -13,7 +13,7 @@ import { strategies } from './strategies';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([UserRepository]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
