@@ -1,10 +1,10 @@
 import { Repository } from 'typeorm';
 
-import { CustomRepository } from '@/common';
+import { EntityRepository } from '@/common';
 
 import { User } from '../entities';
 
-@CustomRepository(User)
+@EntityRepository(User)
 export class UserRepository extends Repository<User> {
   async findWithPassword(email: string) {
     return this.createQueryBuilder('user')

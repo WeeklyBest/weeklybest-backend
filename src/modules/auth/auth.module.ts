@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { TypeOrmCustomModule } from '@/common';
 import { AuthConfig } from '@/configs';
 import { CONFIG } from '@/constants';
 import { UserRepository } from '@/models';
@@ -13,7 +13,7 @@ import { strategies } from './strategies';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UserRepository]),
+    TypeOrmCustomModule.forFeature([UserRepository]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({

@@ -62,6 +62,9 @@ export class AuthService {
       );
     }
 
+    console.log(user);
+    console.log(password);
+
     const isPasswordValid = await bcrypt.compare(password, user.password);
     delete user.password;
 
