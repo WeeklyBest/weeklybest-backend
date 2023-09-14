@@ -35,7 +35,7 @@ export class AuthService {
     }
 
     try {
-      await this.userRepository.save(
+      await this.userRepository.insert(
         this.userRepository.create({
           email,
           password: await bcrypt.hash(password, AUTH.SALT),
@@ -54,8 +54,6 @@ export class AuthService {
   async validateLocalUser(email: string, password: string): Promise<User> {
     const user = await this.userRepository.findWithPassword(email);
 
-    console.log(email, password);
-
     if (!user) {
       throw new HttpException(
         AUTH_ERROR.BAD_LOGIN_REQUEST,
@@ -71,6 +69,16 @@ export class AuthService {
         AUTH_ERROR.BAD_LOGIN_REQUEST,
         HttpStatus.BAD_REQUEST,
       );
+    }
+
+    return user;
+  }
+
+  async validateJwtUser(id: number) {
+    const user = await this.userRepository.findOne({ where: { id } });
+
+    if (!user) {
+      throw new HttpException(AUTH_ERROR.UNAUTHORIZED, HttpStatus.UNAUTHORIZED);
     }
 
     return user;
