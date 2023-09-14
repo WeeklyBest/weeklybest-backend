@@ -13,7 +13,7 @@ import {
   SuccessInterceptor,
 } from './common';
 import { corsConfig, swaggerConfig } from './configs';
-import { API_URL, APP } from './constants';
+import { API_URL, APP, CONFIG } from './constants';
 
 class Application {
   private logger = new Logger(Application.name);
@@ -25,7 +25,7 @@ class Application {
     this.app = app;
     this.HOST = process.env.HOST;
     this.PORT = process.env.PORT;
-    this.DEV_MODE = process.env.NODE_ENV === APP.NODE_ENV.DEVELOPMENT;
+    this.DEV_MODE = process.env.NODE_ENV === CONFIG.NODE_ENV.DEVELOPMENT;
   }
 
   private async setUpOpenAPI() {

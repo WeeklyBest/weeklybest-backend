@@ -2,7 +2,7 @@ import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
 
-import { Response } from 'express';
+import { CookieOptions, Response } from 'express';
 
 import { AuthConfig } from '@/configs';
 import { CONFIG, COOKIE } from '@/constants';
@@ -12,7 +12,12 @@ import { AuthService } from './auth.service';
 import { Docs } from './controller.doc';
 import { CurrentUser } from './decorators';
 import { JoinForm, LoginResponse } from './dtos';
-import { KakaoAuthGuard, LocalAuthGuard, NaverAuthGuard } from './guards';
+import {
+  JwtRefreshAuthGuard,
+  KakaoAuthGuard,
+  LocalAuthGuard,
+  NaverAuthGuard,
+} from './guards';
 import { IJwtPayload } from './interface';
 
 @ApiTags('인증/인가 API')
@@ -53,6 +58,17 @@ export class AuthController {
     await this.oAuthLogin(user, res);
   }
 
+  @Get('refresh')
+  @UseGuards(JwtRefreshAuthGuard)
+  refresh(@CurrentUser() user: User): LoginResponse {
+    const jwtPayload: IJwtPayload = { id: user.id };
+    const accessToken = this.authService.generateAccessToken(jwtPayload);
+
+    return {
+      accessToken,
+    };
+  }
+
   @Docs.naver('네이버 회원가입/로그인')
   @Get('naver')
   @UseGuards(NaverAuthGuard)
@@ -69,7 +85,19 @@ export class AuthController {
 
   private async setRefreshTokenCookie(payload: IJwtPayload, res: Response) {
     const refreshToken = await this.authService.generateRefreshToken(payload);
-    res.cookie(COOKIE.REFRESH_TOKEN, refreshToken);
+    const cookieOptions: CookieOptions = {
+      path: '/',
+      maxAge:
+        this.configService.get<AuthConfig>(CONFIG.AUTH).refreshTokenExpiresIn *
+        1000,
+      httpOnly: true,
+      signed: true,
+      secure:
+        this.configService.get(CONFIG.ENV_KEY.NODE_ENV) !==
+        CONFIG.NODE_ENV.DEVELOPMENT,
+    };
+
+    res.cookie(COOKIE.REFRESH_TOKEN, refreshToken, cookieOptions);
   }
 
   private async issueTokens(user: User, res: Response): Promise<LoginResponse> {
