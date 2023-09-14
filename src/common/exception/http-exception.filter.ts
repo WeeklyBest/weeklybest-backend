@@ -8,7 +8,7 @@ import {
 
 import { Response } from 'express';
 
-import { ErrorResponse, ResponseEntity } from '../interface';
+import { IErrorResponse, IResponseEntity } from '../interface';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -16,12 +16,12 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const context = host.switchToHttp();
     const response = context.getResponse<Response>();
     const status = exception.getStatus();
-    const error = exception.getResponse() as string | ErrorResponse;
+    const error = exception.getResponse() as string | IErrorResponse;
 
     const isValidationError =
       typeof error !== 'string' && error.statusCode === HttpStatus.BAD_REQUEST;
 
-    const responseEntity: ResponseEntity = {
+    const responseEntity: IResponseEntity = {
       success: false,
       statusCode: status,
       data: isValidationError ? error.message : error,

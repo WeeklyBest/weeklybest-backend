@@ -8,13 +8,13 @@ import {
   ApiOperation,
 } from '@nestjs/swagger';
 
-import { SwaggerMethodDoc } from '@/common';
+import { SwaggerMethodDocType } from '@/common';
 import { MESSAGE } from '@/constants';
 
 import { AuthController } from './auth.controller';
 import { LoginForm, LoginResponse } from './dtos';
 
-export const Docs: SwaggerMethodDoc<AuthController> = {
+export const Docs: SwaggerMethodDocType<AuthController> = {
   join(summary: string) {
     return applyDecorators(
       ApiOperation({

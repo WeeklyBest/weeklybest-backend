@@ -8,7 +8,7 @@ import {
 import { Response } from 'express';
 import { map, Observable } from 'rxjs';
 
-import { ResponseEntity } from '../interface';
+import { IResponseEntity } from '../interface';
 
 @Injectable()
 export class SuccessInterceptor implements NestInterceptor {
@@ -21,7 +21,7 @@ export class SuccessInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       map(
-        (data): ResponseEntity => ({
+        (data): IResponseEntity => ({
           success: true,
           statusCode: status,
           data,
