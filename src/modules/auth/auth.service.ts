@@ -40,7 +40,7 @@ export class AuthService {
           email,
           password: await bcrypt.hash(password, AUTH.SALT),
           name,
-          role: UserRole.ADMIN,
+          role: UserRole.USER,
         }),
       );
     } catch (error) {
