@@ -1,3 +1,4 @@
+import { AdminStrategy } from './admin.strategy';
 import { JwtRefreshStrategy } from './jwt-refresh.strategy';
 import { JwtStrategy } from './jwt.strategy';
 import { KakaoStrategy } from './kakao.strategy';
@@ -10,4 +11,5 @@ export const strategies = [
   NaverStrategy,
   JwtStrategy,
   JwtRefreshStrategy,
+  AdminStrategy,
 ];
