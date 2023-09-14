@@ -26,7 +26,7 @@ export class User extends CommonEntity {
 
   @ApiProperty({
     description: '이메일',
-    example: 'Admin1234@example.com',
+    example: 'admin1234@example.com',
     required: true,
   })
   @IsEmail({}, { message: USER.EMAIL.MESSAGE.IS_EMAIL })

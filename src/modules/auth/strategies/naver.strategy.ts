@@ -6,12 +6,12 @@ import { InternalOAuthError, Strategy } from 'passport-oauth2';
 
 import { AuthConfig } from '@/configs';
 import { CONFIG } from '@/constants';
+import { SNSProvider } from '@/models';
 
 import { STRATEGY } from '../auth.constant';
 import { AuthService } from '../auth.service';
-import { INaverProfile, INaverProfileResponse } from '../interface';
 import { OAuthRequest } from '../dtos';
-import { SNSProvider } from '@/models';
+import { INaverProfile, INaverProfileResponse } from '../interface';
 
 const PROVIDER_NAME = 'naver';
 const AUTHORIZATION_URL = 'https://nid.naver.com/oauth2.0/authorize';
