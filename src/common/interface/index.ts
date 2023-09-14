@@ -14,6 +14,6 @@ export type SwaggerMethodDocType<T> = {
   [K in keyof T]: (summary: string) => MethodDecorator;
 };
 
-export type SwaggerFileDocType<T> = {
+export type SwaggerFiledDocType<T> = {
   [K in keyof T]: () => PropertyDecorator;
 };
