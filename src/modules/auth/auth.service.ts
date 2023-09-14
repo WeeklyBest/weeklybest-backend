@@ -69,6 +69,10 @@ export class AuthService {
     return user;
   }
 
+  async removeRefreshToken(userId: number) {
+    this.userRepository.update(userId, { refreshToken: null });
+  }
+
   async getUserIfRefreshTokenMatches(id: number, refreshToken: string) {
     const user = await this.userRepository.findWithRefreshToken(id);
 

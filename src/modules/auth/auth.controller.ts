@@ -13,6 +13,7 @@ import { Docs } from './controller.doc';
 import { CurrentUser } from './decorators';
 import { JoinForm, LoginResponse } from './dtos';
 import {
+  JwtAuthGuard,
   JwtRefreshAuthGuard,
   KakaoAuthGuard,
   LocalAuthGuard,
@@ -42,6 +43,21 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<LoginResponse> {
     return this.issueTokens(user, res);
+  }
+
+  @Docs.logout('로그아웃')
+  @Post('logout')
+  @UseGuards(JwtAuthGuard)
+  async logout(
+    @CurrentUser() user: User,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    await this.authService.removeRefreshToken(user.id);
+
+    res.cookie(COOKIE.REFRESH_TOKEN, '', {
+      maxAge: 0,
+      httpOnly: true,
+    });
   }
 
   @Docs.kakao('카카오 회원가입/로그인')
@@ -87,7 +103,6 @@ export class AuthController {
   private async setRefreshTokenCookie(payload: IJwtPayload, res: Response) {
     const refreshToken = await this.authService.generateRefreshToken(payload);
     const cookieOptions: CookieOptions = {
-      path: '/',
       maxAge:
         this.configService.get<AuthConfig>(CONFIG.AUTH).refreshTokenExpiresIn *
         1000,
