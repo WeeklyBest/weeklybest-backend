@@ -6,6 +6,7 @@ import { TypeOrmCustomModule } from '@/common';
 import { AuthConfig } from '@/configs';
 import { CONFIG } from '@/constants';
 import { UserRepository } from '@/models';
+import { UsersModule } from '@/modules/users';
 
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
@@ -25,6 +26,7 @@ import { strategies } from './strategies';
       }),
       inject: [ConfigService],
     }),
+    UsersModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, ...strategies],
