@@ -8,13 +8,13 @@ import {
   ApiOperation,
 } from '@nestjs/swagger';
 
-import { SwaggerMethodDoc } from '@/common';
+import { SwaggerMethodDocType } from '@/common';
 import { MESSAGE } from '@/constants';
 
 import { AuthController } from './auth.controller';
 import { LoginForm, LoginResponse } from './dtos';
 
-export const Docs: SwaggerMethodDoc<AuthController> = {
+export const Docs: SwaggerMethodDocType<AuthController> = {
   join(summary: string) {
     return applyDecorators(
       ApiOperation({
@@ -42,6 +42,15 @@ export const Docs: SwaggerMethodDoc<AuthController> = {
       ApiOkResponse({ description: '로그인 성공', type: LoginResponse }),
       ApiInternalServerErrorResponse({
         description: MESSAGE.SWAGGER.INTERNAL_SERVER_ERROR,
+      }),
+    );
+  },
+
+  logout(summary: string) {
+    return applyDecorators(
+      ApiOperation({
+        summary,
+        description: '로그인된 회원의 Refresh 토큰을 삭제한 뒤 로그아웃합니다.',
       }),
     );
   },
@@ -78,6 +87,16 @@ export const Docs: SwaggerMethodDoc<AuthController> = {
       ApiOperation({
         summary,
         description: '네이버 OAuth 인증 성공 시 실행되는 콜백 API입니다.',
+      }),
+    );
+  },
+
+  refresh(summary: string) {
+    return applyDecorators(
+      ApiOperation({
+        summary,
+        description:
+          'Refresh 토큰을 이용해 만료된 Access 토큰을 새로 갱신합니다.',
       }),
     );
   },

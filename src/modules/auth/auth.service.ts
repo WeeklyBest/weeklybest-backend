@@ -40,7 +40,7 @@ export class AuthService {
           email,
           password: await bcrypt.hash(password, AUTH.SALT),
           name,
-          role: UserRole.ADMIN,
+          role: UserRole.USER,
         }),
       );
     } catch (error) {
@@ -54,19 +54,14 @@ export class AuthService {
   async validateLocalUser(email: string, password: string): Promise<User> {
     const user = await this.userRepository.findWithPassword(email);
 
-    if (!user) {
-      throw new HttpException(
-        AUTH_ERROR.BAD_LOGIN_REQUEST,
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+    this.checkAuthValidity(user);
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     delete user.password;
 
     if (!isPasswordValid) {
       throw new HttpException(
-        AUTH_ERROR.BAD_LOGIN_REQUEST,
+        AUTH_ERROR.BAD_AUTH_REQUEST,
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -74,12 +69,22 @@ export class AuthService {
     return user;
   }
 
-  async validateJwtUser(id: number) {
-    const user = await this.userRepository.findOne({ where: { id } });
+  async removeRefreshToken(userId: number) {
+    this.userRepository.update(userId, { refreshToken: null });
+  }
 
-    if (!user) {
-      throw new HttpException(AUTH_ERROR.UNAUTHORIZED, HttpStatus.UNAUTHORIZED);
-    }
+  async getUserIfRefreshTokenMatches(id: number, refreshToken: string) {
+    const user = await this.userRepository.findWithRefreshToken(id);
+
+    this.checkAuthValidity(user);
+
+    const doesRefreshTokenMatch = await bcrypt.compare(
+      refreshToken,
+      user.refreshToken,
+    );
+
+    this.checkAuthValidity(doesRefreshTokenMatch);
+    delete user.refreshToken;
 
     return user;
   }
@@ -100,13 +105,15 @@ export class AuthService {
     try {
       const refreshToken = this.jwtService.sign(payload, {
         secret: this.configService.get<AuthConfig>(CONFIG.AUTH)
-          .accessTokenSecret,
+          .refreshTokenSecret,
         expiresIn: this.configService.get<AuthConfig>(CONFIG.AUTH)
-          .accessTokenExpiresIn,
+          .refreshTokenExpiresIn,
       });
 
+      const hashedRefreshToken = await bcrypt.hash(refreshToken, AUTH.SALT);
+
       const result = await this.userRepository.update(id, {
-        refreshToken,
+        refreshToken: hashedRefreshToken,
       });
 
       if (result.affected === 0) {
@@ -135,7 +142,6 @@ export class AuthService {
   }
 
   private checkOAuthInfo(user: User, { provider, snsId }: OAuthRequest) {
-    console.log(typeof user.snsId, typeof snsId);
     if (user.provider !== provider || user.snsId != snsId) {
       throw new HttpException(
         AUTH_ERROR.MISMATCHED_SNS_INFO,
@@ -151,6 +157,15 @@ export class AuthService {
       throw new HttpException(
         AUTH_ERROR.JOIN_ERROR,
         HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  private checkAuthValidity(condition: any) {
+    if (!!!condition) {
+      throw new HttpException(
+        AUTH_ERROR.BAD_AUTH_REQUEST,
+        HttpStatus.BAD_REQUEST,
       );
     }
   }

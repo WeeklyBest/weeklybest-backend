@@ -3,14 +3,16 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { configs } from '@/configs';
-import { APP, CONFIG } from '@/constants';
+import { CONFIG } from '@/constants';
 import { modules } from '@/modules';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: `.env.${process.env.NODE_ENV || APP.NODE_ENV.DEVELOPMENT}`,
+      envFilePath: `.env.${
+        process.env.NODE_ENV || CONFIG.NODE_ENV.DEVELOPMENT
+      }`,
       load: configs,
     }),
     TypeOrmModule.forRootAsync({
