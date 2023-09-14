@@ -12,7 +12,6 @@ export class UsersController {
   @Get('me')
   @UseGuards(JwtAuthGuard)
   async me(@CurrentUser() user: User) {
-    console.log(user);
     return new UserSummary(user);
   }
 }
