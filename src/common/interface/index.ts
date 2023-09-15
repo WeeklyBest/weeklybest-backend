@@ -17,3 +17,15 @@ export type SwaggerMethodDocType<T> = {
 export type SwaggerFiledDocType<T> = {
   [K in keyof T]: () => PropertyDecorator;
 };
+
+export interface IPagingOptions {
+  pageNum: number;
+  pageSize: number;
+}
+
+export interface IPagination<T> {
+  list: T[];
+  totalPages: number;
+  isFirst: boolean;
+  isLast: boolean;
+}

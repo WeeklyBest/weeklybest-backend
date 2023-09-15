@@ -1,42 +1,21 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
-import { PRODUCT, Product, ProductRepository } from '@/models';
-
-import { CreateProductForm } from './dtos';
+import { Product, ProductRepository } from '@/models';
+import { IPagination, IPagingOptions, getPagination } from '@/common';
 
 @Injectable()
 export class ProductsService {
   constructor(private readonly productRepository: ProductRepository) {}
 
-  async createProduct(createProductForm: CreateProductForm): Promise<void> {
-    const { name, retailPrice, sellingPrice, onSale, show } = createProductForm;
+  async list(pagingOptions: IPagingOptions): Promise<IPagination<Product>> {
+    const { pageNum, pageSize } = pagingOptions;
 
-    const existsProduct: Product = await this.productRepository.findOne({
-      where: { name },
+    const product = await this.productRepository.findAndCount({
+      skip: (pageNum - 1) * pageSize,
+      take: pageSize,
+      where: { show: true },
     });
 
-    if (existsProduct) {
-      throw new HttpException(
-        PRODUCT.CREATE.DUPLICATE_PRODUCT,
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-
-    try {
-      await this.productRepository.insert(
-        this.productRepository.create({
-          name,
-          retailPrice,
-          sellingPrice,
-          onSale,
-          show,
-        }),
-      );
-    } catch (error) {
-      throw new HttpException(
-        PRODUCT.CREATE.ERROR,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+    return getPagination(product[0], product[1], pagingOptions);
   }
 }

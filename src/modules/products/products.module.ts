@@ -5,10 +5,9 @@ import { ProductRepository } from '@/models';
 
 import { ProductsController } from './products.controller';
 import { ProductsService } from './products.service';
-import { UsersModule } from '../users';
 
 @Module({
-  imports: [TypeOrmCustomModule.forFeature([ProductRepository]), UsersModule],
+  imports: [TypeOrmCustomModule.forFeature([ProductRepository])],
   controllers: [ProductsController],
   providers: [ProductsService],
   exports: [ProductsService],
