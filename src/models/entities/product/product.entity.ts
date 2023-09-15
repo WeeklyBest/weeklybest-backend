@@ -1,10 +1,10 @@
 import { Entity } from 'typeorm';
 
-import { CommonEntity } from '@/common';
+import { CommonIdEntity } from '@/common';
 import { ProductDocs as Docs } from '@/docs';
 
 @Entity()
-export class Product extends CommonEntity {
+export class Product extends CommonIdEntity {
   @Docs.id()
   id: number;
 

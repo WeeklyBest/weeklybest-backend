@@ -1,12 +1,12 @@
 import { Entity, Index } from 'typeorm';
 
-import { CommonEntity } from '@/common';
+import { CommonIdEntity } from '@/common';
 import { UserDocs as Docs } from '@/docs';
 import { SNSProvider, UserRole } from '@/models';
 
 @Index('email', ['email'], { unique: true })
 @Entity()
-export class User extends CommonEntity {
+export class User extends CommonIdEntity {
   @Docs.id()
   id: number;
 
