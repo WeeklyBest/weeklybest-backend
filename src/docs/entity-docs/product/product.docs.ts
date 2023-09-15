@@ -22,6 +22,11 @@ export const ProductDocs: SwaggerFiledDocType<Product> = {
 
   name() {
     return applyDecorators(
+      ApiProperty({
+        description: '상품명',
+        example: '남녀공용 기모 오버핏 무지 맨투맨',
+        required: true,
+      }),
       Column({
         length: PRODUCT.NAME.MAX_LENGTH,
       }),
@@ -30,6 +35,10 @@ export const ProductDocs: SwaggerFiledDocType<Product> = {
 
   retailPrice() {
     return applyDecorators(
+      ApiProperty({
+        description: '소비자가',
+        example: 10000,
+      }),
       Column({
         type: 'mediumint',
         unsigned: true,
@@ -40,6 +49,10 @@ export const ProductDocs: SwaggerFiledDocType<Product> = {
 
   sellingPrice() {
     return applyDecorators(
+      ApiProperty({
+        description: '판매가',
+        example: 8000,
+      }),
       Column({
         type: 'mediumint',
         unsigned: true,
@@ -51,6 +64,10 @@ export const ProductDocs: SwaggerFiledDocType<Product> = {
   // 통계 속성
   salesVolume() {
     return applyDecorators(
+      ApiProperty({
+        description: '판매량',
+        example: 156,
+      }),
       Column({
         unsigned: true,
         default: 0,
@@ -60,6 +77,9 @@ export const ProductDocs: SwaggerFiledDocType<Product> = {
 
   reviewCount() {
     return applyDecorators(
+      ApiProperty({
+        description: '리뷰 수',
+      }),
       Column({
         unsigned: true,
         default: 0,
@@ -69,6 +89,10 @@ export const ProductDocs: SwaggerFiledDocType<Product> = {
 
   wishCount() {
     return applyDecorators(
+      ApiProperty({
+        description: '찜 수',
+        example: 12,
+      }),
       Column({
         unsigned: true,
         default: 0,
@@ -79,6 +103,10 @@ export const ProductDocs: SwaggerFiledDocType<Product> = {
   // check 옵션
   show() {
     return applyDecorators(
+      ApiProperty({
+        description: '진열 여부',
+        example: true,
+      }),
       Column({
         type: 'tinyint',
         default: 1,
@@ -88,6 +116,10 @@ export const ProductDocs: SwaggerFiledDocType<Product> = {
 
   onSale() {
     return applyDecorators(
+      ApiProperty({
+        description: '판매 여부',
+        example: true,
+      }),
       Column({
         type: 'tinyint',
         default: 1,
