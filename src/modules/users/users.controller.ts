@@ -6,7 +6,7 @@ import { CurrentUser, JwtAuthGuard } from '@/modules/auth';
 
 import { UserSummary } from './dtos';
 
-@ApiTags('사용자 본인 정보 조회')
+@ApiTags('회원 API')
 @Controller('users')
 export class UsersController {
   @Get('me')
