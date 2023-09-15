@@ -14,7 +14,7 @@ import { MESSAGE } from '@/constants';
 import { AuthController } from './auth.controller';
 import { LoginForm, LoginResponse } from './dtos';
 
-export const Docs: SwaggerMethodDocType<AuthController> = {
+export const AuthControllerDocs: SwaggerMethodDocType<AuthController> = {
   join(summary: string) {
     return applyDecorators(
       ApiOperation({

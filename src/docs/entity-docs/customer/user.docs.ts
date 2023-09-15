@@ -10,10 +10,10 @@ import {
 } from 'class-validator';
 import { Column, PrimaryGeneratedColumn } from 'typeorm';
 
-import { SwaggerFileDocType } from '@/common';
+import { SwaggerFiledDocType } from '@/common';
 import { User, SNSProvider, USER, UserRole } from '@/models';
 
-export const UserDocs: SwaggerFileDocType<User> = {
+export const UserDocs: SwaggerFiledDocType<User> = {
   id() {
     return applyDecorators(
       ApiProperty({

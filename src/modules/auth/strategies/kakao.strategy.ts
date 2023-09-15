@@ -37,8 +37,6 @@ export class KakaoStrategy extends PassportStrategy(Strategy, STRATEGY.KAKAO) {
 
     const user = await this.authService.getOAuthUser(oAuthRequest);
 
-    console.log(user);
-
     return user;
   }
 }

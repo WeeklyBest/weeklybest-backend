@@ -9,7 +9,7 @@ import { CONFIG, COOKIE } from '@/constants';
 import { User } from '@/models';
 
 import { AuthService } from './auth.service';
-import { Docs } from './controller.doc';
+import { AuthControllerDocs as Docs } from './auth.controller.docs';
 import { CurrentUser } from './decorators';
 import { JoinForm, LoginResponse } from './dtos';
 import {
