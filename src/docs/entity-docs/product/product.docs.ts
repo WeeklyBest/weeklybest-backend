@@ -47,7 +47,6 @@ export const ProductDocs = {
       Column({
         type: 'mediumint',
         unsigned: true,
-        default: 0,
       }),
     );
   },
@@ -99,7 +98,6 @@ export const ProductDocs = {
         example: true,
       }),
       Column({
-        type: 'tinyint',
         default: 1,
       }),
     );
@@ -112,7 +110,6 @@ export const ProductDocs = {
         example: true,
       }),
       Column({
-        type: 'tinyint',
         default: 1,
       }),
     );

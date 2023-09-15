@@ -71,8 +71,8 @@ export const UserDocs = {
   role() {
     return applyDecorators(
       Column({
-        type: 'enum',
-        enum: UserRole,
+        type: 'char',
+        length: USER.ROLE.MAX_LENGTH,
         default: UserRole.USER,
       }),
     );
@@ -81,8 +81,7 @@ export const UserDocs = {
   provider() {
     return applyDecorators(
       Column({
-        type: 'enum',
-        enum: SNSProvider,
+        length: USER.PROVIDER.MAX_LENGTH,
         default: SNSProvider.LOCAL,
       }),
     );
