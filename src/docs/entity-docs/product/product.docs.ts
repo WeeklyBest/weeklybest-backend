@@ -1,23 +1,14 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 
-import { Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Column } from 'typeorm';
 
-import { SwaggerFiledDocType } from '@/common';
-import { PRODUCT, Product } from '@/models';
+import { SwaggerDoc } from '@/common';
+import { PRODUCT } from '@/models';
 
-export const ProductDocs: SwaggerFiledDocType<Product> = {
-  id() {
-    return applyDecorators(
-      ApiProperty({
-        description: '아이디',
-        example: 1,
-        required: true,
-      }),
-      PrimaryGeneratedColumn({
-        unsigned: true,
-      }),
-    );
+export const ProductDocs = {
+  productId() {
+    return applyDecorators(SwaggerDoc.id('상품 식별자'));
   },
 
   name() {
@@ -101,7 +92,7 @@ export const ProductDocs: SwaggerFiledDocType<Product> = {
   },
 
   // check 옵션
-  show() {
+  display() {
     return applyDecorators(
       ApiProperty({
         description: '진열 여부',

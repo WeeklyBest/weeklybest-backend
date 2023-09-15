@@ -8,21 +8,14 @@ import {
   Matches,
   MaxLength,
 } from 'class-validator';
-import { Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Column } from 'typeorm';
 
-import { SwaggerFiledDocType } from '@/common';
-import { User, SNSProvider, USER, UserRole } from '@/models';
+import { SwaggerDoc } from '@/common';
+import { SNSProvider, USER, UserRole } from '@/models';
 
-export const UserDocs: SwaggerFiledDocType<User> = {
-  id() {
-    return applyDecorators(
-      ApiProperty({
-        description: '아이디',
-        example: '1',
-        required: true,
-      }),
-      PrimaryGeneratedColumn(),
-    );
+export const UserDocs = {
+  userId() {
+    return applyDecorators(SwaggerDoc.id('회원 식별자'));
   },
 
   email() {

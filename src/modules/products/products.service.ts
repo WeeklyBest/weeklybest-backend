@@ -13,7 +13,7 @@ export class ProductsService {
     const product = await this.productRepository.findAndCount({
       skip: (pageNum - 1) * pageSize,
       take: pageSize,
-      where: { show: true },
+      where: { display: true },
     });
 
     return getPagination(product[0], product[1], pagingOptions);

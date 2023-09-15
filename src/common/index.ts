@@ -1,4 +1,5 @@
 export * from './decorator';
+export * from './doc';
 export * from './dto';
 export * from './entities';
 export * from './exception';
