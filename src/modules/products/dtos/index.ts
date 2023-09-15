@@ -1,1 +1,1 @@
-export * from './create-product-form.dto';
+export * from './upload-product-form.dto';

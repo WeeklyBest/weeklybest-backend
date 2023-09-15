@@ -2,14 +2,14 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
 import { PRODUCT, Product, ProductRepository } from '@/models';
 
-import { CreateProductForm } from './dtos';
+import { UploadProductForm } from './dtos';
 
 @Injectable()
 export class ProductsService {
   constructor(private readonly productRepository: ProductRepository) {}
 
-  async createProduct(createProductForm: CreateProductForm): Promise<void> {
-    const { name, retailPrice, sellingPrice, onSale, show } = createProductForm;
+  async uploadProduct(uploadProductForm: UploadProductForm): Promise<void> {
+    const { name, retailPrice, sellingPrice, onSale, show } = uploadProductForm;
 
     const existsProduct: Product = await this.productRepository.findOne({
       where: { name },

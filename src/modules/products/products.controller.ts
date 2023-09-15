@@ -4,7 +4,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { AdminStrategy } from '@/modules/auth/strategies/admin.strategy';
 
 import { ProductsService } from './products.service';
-import { CreateProductForm } from './dtos';
+import { UploadProductForm } from './dtos';
 import { ProductsControllerDocs as Docs } from './products.controller.docs';
 
 @ApiTags('관리자 페이지')
@@ -15,7 +15,7 @@ export class ProductsController {
   @Docs.createProduct('상품 업로드')
   @Post('products/create')
   @UseGuards(AdminStrategy)
-  async createProduct(@Body() createProductForm: CreateProductForm) {
-    return this.productsService.createProduct(createProductForm);
+  async createProduct(@Body() uploadProductForm: UploadProductForm) {
+    return this.productsService.uploadProduct(uploadProductForm);
   }
 }
