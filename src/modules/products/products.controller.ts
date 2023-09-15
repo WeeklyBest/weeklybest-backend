@@ -15,8 +15,8 @@ export class ProductsController {
   @Docs.list('상품 목록 조회')
   @Get()
   async list(
-    @Query() { pageNum, pageSize }: PagingQuery,
+    @Query() { pageNum = 1, pageSize = 10, ...rest }: PagingQuery,
   ): Promise<IPagination<Product>> {
-    return this.productsService.list({ pageNum, pageSize });
+    return this.productsService.list({ pageNum, pageSize, ...rest });
   }
 }

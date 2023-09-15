@@ -1,13 +1,12 @@
-import { Entity } from 'typeorm';
+import { Entity, ManyToOne } from 'typeorm';
 
 import { CommonIdEntity } from '@/common';
 import { ProductDocs as Docs } from '@/docs';
 
+import { Category } from './category.entity';
+
 @Entity()
 export class Product extends CommonIdEntity {
-  @Docs.id()
-  id: number;
-
   @Docs.name()
   name: string;
 
@@ -28,9 +27,15 @@ export class Product extends CommonIdEntity {
   wishCount: number;
 
   // check 옵션
-  @Docs.show()
-  show: boolean;
+  @Docs.display()
+  display: boolean;
 
   @Docs.onSale()
   onSale: boolean;
+
+  @ManyToOne(() => Category, {
+    onUpdate: 'CASCADE',
+    onDelete: 'SET NULL',
+  })
+  category: Category;
 }
