@@ -11,7 +11,7 @@ export const ProductsControllerDocs: SwaggerMethodDocType<ProductsController> =
       return applyDecorators(
         ApiOperation({
           summary,
-          description: '진열 여부가 true인 상품 목록을 모두 조회합니다.',
+          description: '진열 여부가 true인 상품을 모두 조회합니다.',
         }),
       );
     },
