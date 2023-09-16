@@ -1,9 +1,10 @@
-import { Entity, ManyToOne } from 'typeorm';
+import { Entity, JoinColumn, ManyToMany, ManyToOne } from 'typeorm';
 
 import { CommonIdEntity } from '@/common';
 import { ProductDocs as Docs } from '@/docs';
 
 import { Category } from './category.entity';
+import { OptionSet } from './option-set.entity';
 
 @Entity()
 export class Product extends CommonIdEntity {
@@ -33,9 +34,14 @@ export class Product extends CommonIdEntity {
   @Docs.onSale()
   onSale: boolean;
 
+  // 연관 관계
   @ManyToOne(() => Category, {
     onUpdate: 'CASCADE',
     onDelete: 'SET NULL',
   })
-  Category: Category;
+  category: Category;
+
+  @ManyToMany(() => OptionSet, (optionSet) => optionSet.products)
+  @JoinColumn()
+  optionSets: OptionSet[];
 }
