@@ -1,13 +1,12 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 
 import { Type } from 'class-transformer';
 import { IsInt, IsOptional, Min } from 'class-validator';
 
 export class PagingQuery {
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: '현재 페이지 번호',
     example: 1,
-    required: false,
   })
   @Type(() => Number)
   @IsOptional()
@@ -15,10 +14,9 @@ export class PagingQuery {
   @Min(1)
   pageNum: number;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: '한 페이지의 상품 개수',
     example: 10,
-    required: false,
   })
   @Type(() => Number)
   @IsOptional()

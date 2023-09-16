@@ -37,5 +37,5 @@ export class Product extends CommonIdEntity {
     onUpdate: 'CASCADE',
     onDelete: 'SET NULL',
   })
-  category: Category;
+  Category: Category;
 }

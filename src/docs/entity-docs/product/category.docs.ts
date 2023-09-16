@@ -13,7 +13,6 @@ export const CategoryDocs = {
       ApiProperty({
         description: '상품 그룹명',
         example: 'OUTER',
-        required: true,
       }),
     );
   },
@@ -23,7 +22,6 @@ export const CategoryDocs = {
       ApiProperty({
         description: '상품 그룹 코드',
         example: 'outer',
-        required: true,
       }),
     );
   },

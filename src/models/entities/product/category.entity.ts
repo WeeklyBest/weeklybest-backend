@@ -1,8 +1,8 @@
 import { Column, Entity } from 'typeorm';
 
 import { CommonIdEntity } from '@/common';
-import { CATEGORY } from '@/models/constants';
 import { CategoryDocs as Docs } from '@/docs';
+import { CATEGORY } from '@/models/constants';
 
 @Entity()
 export class Category extends CommonIdEntity {
