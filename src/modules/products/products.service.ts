@@ -27,7 +27,7 @@ export class ProductsService {
       .createQueryBuilder(productAlias)
       .skip((pageNum - 1) * pageSize)
       .take(pageSize)
-      .leftJoinAndSelect(`${productAlias}.Category`, categoryAlias);
+      .leftJoinAndSelect(`${productAlias}.category`, categoryAlias);
 
     // 상품 그룹별 필터링
     if (category) {
