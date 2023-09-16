@@ -5,7 +5,7 @@ import { AdminService } from './admin.service';
 import { AdminControllerDocs as Docs } from './admin.controller.docs';
 import { UploadProductForm } from './dtos';
 
-import { AdminStrategy } from '../auth/strategies/admin.strategy';
+import { AdminAuthGuard } from '../auth';
 
 @ApiTags('관리자 API')
 @Controller('admin')
@@ -14,7 +14,7 @@ export class AdminController {
 
   @Docs.uploadProduct('상품 업로드')
   @Post('products/upload')
-  @UseGuards(AdminStrategy)
+  @UseGuards(AdminAuthGuard)
   async uploadProduct(@Body() uploadProductForm: UploadProductForm) {
     return this.productsService.uploadProduct(uploadProductForm);
   }
