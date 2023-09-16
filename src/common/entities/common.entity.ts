@@ -1,8 +1,9 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+
 import { CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 export abstract class CommonEntity {
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: '2023-09-10 18:00:32',
     description: '생성일',
     required: true,
@@ -10,7 +11,7 @@ export abstract class CommonEntity {
   @CreateDateColumn()
   createdAt?: Date;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: '2023-09-11 12:36:22',
     description: '수정일',
   })

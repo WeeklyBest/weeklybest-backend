@@ -6,6 +6,8 @@ export class UploadProductForm extends PickType(Product, [
   'name',
   'retailPrice',
   'sellingPrice',
+  'display',
   'onSale',
-  'show',
+  'category',
+  'optionSets',
 ]) {}

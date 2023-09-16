@@ -7,9 +7,6 @@ import { SNSProvider, UserRole } from '@/models';
 @Index('email', ['email'], { unique: true })
 @Entity()
 export class User extends CommonIdEntity {
-  @Docs.id()
-  id: number;
-
   @Docs.email()
   email: string;
 

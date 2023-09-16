@@ -8,21 +8,14 @@ import {
   Matches,
   MaxLength,
 } from 'class-validator';
-import { Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Column } from 'typeorm';
 
-import { SwaggerFiledDocType } from '@/common';
-import { User, SNSProvider, USER, UserRole } from '@/models';
+import { SwaggerDoc } from '@/common';
+import { SNSProvider, USER, UserRole } from '@/models';
 
-export const UserDocs: SwaggerFiledDocType<User> = {
-  id() {
-    return applyDecorators(
-      ApiProperty({
-        description: '아이디',
-        example: '1',
-        required: true,
-      }),
-      PrimaryGeneratedColumn(),
-    );
+export const UserDocs = {
+  userId() {
+    return applyDecorators(SwaggerDoc.id('회원 식별자'));
   },
 
   email() {
@@ -30,7 +23,6 @@ export const UserDocs: SwaggerFiledDocType<User> = {
       ApiProperty({
         description: '이메일',
         example: 'admin@example.com',
-        required: true,
       }),
       IsEmail({}, { message: USER.EMAIL.MESSAGE.IS_EMAIL }),
       IsNotEmpty({ message: USER.EMAIL.MESSAGE.IS_NOT_EMPTY }),
@@ -66,7 +58,6 @@ export const UserDocs: SwaggerFiledDocType<User> = {
       ApiProperty({
         description: '회원의 실명',
         example: '관리자',
-        required: true,
       }),
       Length(USER.NAME.MIN_LENGTH, USER.NAME.MAX_LENGTH),
       Column({
@@ -78,8 +69,8 @@ export const UserDocs: SwaggerFiledDocType<User> = {
   role() {
     return applyDecorators(
       Column({
-        type: 'enum',
-        enum: UserRole,
+        type: 'char',
+        length: USER.ROLE.MAX_LENGTH,
         default: UserRole.USER,
       }),
     );
@@ -88,8 +79,7 @@ export const UserDocs: SwaggerFiledDocType<User> = {
   provider() {
     return applyDecorators(
       Column({
-        type: 'enum',
-        enum: SNSProvider,
+        length: USER.PROVIDER.MAX_LENGTH,
         default: SNSProvider.LOCAL,
       }),
     );
