@@ -19,4 +19,13 @@ export const OptionSetDocs = {
       }),
     );
   },
+
+  order() {
+    return applyDecorators(
+      ApiProperty({
+        description: '정렬 순서 (0부터 시작)',
+        example: 0,
+      }),
+    );
+  },
 };

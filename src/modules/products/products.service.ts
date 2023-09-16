@@ -56,4 +56,13 @@ export class ProductsService {
 
     return getPagination(productList, count, { pageNum, pageSize });
   }
+
+  async getOne(id: number): Promise<Product> {
+    const query = this.productRepository
+      .createQueryBuilder('product')
+      .select(['product'])
+      .where('product_id = :id', { id });
+
+    return query.getOne();
+  }
 }

@@ -15,4 +15,13 @@ export const ProductsControllerDocs: SwaggerMethodDocType<ProductsController> =
         }),
       );
     },
+
+    getOne(summary: string) {
+      return applyDecorators(
+        ApiOperation({
+          summary,
+          description: '상품 옵션을 포함한 상품 상세 정보를 조회합니다.',
+        }),
+      );
+    },
   };

@@ -28,11 +28,13 @@ export class OptionSet extends CommonIdEntity {
   })
   name: string;
 
+  @Docs.inputType()
   @Column({
     default: InputType.CHECKBOX,
   })
   inputType: InputType;
 
+  @Docs.order()
   @Column({
     type: 'tinyint',
     unsigned: true,

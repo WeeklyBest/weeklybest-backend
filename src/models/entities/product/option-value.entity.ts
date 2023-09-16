@@ -32,6 +32,7 @@ export class OptionValue extends CommonIdEntity {
   })
   additionalCharge: number;
 
+  @Docs.order()
   @Column({
     type: 'tinyint',
     unsigned: true,
