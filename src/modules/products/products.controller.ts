@@ -13,12 +13,12 @@ import { ProductListQuery } from './dtos';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
-  @Docs.list('상품 목록 조회')
+  @Docs.getAll('상품 목록 조회')
   @Get()
-  async list(
+  async getAll(
     @Query() { pageNum = 1, pageSize = 10, ...rest }: ProductListQuery,
   ): Promise<IPagination<Product>> {
-    return this.productsService.list({ pageNum, pageSize, ...rest });
+    return this.productsService.getAll({ pageNum, pageSize, ...rest });
   }
 
   @Docs.getOne('상품 상세 정보 조회')
