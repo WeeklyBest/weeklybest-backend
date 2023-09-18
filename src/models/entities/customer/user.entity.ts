@@ -1,9 +1,8 @@
-import { Column, Entity, Index } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 
 import { CommonIdEntity } from '@/common';
 import { SNSProvider, USER, UserRole } from '@/models';
 
-@Index('email', ['email'], { unique: true })
 @Entity()
 export class User extends CommonIdEntity {
   @Column({
