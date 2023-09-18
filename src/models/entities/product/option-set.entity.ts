@@ -9,7 +9,6 @@ import {
 } from 'typeorm';
 
 import { CommonIdEntity } from '@/common';
-import { OptionSetDocs as Docs } from '@/docs';
 
 import { OPTION_SET } from '@/models/constants';
 import { InputType } from '@/models/enums';
@@ -22,19 +21,16 @@ import { Product } from './product.entity';
 @Unique('unq_option_set_category_order', ['category', 'order'])
 @Entity()
 export class OptionSet extends CommonIdEntity {
-  @Docs.name()
   @Column({
     length: OPTION_SET.NAME.MAX_LENGTH,
   })
   name: string;
 
-  @Docs.inputType()
   @Column({
     default: InputType.CHECKBOX,
   })
   inputType: InputType;
 
-  @Docs.order()
   @Column({
     type: 'tinyint',
     unsigned: true,

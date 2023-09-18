@@ -1,30 +1,50 @@
-import { Entity, Index } from 'typeorm';
+import { Column, Entity, Index } from 'typeorm';
 
 import { CommonIdEntity } from '@/common';
-import { UserDocs as Docs } from '@/docs';
-import { SNSProvider, UserRole } from '@/models';
+import { SNSProvider, USER, UserRole } from '@/models';
 
 @Index('email', ['email'], { unique: true })
 @Entity()
 export class User extends CommonIdEntity {
-  @Docs.email()
+  @Column({
+    unique: true,
+    length: USER.EMAIL.MAX_LENGTH,
+  })
   email: string;
 
-  @Docs.password()
+  @Column({
+    length: USER.PASSWORD.MAX_LENGTH,
+    nullable: true,
+    select: false,
+  })
   password: string;
 
-  @Docs.name()
+  @Column({
+    length: USER.NAME.MAX_LENGTH,
+  })
   name: string;
 
-  @Docs.role()
+  @Column({
+    type: 'char',
+    length: USER.ROLE.MAX_LENGTH,
+    default: UserRole.USER,
+  })
   role: UserRole;
 
-  @Docs.provider()
+  @Column({
+    length: USER.PROVIDER.MAX_LENGTH,
+    default: SNSProvider.LOCAL,
+  })
   provider: SNSProvider;
 
-  @Docs.snsId()
+  @Column({
+    nullable: true,
+  })
   snsId: string;
 
-  @Docs.refreshToken()
+  @Column({
+    nullable: true,
+    select: false,
+  })
   refreshToken: string;
 }

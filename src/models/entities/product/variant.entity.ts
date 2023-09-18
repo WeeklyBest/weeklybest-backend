@@ -1,14 +1,12 @@
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
 
 import { CommonIdEntity } from '@/common';
-import { VariantDocs as Docs } from '@/docs';
 
 import { OptionValue } from './option-value.entity';
 import { Product } from './product.entity';
 
 @Entity()
 export class Variant extends CommonIdEntity {
-  @Docs.quantity()
   @Column({
     type: 'smallint',
     unsigned: true,
@@ -16,7 +14,6 @@ export class Variant extends CommonIdEntity {
   })
   quantity: number;
 
-  @Docs.hide()
   @Column({
     default: false,
   })

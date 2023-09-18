@@ -8,7 +8,6 @@ import {
 } from 'typeorm';
 
 import { CommonIdEntity } from '@/common';
-import { OptionValueDocs as Docs } from '@/docs';
 
 import { OPTION_VALUE } from '@/models/constants';
 
@@ -19,20 +18,17 @@ import { Variant } from './variant.entity';
 @Unique('unq_option_value_option_set_order', ['optionSet', 'order'])
 @Entity()
 export class OptionValue extends CommonIdEntity {
-  @Docs.name()
   @Column({
     length: OPTION_VALUE.NAME.MAX_LENGTH,
   })
   name: string;
 
-  @Docs.additionalCharge()
   @Column({
     type: 'mediumint',
     default: 0,
   })
   additionalCharge: number;
 
-  @Docs.order()
   @Column({
     type: 'tinyint',
     unsigned: true,

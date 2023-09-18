@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 
 import { CART_ERROR, Cart, User } from '@/models';
 
-import { CreateCartDto } from './dtos';
+import { CreateCartRequest } from './dtos';
 
 @Injectable()
 export class CartService {
@@ -14,7 +14,7 @@ export class CartService {
     private readonly cartRepository: Repository<Cart>,
   ) {}
 
-  async create({ variantId, ...rest }: CreateCartDto, user: User) {
+  async create({ variantId, ...rest }: CreateCartRequest, user: User) {
     const newCart = await this.cartRepository.save(
       this.cartRepository.create({
         ...rest,

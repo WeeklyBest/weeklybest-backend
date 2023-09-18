@@ -15,7 +15,7 @@ import { CurrentUser, JwtAuthGuard } from '../auth';
 
 import { CartService } from './cart.service';
 import { CartControllerDocs as Docs } from './cart.controller.docs';
-import { CreateCartDto } from './dtos';
+import { CreateCartRequest } from './dtos';
 
 @ApiTags('장바구니 API')
 @Controller('cart')
@@ -25,7 +25,7 @@ export class CartController {
   @Docs.create('장바구니에 상품 추가')
   @Post()
   @UseGuards(JwtAuthGuard)
-  async create(@Body() dto: CreateCartDto, @CurrentUser() user: User) {
+  async create(@Body() dto: CreateCartRequest, @CurrentUser() user: User) {
     await this.cartService.create(dto, user);
   }
 
