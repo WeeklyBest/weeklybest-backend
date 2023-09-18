@@ -10,12 +10,11 @@ import {
 } from 'class-validator';
 import { Column } from 'typeorm';
 
-import { SwaggerDoc } from '@/common';
 import { SNSProvider, USER, UserRole } from '@/models';
 
 export const UserDocs = {
   userId() {
-    return applyDecorators(SwaggerDoc.id('회원 식별자'));
+    return applyDecorators();
   },
 
   email() {

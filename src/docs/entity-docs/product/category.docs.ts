@@ -1,11 +1,9 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 
-import { SwaggerDoc } from '@/common';
-
 export const CategoryDocs = {
   categoryId() {
-    return applyDecorators(SwaggerDoc.id('카테고리 식별자'));
+    return applyDecorators();
   },
 
   name() {
