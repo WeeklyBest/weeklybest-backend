@@ -5,9 +5,11 @@ import { CommonIdEntity } from '@/common';
 import { Variant } from './variant.entity';
 
 import { User } from '../customer';
+import { CartDoc as Docs } from '@/docs';
 
 @Entity()
 export class Cart extends CommonIdEntity {
+  @Docs.quantity()
   @Column({
     type: 'tinyint',
     unsigned: true,

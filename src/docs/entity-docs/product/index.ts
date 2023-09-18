@@ -1,3 +1,4 @@
+export * from './cart.docs';
 export * from './category.docs';
 export * from './option-set.docs';
 export * from './option-value.docs';
