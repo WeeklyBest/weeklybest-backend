@@ -1,7 +1,7 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 
-export const CartDoc = {
+export const CartDocs = {
   quantity() {
     return applyDecorators(
       ApiProperty({

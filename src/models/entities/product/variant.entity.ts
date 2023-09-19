@@ -1,4 +1,4 @@
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToMany, ManyToOne } from 'typeorm';
 
 import { CommonIdEntity } from '@/common';
 
@@ -26,10 +26,8 @@ export class Variant extends CommonIdEntity {
   })
   product: Product;
 
-  @ManyToMany(() => OptionValue, (optionValue) => optionValue.variants)
-  @JoinTable({
-    name: 'variant_option_value',
-    inverseJoinColumn: { name: 'value_id', referencedColumnName: 'id' },
+  @ManyToMany(() => OptionValue, (optionValue) => optionValue.variants, {
+    cascade: ['insert'],
   })
   optionValues: OptionValue[];
 }

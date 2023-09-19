@@ -1,11 +1,11 @@
 import { Column, Entity, ManyToOne } from 'typeorm';
 
 import { CommonIdEntity } from '@/common';
+import { CartDocs as Docs } from '@/docs';
 
 import { Variant } from './variant.entity';
 
 import { User } from '../customer';
-import { CartDoc as Docs } from '@/docs';
 
 @Entity()
 export class Cart extends CommonIdEntity {
@@ -19,11 +19,13 @@ export class Cart extends CommonIdEntity {
 
   @ManyToOne(() => User, {
     onDelete: 'CASCADE',
+    nullable: false,
   })
   user: User;
 
   @ManyToOne(() => Variant, {
     onDelete: 'CASCADE',
+    nullable: false,
   })
   variant: Variant;
 }

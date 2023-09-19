@@ -1,18 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { CART_ERROR, CartRepository, User } from '@/models';
 
-import { CART_ERROR, Cart, User } from '@/models';
-
-import { CreateCartRequest } from './dtos';
+import { CartItemResponse, CreateCartRequest } from './dtos';
 
 @Injectable()
 export class CartService {
-  constructor(
-    @InjectRepository(Cart)
-    private readonly cartRepository: Repository<Cart>,
-  ) {}
+  constructor(private readonly cartRepository: CartRepository) {}
 
   async create({ variantId, ...rest }: CreateCartRequest, user: User) {
     const newCart = await this.cartRepository.save(
@@ -29,6 +23,12 @@ export class CartService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  async getAll(user: User): Promise<any> {
+    const cartItems = await this.cartRepository.findAllByUserId(user.id);
+
+    return cartItems.map((cartItem) => new CartItemResponse(cartItem));
   }
 
   async remove(cartId: number, user: User) {

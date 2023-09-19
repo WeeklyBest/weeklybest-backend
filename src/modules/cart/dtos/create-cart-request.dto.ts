@@ -1,8 +1,9 @@
-import { CartDoc } from '@/docs';
-import { Cart } from '@/models';
 import { PickType } from '@nestjs/swagger';
 
+import { CartDocs } from '@/docs';
+import { Cart } from '@/models';
+
 export class CreateCartRequest extends PickType(Cart, ['quantity']) {
-  @CartDoc.variantId()
+  @CartDocs.variantId()
   variantId: number;
 }
