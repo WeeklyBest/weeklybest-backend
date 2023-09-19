@@ -4,7 +4,7 @@ import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { CartItemResponse } from './dtos';
 
 export const CartControllerDocs = {
-  create(summary: string) {
+  add(summary: string) {
     return applyDecorators(
       ApiOperation({
         summary,

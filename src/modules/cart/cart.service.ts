@@ -8,7 +8,7 @@ import { CartItemResponse, CreateCartRequest } from './dtos';
 export class CartService {
   constructor(private readonly cartRepository: CartRepository) {}
 
-  async create({ variantId, ...rest }: CreateCartRequest, user: User) {
+  async add({ variantId, ...rest }: CreateCartRequest, user: User) {
     const newCart = await this.cartRepository.save(
       this.cartRepository.create({
         ...rest,

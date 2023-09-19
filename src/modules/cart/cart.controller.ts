@@ -23,11 +23,11 @@ import { CartItemResponse, CreateCartRequest } from './dtos';
 export class CartController {
   constructor(private readonly cartService: CartService) {}
 
-  @Docs.create('장바구니에 상품 추가')
+  @Docs.add('장바구니에 상품 추가')
   @Post()
   @UseGuards(JwtAuthGuard)
-  async create(@Body() dto: CreateCartRequest, @CurrentUser() user: User) {
-    await this.cartService.create(dto, user);
+  async add(@Body() dto: CreateCartRequest, @CurrentUser() user: User) {
+    await this.cartService.add(dto, user);
   }
 
   @Docs.getAll('장바구니 상품 목록 조회')
