@@ -6,7 +6,7 @@ import { SNSProvider, User, UserRole } from '@/models';
 
 @Exclude()
 export class UserResponse {
-  @SwaggerDoc.id()
+  @SwaggerDoc.id('회원 식별자')
   @Expose()
   id: number;
 

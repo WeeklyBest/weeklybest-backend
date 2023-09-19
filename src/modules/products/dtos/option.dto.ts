@@ -5,7 +5,7 @@ import { OptionDocs, OptionValueDocs } from '@/docs';
 import { InputType, Option, OptionValue } from '@/models';
 
 export class OptionValueResponse {
-  @SwaggerDoc.id()
+  @SwaggerDoc.id('상품 옵션 값 식별자')
   id: number;
 
   @OptionValueDocs.value()
@@ -28,7 +28,7 @@ export class OptionValueResponse {
 }
 
 export class OptionResponse {
-  @SwaggerDoc.id()
+  @SwaggerDoc.id('상품 옵션 식별자')
   id: number;
 
   @OptionDocs.label()

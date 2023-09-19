@@ -1,14 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 
+import { SwaggerDoc } from '@/common';
 import { CartDocs, ProductDocs } from '@/docs';
 import { CartItem } from '@/models';
 import { VariantOptionResponse } from '@/modules/products';
 
 export class CartItemResponse {
-  @ApiProperty({
-    description: '상품 식별자',
-    example: 1,
-  })
+  @SwaggerDoc.id('상품 식별자')
   productId: number;
 
   @ProductDocs.name()
