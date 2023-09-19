@@ -3,27 +3,36 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { CART_ERROR, Cart, User } from '@/models';
+import { CART_ERROR, CartItem, CartRepository, User } from '@/models';
 
-import { CreateCartDto } from './dtos';
+import { CartItemResponse, AddCartItemRequest } from './dtos';
 
 @Injectable()
 export class CartService {
   constructor(
-    @InjectRepository(Cart)
-    private readonly cartRepository: Repository<Cart>,
+    private readonly cartRepository: CartRepository,
+    @InjectRepository(CartItem)
+    private readonly cartItemRepository: Repository<CartItem>,
   ) {}
 
-  async create({ variantId, ...rest }: CreateCartDto, user: User) {
-    const newCart = await this.cartRepository.save(
-      this.cartRepository.create({
-        ...rest,
-        user,
-        variant: { id: variantId },
-      }),
-    );
+  async addItem({ variantId, quantity }: AddCartItemRequest, user: User) {
+    let cart = await this.cartRepository.findOne({ where: { user } });
 
-    if (!newCart) {
+    if (!cart) {
+      cart = await this.cartRepository.save({
+        user,
+      });
+    }
+
+    const result = await this.cartItemRepository.save({
+      cart,
+      variant: {
+        id: variantId,
+      },
+      quantity,
+    });
+
+    if (!result) {
       throw new HttpException(
         CART_ERROR.CREATE_ERROR,
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -31,10 +40,26 @@ export class CartService {
     }
   }
 
-  async remove(cartId: number, user: User) {
-    const result = await this.cartRepository.delete({
-      id: cartId,
-      user,
+  async getAllItems(user: User): Promise<CartItemResponse[]> {
+    const cart = await this.cartRepository.findByUserId(user.id);
+
+    if (!cart || !cart.items) return [];
+
+    return cart.items.map((cartItem) => new CartItemResponse(cartItem));
+  }
+
+  async removeItem(variantId: number, user: User) {
+    const cart = await this.cartRepository.findOne({ where: { user } });
+
+    if (!cart) {
+      throw new HttpException(CART_ERROR.CART_NOT_FOUND, HttpStatus.NOT_FOUND);
+    }
+
+    const result = await this.cartItemRepository.delete({
+      cart,
+      variant: {
+        id: variantId,
+      },
     });
 
     if (result.affected <= 0) {

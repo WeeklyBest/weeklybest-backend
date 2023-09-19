@@ -2,11 +2,11 @@ import { applyDecorators } from '@nestjs/common';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export const OptionValueDocs = {
-  name() {
+  value() {
     return applyDecorators(
       ApiProperty({
         description: '옵션값 이름',
-        example: '사이즈',
+        example: 'XL',
       }),
     );
   },

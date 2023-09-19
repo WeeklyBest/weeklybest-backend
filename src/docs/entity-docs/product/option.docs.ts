@@ -1,12 +1,21 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-export const OptionSetDocs = {
-  name() {
+export const OptionDocs = {
+  label() {
     return applyDecorators(
       ApiProperty({
-        description: '옵션세트 이름',
+        description: '고객에게 노출될 옵션 라벨',
         example: '사이즈',
+      }),
+    );
+  },
+
+  description() {
+    return applyDecorators(
+      ApiProperty({
+        description: '관리자에게 노출될 옵션 설명',
+        example: '옷 사이즈 (XS/S/M/L/XL)',
       }),
     );
   },

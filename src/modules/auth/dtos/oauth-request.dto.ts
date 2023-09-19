@@ -1,10 +1,16 @@
-import { PickType } from '@nestjs/swagger';
+import { UserDocs } from '@/docs';
+import { SNSProvider } from '@/models';
 
-import { User } from '@/models';
+export class OAuthRequest {
+  @UserDocs.email()
+  email: string;
 
-export class OAuthRequest extends PickType(User, [
-  'email',
-  'name',
-  'provider',
-  'snsId',
-] as const) {}
+  @UserDocs.name()
+  name: string;
+
+  @UserDocs.provider()
+  provider: SNSProvider;
+
+  @UserDocs.snsId()
+  snsId: string;
+}

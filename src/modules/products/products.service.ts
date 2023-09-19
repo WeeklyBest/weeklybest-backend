@@ -61,7 +61,17 @@ export class ProductsService {
     const query = this.productRepository
       .createQueryBuilder('product')
       .select(['product'])
-      .where('product_id = :id', { id });
+      .where('product.id = :id', { id });
+
+    // Option Set 조인
+    query
+      .leftJoin('product.options', 'opt')
+      .addSelect(['opt.id', 'opt.name', 'opt.inputType', 'opt.order']);
+
+    // Option Value 조인
+    query
+      .leftJoin('opt.values', 'val')
+      .addSelect(['val.id', 'val.name', 'val.additionalCharge', 'val.order']);
 
     return query.getOne();
   }

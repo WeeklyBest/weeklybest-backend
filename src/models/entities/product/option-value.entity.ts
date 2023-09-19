@@ -4,35 +4,34 @@ import {
   JoinColumn,
   ManyToMany,
   ManyToOne,
-  Unique,
+  PrimaryColumn,
 } from 'typeorm';
 
 import { CommonIdEntity } from '@/common';
-import { OptionValueDocs as Docs } from '@/docs';
-
 import { OPTION_VALUE } from '@/models/constants';
 
-import { OptionSet } from './option-set.entity';
 import { Variant } from './variant.entity';
+import { Option } from './option.entity';
 
-@Unique('unq_option_value_option_set_name', ['optionSet', 'name'])
-@Unique('unq_option_value_option_set_order', ['optionSet', 'order'])
 @Entity()
 export class OptionValue extends CommonIdEntity {
-  @Docs.name()
-  @Column({
-    length: OPTION_VALUE.NAME.MAX_LENGTH,
-  })
-  name: string;
+  @PrimaryColumn()
+  id: number;
 
-  @Docs.additionalCharge()
+  @PrimaryColumn()
+  optionId: number;
+
+  @Column({
+    length: OPTION_VALUE.VALUE.MAX_LENGTH,
+  })
+  value: string;
+
   @Column({
     type: 'mediumint',
     default: 0,
   })
   additionalCharge: number;
 
-  @Docs.order()
   @Column({
     type: 'tinyint',
     unsigned: true,
@@ -40,14 +39,13 @@ export class OptionValue extends CommonIdEntity {
   order: number;
 
   // 연관 관계
-  @ManyToOne(() => OptionSet, (optionSet) => optionSet.values, {
+  @ManyToOne(() => Option, (option) => option.values, {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
-    nullable: false,
   })
-  optionSet: OptionSet;
+  @JoinColumn({ name: 'optionId' })
+  option: Option;
 
   @ManyToMany(() => Variant, (variant) => variant.optionValues)
-  @JoinColumn()
   variants: Variant[];
 }

@@ -16,7 +16,7 @@ export class AdminService {
       display,
       onSale,
       category,
-      optionSets,
+      options,
     } = uploadProductForm;
 
     const existsProduct: Product = await this.productRepository.findOne({
@@ -39,7 +39,7 @@ export class AdminService {
           display,
           onSale,
           category,
-          optionSets,
+          options,
         }),
       );
     } catch (error) {
