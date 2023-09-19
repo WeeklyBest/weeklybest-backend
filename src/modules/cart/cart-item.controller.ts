@@ -9,38 +9,40 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-import { IdParam } from '@/common';
 import { User } from '@/models';
 
 import { CurrentUser, JwtAuthGuard } from '../auth';
 
 import { CartService } from './cart.service';
-import { CartControllerDocs as Docs } from './cart.controller.docs';
-import { CartItemResponse, CreateCartRequest } from './dtos';
+import { CartItemControllerDocs as Docs } from './cart.controller.docs';
+import { CartItemIdParam, CartItemResponse, CreateCartRequest } from './dtos';
 
 @ApiTags('장바구니 API')
-@Controller('cart')
-export class CartController {
+@Controller('cart-items')
+export class CartItemController {
   constructor(private readonly cartService: CartService) {}
 
   @Docs.add('장바구니에 상품 추가')
   @Post()
   @UseGuards(JwtAuthGuard)
   async add(@Body() dto: CreateCartRequest, @CurrentUser() user: User) {
-    await this.cartService.add(dto, user);
+    await this.cartService.addItem(dto, user);
   }
 
   @Docs.getAll('장바구니 상품 목록 조회')
   @Get()
   @UseGuards(JwtAuthGuard)
   async getAll(@CurrentUser() user: User): Promise<CartItemResponse[]> {
-    return this.cartService.getAll(user);
+    return this.cartService.getAllItems(user);
   }
 
-  @Docs.delete('장바구니에서 상품 제거')
-  @Delete(':id')
+  @Docs.remove('장바구니에서 상품 제거')
+  @Delete('variant/:variantId')
   @UseGuards(JwtAuthGuard)
-  async remove(@Param() { id }: IdParam, @CurrentUser() user: User) {
-    await this.cartService.remove(id, user);
+  async remove(
+    @Param() { variantId }: CartItemIdParam,
+    @CurrentUser() user: User,
+  ) {
+    await this.cartService.removeItem(variantId, user);
   }
 }
