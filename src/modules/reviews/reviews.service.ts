@@ -37,6 +37,21 @@ export class ReviewsService {
     }
   }
 
+  async getReview(id: number): Promise<ReviewResponse> {
+    const review = await this.reviewRepository.findOne({
+      relations: ['user'],
+      where: {
+        id,
+      },
+    });
+
+    if (!review) {
+      throw new HttpException(REVIEW_ERROR.NOT_FOUND, HttpStatus.NOT_FOUND);
+    }
+
+    return new ReviewResponse(review);
+  }
+
   async editReview(id: number, dto: EditReviewRequest, user: User) {
     try {
       const result = await this.reviewRepository.update({ id, user }, dto);

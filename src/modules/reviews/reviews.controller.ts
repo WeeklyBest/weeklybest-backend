@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   Patch,
   Post,
@@ -12,7 +13,12 @@ import { User } from '@/models';
 
 import { CurrentUser, JwtAuthGuard } from '../auth';
 
-import { CreateReviewRequest, EditReviewRequest, ReviewIdParam } from './dtos';
+import {
+  CreateReviewRequest,
+  EditReviewRequest,
+  ReviewIdParam,
+  ReviewResponse,
+} from './dtos';
 
 import { ReviewControllerDoc as Doc } from './controller.doc';
 import { ReviewsService } from './reviews.service';
@@ -29,6 +35,13 @@ export class ReviewsController {
     @CurrentUser() user: User,
   ): Promise<void> {
     await this.reviewsService.addReview(dto, user);
+  }
+
+  @Doc.getReview('리뷰 조회')
+  @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  async getReview(@Param() { id }: ReviewIdParam): Promise<ReviewResponse> {
+    return this.reviewsService.getReview(id);
   }
 
   @Doc.editReview('리뷰 수정')
