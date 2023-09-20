@@ -1,7 +1,10 @@
+import { ApiProperty } from '@nestjs/swagger';
+
 import { SwaggerDoc } from '@/common';
 import { ProductDocs } from '@/docs';
-import { CategoryResponse } from './category.dto';
 import { Product } from '@/models';
+
+import { CategoryResponse } from './category.dto';
 
 export class ProductCardResponse {
   @SwaggerDoc.id('상품 식별자')
@@ -37,6 +40,10 @@ export class ProductCardResponse {
   @SwaggerDoc.updatedAt()
   updatedAt: Date;
 
+  @ApiProperty({
+    description: '상품 카테고리',
+    type: CategoryResponse,
+  })
   category: CategoryResponse;
 
   constructor(product: Product) {

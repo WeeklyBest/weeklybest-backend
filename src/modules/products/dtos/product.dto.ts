@@ -1,24 +1,50 @@
+import { ApiProperty } from '@nestjs/swagger';
+
+import { SwaggerDoc } from '@/common';
+import { ProductDocs } from '@/docs';
 import { Color, Product, SizeValue } from '@/models';
 
 import { ColorResponse } from '@/modules/colors';
 import { SizeValueResponse } from '@/modules/size';
 
 export class ProductDetailResponse {
+  @SwaggerDoc.id('상품 식별자')
   id: number;
 
+  @ProductDocs.name()
   name: string;
 
+  @ProductDocs.retailPrice()
   retailPrice: number;
+
+  @ProductDocs.sellingPrice()
   sellingPrice: number;
 
+  @ProductDocs.salesVolume()
   salesVolume: number;
+
+  @ProductDocs.reviewCount()
   reviewCount: number;
+
+  @ProductDocs.wishCount()
   wishCount: number;
 
+  @ProductDocs.display()
   display: boolean;
+
+  @ProductDocs.onSale()
   onSale: boolean;
 
+  @ApiProperty({
+    description: '상품 색상 목록',
+    type: [ColorResponse],
+  })
   colors: ColorResponse[];
+
+  @ApiProperty({
+    description: '상품 사이즈 목록',
+    type: [SizeValueResponse],
+  })
   sizes: SizeValueResponse[];
 
   constructor(product: Product, colors: Color[], sizeValues: SizeValue[]) {
