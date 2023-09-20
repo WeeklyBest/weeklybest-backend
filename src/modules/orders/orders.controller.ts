@@ -16,6 +16,7 @@ import { CreateOrderRequest, OrderIdParam, OrderResponse } from './dtos';
 
 import { OrdersControllerDoc as Doc } from './controller.doc';
 import { OrdersService } from './orders.service';
+import { PagingQuery } from '@/common';
 
 @Controller('orders')
 export class OrdersController {
@@ -39,6 +40,16 @@ export class OrdersController {
     @CurrentUser() user: User,
   ): Promise<OrderResponse> {
     return this.ordersService.getOne(id, user);
+  }
+
+  @Doc.getMe('내 주문 목록 조회')
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  async getMe(
+    @Param() pagingQuery: PagingQuery,
+    @CurrentUser() user: User,
+  ): Promise<OrderResponse[]> {
+    return this.ordersService.getMe(pagingQuery, user);
   }
 
   @Doc.cancel('주문 취소')

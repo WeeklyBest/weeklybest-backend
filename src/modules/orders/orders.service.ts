@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { ORDER_ERROR, Order, OrderStatus, User } from '@/models';
 
 import { CreateOrderRequest, OrderResponse } from './dtos';
+import { PagingQuery } from '@/common';
 
 @Injectable()
 export class OrdersService {
@@ -34,6 +35,24 @@ export class OrdersService {
     }
 
     return new OrderResponse(order);
+  }
+
+  async getMe(
+    { pageNum, pageSize }: PagingQuery,
+    user: User,
+  ): Promise<OrderResponse[]> {
+    const orders = await this.orderRepository.find({
+      where: {
+        user,
+      },
+      skip: (pageNum - 1) * pageSize,
+      take: pageSize,
+      order: {
+        createdAt: 'DESC',
+      },
+    });
+
+    return orders.map((order) => new OrderResponse(order));
   }
 
   async cancel(id: number, user: User): Promise<void> {
