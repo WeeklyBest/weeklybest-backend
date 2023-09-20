@@ -7,4 +7,4 @@ export * from './interceptor';
 export * from './interface';
 export * from './module';
 export * from './service';
-export * from './util';
+export * from './utils';
