@@ -3,16 +3,7 @@ import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 
 import { CartItemResponse } from './dtos';
 
-export const CartItemControllerDocs = {
-  add(summary: string) {
-    return applyDecorators(
-      ApiOperation({
-        summary,
-        description: '장바구니에 상품을 담습니다.',
-      }),
-    );
-  },
-
+export const CartControllerDocs = {
   getMyCartItems(summary: string) {
     return applyDecorators(
       ApiOperation({
@@ -21,15 +12,6 @@ export const CartItemControllerDocs = {
       }),
       ApiOkResponse({
         type: [CartItemResponse],
-      }),
-    );
-  },
-
-  remove(summary: string) {
-    return applyDecorators(
-      ApiOperation({
-        summary,
-        description: '장바구니에 등록된 상품을 하나 제거합니다.',
       }),
     );
   },

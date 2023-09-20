@@ -1,9 +1,8 @@
 import {
   Body,
   Controller,
-  Delete,
-  Get,
   Param,
+  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -14,8 +13,13 @@ import { User } from '@/models';
 import { CurrentUser, JwtAuthGuard } from '../auth';
 
 import { CartService } from './cart.service';
-import { CartItemControllerDocs as Docs } from './cart.controller.docs';
-import { CartParamDto, CartItemResponse, AddCartItemRequest } from './dtos';
+import { CartItemControllerDocs as Docs } from './cart-item.controller.docs';
+import {
+  AddCartItemRequest,
+  EditVariantParam,
+  CartItemIdParam,
+  EditCartItemRequest,
+} from './dtos';
 
 @ApiTags('장바구니 API')
 @Controller('cart-items')
@@ -29,17 +33,24 @@ export class CartItemController {
     await this.cartService.addItem(dto, user);
   }
 
-  @Docs.getMyCartItems('장바구니 상품 목록 조회')
-  @Get('/me')
+  @Docs.editVariant('장바구니 아이템 옵션 변경')
+  @Patch(':cartItemId/variants/:variantId')
   @UseGuards(JwtAuthGuard)
-  async getMyCartItems(@CurrentUser() user: User): Promise<CartItemResponse[]> {
-    return this.cartService.getMyCartItems(user);
+  async editVariant(
+    @Param() { cartItemId, variantId }: EditVariantParam,
+    @CurrentUser() user: User,
+  ) {
+    await this.cartService.editVariant(cartItemId, variantId, user);
   }
 
-  @Docs.remove('장바구니에서 상품 제거')
-  @Delete(':id')
+  @Docs.editItem('장바구니 아이템 속성 변경')
+  @Patch(':id')
   @UseGuards(JwtAuthGuard)
-  async remove(@Param() { id }: CartParamDto, @CurrentUser() user: User) {
-    await this.cartService.removeItem(id, user);
+  async editItem(
+    @Param() { id }: CartItemIdParam,
+    @Body() dto: EditCartItemRequest,
+    @CurrentUser() user: User,
+  ) {
+    await this.cartService.editItem(id, dto, user);
   }
 }
