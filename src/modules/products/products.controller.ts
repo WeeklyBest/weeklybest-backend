@@ -6,7 +6,11 @@ import { Product } from '@/models';
 
 import { ProductsService } from './products.service';
 import { ProductsControllerDocs as Docs } from './products.controller.docs';
-import { ProductListQuery } from './dtos';
+import {
+  ProductDetailResponse,
+  ProductIdParam,
+  ProductListQuery,
+} from './dtos';
 
 @ApiTags('상품 API')
 @Controller('products')
@@ -23,7 +27,9 @@ export class ProductsController {
 
   @Docs.getOne('상품 상세 정보 조회')
   @Get(':id')
-  async getOne(@Param('id') id: number): Promise<Product> {
+  async getOne(
+    @Param() { id }: ProductIdParam,
+  ): Promise<ProductDetailResponse> {
     return this.productsService.getOne(id);
   }
 }

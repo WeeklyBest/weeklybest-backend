@@ -1,9 +1,9 @@
-import { Column, Entity, JoinColumn, ManyToMany } from 'typeorm';
+import { Column, Entity, ManyToOne } from 'typeorm';
 
 import { CommonIdEntity } from '@/common';
 import { CATEGORY } from '@/models/constants';
 
-import { Option } from './option.entity';
+import { SizeGroup } from './size-group.entity';
 
 @Entity()
 export class Category extends CommonIdEntity {
@@ -18,7 +18,10 @@ export class Category extends CommonIdEntity {
   })
   code: string;
 
-  @ManyToMany(() => Option, (option) => option.categories)
-  @JoinColumn()
-  options: Option[];
+  // 연관 관계
+  @ManyToOne(() => SizeGroup, {
+    onUpdate: 'CASCADE',
+    onDelete: 'SET NULL',
+  })
+  sizeGroup: SizeGroup;
 }

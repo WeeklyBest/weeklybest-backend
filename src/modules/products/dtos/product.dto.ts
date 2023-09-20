@@ -1,6 +1,9 @@
-import { Product } from '@/models';
+import { Color, Product, SizeValue } from '@/models';
 
-export class ProductResponse {
+import { ColorResponse } from '@/modules/colors';
+import { SizeValueResponse } from '@/modules/size';
+
+export class ProductDetailResponse {
   id: number;
 
   name: string;
@@ -15,7 +18,10 @@ export class ProductResponse {
   display: boolean;
   onSale: boolean;
 
-  constructor(product: Product) {
+  colors: ColorResponse[];
+  sizes: SizeValueResponse[];
+
+  constructor(product: Product, colors: Color[], sizeValues: SizeValue[]) {
     this.id = product.id;
     this.name = product.name;
     this.retailPrice = product.retailPrice;
@@ -25,5 +31,10 @@ export class ProductResponse {
     this.wishCount = product.wishCount;
     this.display = product.display;
     this.onSale = product.onSale;
+
+    this.colors = colors.map((color) => new ColorResponse(color));
+    this.sizes = sizeValues.map(
+      (sizeValue) => new SizeValueResponse(sizeValue),
+    );
   }
 }

@@ -1,9 +1,10 @@
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne } from 'typeorm';
 
 import { CommonIdEntity } from '@/common';
 
-import { OptionValue } from './option-value.entity';
 import { Product } from './product.entity';
+import { Color } from './color.entity';
+import { SizeValue } from './size-value.entity';
 
 @Entity()
 export class Variant extends CommonIdEntity {
@@ -13,30 +14,28 @@ export class Variant extends CommonIdEntity {
     default: 0,
   })
   quantity: number;
+
   @Column({
     default: false,
   })
   hide: boolean;
+
   // 연관 관계
   @ManyToOne(() => Product, {
     onDelete: 'CASCADE',
     nullable: false,
   })
   product: Product;
-  @ManyToMany(() => OptionValue, (optionValue) => optionValue.variants, {
-    cascade: ['insert'],
+
+  @ManyToOne(() => Color, (color) => color.variants, {
+    onUpdate: 'CASCADE',
+    nullable: false,
   })
-  @JoinTable({
-    name: 'variant_option',
-    joinColumns: [
-      {
-        name: 'variant_id',
-      },
-    ],
-    inverseJoinColumns: [
-      { name: 'option_id', referencedColumnName: 'option' },
-      { name: 'value_id', referencedColumnName: 'id' },
-    ],
+  color: Color;
+
+  @ManyToOne(() => SizeValue, (sizeValue) => sizeValue.variants, {
+    onUpdate: 'CASCADE',
+    nullable: false,
   })
-  optionValues: OptionValue[];
+  sizeValue: SizeValue;
 }

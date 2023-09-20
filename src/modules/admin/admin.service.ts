@@ -9,15 +9,8 @@ export class AdminService {
   constructor(private readonly productRepository: ProductRepository) {}
 
   async uploadProduct(uploadProductForm: UploadProductForm): Promise<void> {
-    const {
-      name,
-      retailPrice,
-      sellingPrice,
-      display,
-      onSale,
-      category,
-      options,
-    } = uploadProductForm;
+    const { name, retailPrice, sellingPrice, display, onSale, category } =
+      uploadProductForm;
 
     const existsProduct: Product = await this.productRepository.findOne({
       where: { name },
@@ -39,7 +32,6 @@ export class AdminService {
           display,
           onSale,
           category,
-          options,
         }),
       );
     } catch (error) {

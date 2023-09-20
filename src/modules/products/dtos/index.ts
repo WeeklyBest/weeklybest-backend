@@ -1,4 +1,3 @@
-export * from './option.dto';
-export * from './product-list-query.dto';
 export * from './product.dto';
-export * from './variant.dto';
+export * from './product.param.dto';
+export * from './product.query.dto';
