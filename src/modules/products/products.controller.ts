@@ -1,12 +1,12 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-import { IPagination } from '@/common';
-import { Product } from '@/models';
+import { Pagination } from '@/common';
 
 import { ProductsService } from './products.service';
 import { ProductsControllerDocs as Docs } from './products.controller.docs';
 import {
+  ProductCardResponse,
   ProductDetailResponse,
   ProductIdParam,
   ProductListQuery,
@@ -21,7 +21,7 @@ export class ProductsController {
   @Get()
   async getAll(
     @Query() { pageNum = 1, pageSize = 10, ...rest }: ProductListQuery,
-  ): Promise<IPagination<Product>> {
+  ): Promise<Pagination<ProductCardResponse>> {
     return this.productsService.getAll({ pageNum, pageSize, ...rest });
   }
 

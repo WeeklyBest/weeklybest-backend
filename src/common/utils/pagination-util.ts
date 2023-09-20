@@ -1,14 +1,16 @@
-import { IPagination, IPagingOptions } from '../interface';
+import { Pagination } from '../dto';
+import { IPagingOptions } from '../interface';
 
 export function getPagination<T>(
   list: T[],
   totalElements: number,
   { pageNum, pageSize }: IPagingOptions,
-): IPagination<T> {
+): Pagination<T> {
   const totalPages = Math.ceil(totalElements / pageSize);
 
   return {
     list,
+    totalElements,
     totalPages,
     isFirst: pageNum === 1,
     isLast: pageNum === totalPages,
