@@ -10,6 +10,7 @@ import {
 import { ProductCardResponse, ProductDetailResponse } from './dtos';
 
 import { ProductsController } from './products.controller';
+import { ReviewResponse } from '../reviews/dtos';
 
 export const ProductsControllerDoc: SwaggerMethodDocType<ProductsController> = {
   getAll(summary: string) {
@@ -34,6 +35,19 @@ export const ProductsControllerDoc: SwaggerMethodDocType<ProductsController> = {
             },
           ],
         },
+      }),
+    );
+  },
+
+  getReviews(summary: string) {
+    return applyDecorators(
+      ApiOperation({
+        summary,
+        description: '',
+      }),
+      ApiOkResponse({
+        description: '리뷰 목록 조회 성공',
+        type: [ReviewResponse],
       }),
     );
   },
