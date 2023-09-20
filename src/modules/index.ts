@@ -7,6 +7,7 @@ import { ColorsModule } from './colors';
 import { SizeModule } from './size';
 import { OrdersModule } from './orders';
 import { AddressesModule } from './addresses';
+import { ReviewsModule } from './reviews';
 
 export const modules = [
   AdminModule,
@@ -18,4 +19,5 @@ export const modules = [
   SizeModule,
   UsersModule,
   AddressesModule,
+  ReviewsModule,
 ];
