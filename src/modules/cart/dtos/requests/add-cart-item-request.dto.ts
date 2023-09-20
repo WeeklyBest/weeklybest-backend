@@ -1,5 +1,5 @@
 import { SwaggerDoc } from '@/common';
-import { CartDocs } from '@/docs';
+import { CartDoc } from '@/docs';
 
 export class AddCartItemRequest {
   @SwaggerDoc.id('상품 식별자')
@@ -8,6 +8,6 @@ export class AddCartItemRequest {
   @SwaggerDoc.id('상품 품목 식별자')
   variantId: number;
 
-  @CartDocs.quantity()
+  @CartDoc.quantity()
   quantity: number;
 }

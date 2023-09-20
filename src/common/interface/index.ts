@@ -22,10 +22,3 @@ export interface IPagingOptions {
   pageNum: number;
   pageSize: number;
 }
-
-export interface IPagination<T> {
-  list: T[];
-  totalPages: number;
-  isFirst: boolean;
-  isLast: boolean;
-}

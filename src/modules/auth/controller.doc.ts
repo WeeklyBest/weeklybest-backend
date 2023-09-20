@@ -1,3 +1,4 @@
+import { SwaggerMethodDocType } from '@/common';
 import { applyDecorators } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -8,13 +9,13 @@ import {
   ApiOperation,
 } from '@nestjs/swagger';
 
-import { SwaggerMethodDocType } from '@/common';
 import { MESSAGE } from '@/constants';
 
-import { AuthController } from './auth.controller';
 import { LoginForm, LoginResponse } from './dtos';
 
-export const AuthControllerDocs: SwaggerMethodDocType<AuthController> = {
+import { AuthController } from './auth.controller';
+
+export const AuthControllerDoc: SwaggerMethodDocType<AuthController> = {
   join(summary: string) {
     return applyDecorators(
       ApiOperation({

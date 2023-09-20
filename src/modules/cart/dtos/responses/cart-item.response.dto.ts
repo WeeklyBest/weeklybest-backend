@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 import { SwaggerDoc } from '@/common';
-import { CartDocs, ProductDocs } from '@/docs';
+import { CartDoc, ProductDoc } from '@/docs';
 import { CartItem } from '@/models';
 
 import { ColorResponse } from '@/modules/colors';
@@ -17,16 +17,16 @@ export class CartItemResponse {
   @SwaggerDoc.id('상품 품목 식별자')
   variantId: number;
 
-  @ProductDocs.name()
+  @ProductDoc.name()
   productName: string;
 
-  @ProductDocs.retailPrice()
+  @ProductDoc.retailPrice()
   retailPrice: number;
 
-  @ProductDocs.sellingPrice()
+  @ProductDoc.sellingPrice()
   sellingPrice: number;
 
-  @CartDocs.quantity()
+  @CartDoc.quantity()
   quantity: number;
 
   @ApiProperty({

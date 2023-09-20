@@ -8,9 +8,10 @@ import { AuthConfig } from '@/configs';
 import { CONFIG } from '@/constants';
 import { User, UserRepository, UserRole } from '@/models';
 
-import { AUTH, AUTH_ERROR } from './auth.constant';
 import { JoinForm, OAuthRequest } from './dtos';
 import { IJwtPayload } from './interface';
+
+import { AUTH, AUTH_ERROR } from './auth.constant';
 
 @Injectable()
 export class AuthService {

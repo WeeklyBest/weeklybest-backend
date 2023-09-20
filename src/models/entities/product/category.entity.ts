@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne } from 'typeorm';
 
 import { CommonIdEntity } from '@/common';
-import { CATEGORY } from '@/models/constants';
+import { CATEGORY } from '@/models';
 
 import { SizeGroup } from './size-group.entity';
 

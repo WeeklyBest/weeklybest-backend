@@ -8,10 +8,11 @@ import { AuthConfig } from '@/configs';
 import { CONFIG } from '@/constants';
 import { SNSProvider } from '@/models';
 
-import { STRATEGY } from '../auth.constant';
-import { AuthService } from '../auth.service';
 import { OAuthRequest } from '../dtos';
 import { INaverProfile, INaverProfileResponse } from '../interface';
+
+import { STRATEGY } from '../auth.constant';
+import { AuthService } from '../auth.service';
 
 const PROVIDER_NAME = 'naver';
 const AUTHORIZATION_URL = 'https://nid.naver.com/oauth2.0/authorize';

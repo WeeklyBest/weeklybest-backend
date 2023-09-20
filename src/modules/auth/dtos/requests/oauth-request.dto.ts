@@ -1,16 +1,16 @@
-import { UserDocs } from '@/docs';
+import { UserDoc } from '@/docs';
 import { SNSProvider } from '@/models';
 
 export class OAuthRequest {
-  @UserDocs.email()
+  @UserDoc.email()
   email: string;
 
-  @UserDocs.name()
+  @UserDoc.name()
   name: string;
 
-  @UserDocs.provider()
+  @UserDoc.provider()
   provider: SNSProvider;
 
-  @UserDocs.snsId()
+  @UserDoc.snsId()
   snsId: string;
 }

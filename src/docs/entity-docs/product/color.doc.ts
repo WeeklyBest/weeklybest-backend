@@ -1,7 +1,7 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 
-export const ColorDocs = {
+export const ColorDoc = {
   label() {
     return applyDecorators(
       ApiProperty({

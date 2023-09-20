@@ -6,14 +6,15 @@ import { SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
 import * as expressBasicAuth from 'express-basic-auth';
 
-import { AppModule } from './app.module';
 import {
   CustomLoggerService,
   HttpExceptionFilter,
   SuccessInterceptor,
-} from './common';
-import { corsConfig, swaggerConfig } from './configs';
-import { API_URL, APP, CONFIG } from './constants';
+} from '@/common';
+import { corsConfig, swaggerConfig } from '@/configs';
+import { API_URL, APP, CONFIG } from '@/constants';
+
+import { AppModule } from './app.module';
 
 class Application {
   private logger = new Logger(Application.name);

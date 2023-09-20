@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { FindManyOptions, Repository } from 'typeorm';
 
-import { IPagination, getPagination } from '@/common';
+import { Pagination, getPagination } from '@/common';
 import {
   ColorRepository,
   PRODUCT_ERROR,
@@ -12,7 +12,11 @@ import {
   SizeValueRepository,
 } from '@/models';
 
-import { ProductDetailResponse, ProductListQuery } from './dtos';
+import {
+  ProductCardResponse,
+  ProductDetailResponse,
+  ProductListQuery,
+} from './dtos';
 
 @Injectable()
 export class ProductsService {
@@ -28,7 +32,7 @@ export class ProductsService {
     pageSize,
     category,
     sort,
-  }: ProductListQuery): Promise<IPagination<Product>> {
+  }: ProductListQuery): Promise<Pagination<ProductCardResponse>> {
     const findOptions: FindManyOptions<Product> = {
       relations: ['category'],
       skip: (pageNum - 1) * pageSize,
@@ -67,7 +71,11 @@ export class ProductsService {
       findOptions,
     );
 
-    return getPagination(productList, count, { pageNum, pageSize });
+    const responseData = productList.map(
+      (item) => new ProductCardResponse(item),
+    );
+
+    return getPagination(responseData, count, { pageNum, pageSize });
   }
 
   async getOne(id: number): Promise<ProductDetailResponse> {

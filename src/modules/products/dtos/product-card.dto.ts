@@ -2,12 +2,11 @@ import { ApiProperty } from '@nestjs/swagger';
 
 import { SwaggerDoc } from '@/common';
 import { ProductDoc } from '@/docs';
-import { Color, Product, SizeValue } from '@/models';
+import { Product } from '@/models';
 
-import { ColorResponse } from '@/modules/colors';
-import { SizeValueResponse } from '@/modules/size';
+import { CategoryResponse } from './category.dto';
 
-export class ProductDetailResponse {
+export class ProductCardResponse {
   @SwaggerDoc.id('상품 식별자')
   id: number;
 
@@ -35,32 +34,34 @@ export class ProductDetailResponse {
   @ProductDoc.onSale()
   onSale: boolean;
 
-  @ApiProperty({
-    description: '상품 색상 목록',
-    type: [ColorResponse],
-  })
-  colors: ColorResponse[];
+  @SwaggerDoc.createdAt()
+  createdAt: Date;
+
+  @SwaggerDoc.updatedAt()
+  updatedAt: Date;
 
   @ApiProperty({
-    description: '상품 사이즈 목록',
-    type: [SizeValueResponse],
+    description: '상품 카테고리',
+    type: CategoryResponse,
   })
-  sizes: SizeValueResponse[];
+  category: CategoryResponse;
 
-  constructor(product: Product, colors: Color[], sizeValues: SizeValue[]) {
+  constructor(product: Product) {
     this.id = product.id;
     this.name = product.name;
     this.retailPrice = product.retailPrice;
     this.sellingPrice = product.sellingPrice;
+
     this.salesVolume = product.salesVolume;
     this.reviewCount = product.reviewCount;
     this.wishCount = product.wishCount;
+
     this.display = product.display;
     this.onSale = product.onSale;
 
-    this.colors = colors.map((color) => new ColorResponse(color));
-    this.sizes = sizeValues.map(
-      (sizeValue) => new SizeValueResponse(sizeValue),
-    );
+    this.createdAt = product.createdAt;
+    this.updatedAt = product.updatedAt;
+
+    this.category = new CategoryResponse(product.category);
   }
 }

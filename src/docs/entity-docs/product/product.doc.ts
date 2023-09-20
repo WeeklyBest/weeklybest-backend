@@ -1,7 +1,7 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-export const ProductDocs = {
+export const ProductDoc = {
   productId() {
     return applyDecorators();
   },

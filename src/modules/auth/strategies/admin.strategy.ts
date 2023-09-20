@@ -7,9 +7,11 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { AuthConfig } from '@/configs';
 import { CONFIG } from '@/constants';
 import { UserRole } from '@/models';
+
 import { UsersService } from '@/modules/users';
 
 import { STRATEGY } from '../auth.constant';
+
 import { IJwtPayload } from '../interface';
 
 @Injectable()

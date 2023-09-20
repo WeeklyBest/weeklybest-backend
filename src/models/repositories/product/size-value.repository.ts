@@ -1,7 +1,7 @@
 import { Repository } from 'typeorm';
 
 import { EntityRepository } from '@/common';
-import { SizeValue } from '@/models/entities';
+import { SizeValue } from '@/models';
 
 @EntityRepository(SizeValue)
 export class SizeValueRepository extends Repository<SizeValue> {

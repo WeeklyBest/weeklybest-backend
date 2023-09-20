@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
 import { CommonIdEntity } from '@/common';
-import { PRODUCT } from '@/models/constants';
+import { PRODUCT } from '@/models';
 
 import { Category } from './category.entity';
 import { Variant } from './variant.entity';
