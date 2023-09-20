@@ -7,14 +7,14 @@ import { CurrentUser, JwtAuthGuard } from '../auth';
 import { CartItemResponse } from './dtos';
 
 import { CartService } from './cart.service';
-import { CartControllerDocs as Docs } from './cart.controller.docs';
+import { CartControllerDoc as Doc } from './controller.doc';
 
 @ApiTags('장바구니 API')
 @Controller('cart')
 export class CartController {
   constructor(private readonly cartService: CartService) {}
 
-  @Docs.getMyCartItems('장바구니 상품 목록 조회')
+  @Doc.getMyCartItems('장바구니 상품 목록 조회')
   @Get('/me')
   @UseGuards(JwtAuthGuard)
   async getMyCartItems(@CurrentUser() user: User): Promise<CartItemResponse[]> {

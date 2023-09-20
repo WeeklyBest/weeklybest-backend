@@ -4,20 +4,20 @@ import { ApiTags } from '@nestjs/swagger';
 import { Pagination } from '@/common';
 
 import { ProductsService } from './products.service';
-import { ProductsControllerDocs as Docs } from './products.controller.docs';
 import {
   ProductCardResponse,
   ProductDetailResponse,
   ProductIdParam,
   ProductListQuery,
 } from './dtos';
+import { ProductsControllerDoc as Doc } from './controller.doc';
 
 @ApiTags('상품 API')
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
-  @Docs.getAll('상품 목록 조회')
+  @Doc.getAll('상품 목록 조회')
   @Get()
   async getAll(
     @Query() { pageNum = 1, pageSize = 10, ...rest }: ProductListQuery,
@@ -25,7 +25,7 @@ export class ProductsController {
     return this.productsService.getAll({ pageNum, pageSize, ...rest });
   }
 
-  @Docs.getOne('상품 상세 정보 조회')
+  @Doc.getOne('상품 상세 정보 조회')
   @Get(':id')
   async getOne(
     @Param() { id }: ProductIdParam,

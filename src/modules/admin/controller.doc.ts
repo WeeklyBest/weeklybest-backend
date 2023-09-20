@@ -7,10 +7,9 @@ import {
 import { applyDecorators } from '@nestjs/common';
 
 import { SwaggerMethodDocType } from '@/common';
+import { AdminController } from '@/modules/admin';
 
-import { AdminController } from './admin.controller';
-
-export const AdminControllerDocs: SwaggerMethodDocType<AdminController> = {
+export const AdminControllerDoc: SwaggerMethodDocType<AdminController> = {
   uploadProduct(summary: string) {
     return applyDecorators(
       ApiOperation({

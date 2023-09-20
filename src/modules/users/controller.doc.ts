@@ -1,7 +1,7 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 
-export const UsersControllerDocs = {
+export const UsersControllerDoc = {
   getMe(summary: string) {
     return applyDecorators(
       ApiOperation({

@@ -1,4 +1,4 @@
-import { Pagination } from '../dto';
+import { Pagination } from '../dtos';
 import { IPagingOptions } from '../interface';
 
 export function getPagination<T>(
