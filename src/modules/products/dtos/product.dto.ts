@@ -1,6 +1,6 @@
 import { Product } from '@/models';
 
-export class ProductResponse {
+export class ProductDetailResponse {
   id: number;
 
   name: string;
