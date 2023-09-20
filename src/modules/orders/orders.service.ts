@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { ORDER_ERROR, Order, User } from '@/models';
+import { ORDER_ERROR, Order, OrderStatus, User } from '@/models';
 
 import { CreateOrderRequest, OrderResponse } from './dtos';
 
@@ -34,5 +34,21 @@ export class OrdersService {
     }
 
     return new OrderResponse(order);
+  }
+
+  async cancel(id: number, user: User): Promise<void> {
+    const result = await this.orderRepository.update(
+      { id, user },
+      {
+        status: OrderStatus.CANCELLED,
+      },
+    );
+
+    if (result.affected <= 0) {
+      throw new HttpException(
+        ORDER_ERROR.CANCEL_FAILURE,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 }
