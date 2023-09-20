@@ -118,7 +118,10 @@ export class AuthService {
       });
 
       if (result.affected === 0) {
-        throw new Error();
+        throw new HttpException(
+          AUTH_ERROR.REFRESH_FAILURE,
+          HttpStatus.BAD_REQUEST,
+        );
       }
 
       return refreshToken;
