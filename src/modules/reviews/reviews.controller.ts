@@ -22,7 +22,9 @@ import {
 
 import { ReviewControllerDoc as Doc } from './controller.doc';
 import { ReviewsService } from './reviews.service';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('리뷰 API')
 @Controller('reviews')
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
