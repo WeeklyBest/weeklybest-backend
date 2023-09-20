@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-import { COLOR } from '@/models/constants';
+import { COLOR } from '@/models';
 
 import { Variant } from './variant.entity';
 

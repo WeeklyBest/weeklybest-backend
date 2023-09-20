@@ -7,6 +7,7 @@ import {
 import { applyDecorators } from '@nestjs/common';
 
 import { SwaggerMethodDocType } from '@/common';
+
 import { AdminController } from '@/modules/admin';
 
 export const AdminControllerDoc: SwaggerMethodDocType<AdminController> = {

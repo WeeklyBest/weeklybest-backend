@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { SIZE_VALUE } from '@/models/constants';
+import { SIZE_VALUE } from '@/models';
 
 import { SizeGroup } from './size-group.entity';
 import { Variant } from './variant.entity';

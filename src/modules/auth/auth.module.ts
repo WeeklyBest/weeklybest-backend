@@ -8,9 +8,10 @@ import { CONFIG } from '@/constants';
 import { UserRepository } from '@/models';
 import { UsersModule } from '@/modules/users';
 
+import { strategies } from './strategies';
+
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { strategies } from './strategies';
 
 @Module({
   imports: [

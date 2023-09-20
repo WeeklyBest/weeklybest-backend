@@ -3,6 +3,7 @@ import { Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 import { CommonIdEntity } from '@/common';
 
 import { User } from '../customer';
+
 import { CartItem } from './cart-item.entity';
 
 @Entity()

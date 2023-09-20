@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-import { SIZE_GROUP } from '@/models/constants';
+import { SIZE_GROUP } from '@/models';
 
 import { SizeValue } from './size-value.entity';
 

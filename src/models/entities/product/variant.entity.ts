@@ -2,8 +2,8 @@ import { Column, Entity, ManyToOne, RelationId, Unique } from 'typeorm';
 
 import { CommonIdEntity } from '@/common';
 
-import { Product } from './product.entity';
 import { Color } from './color.entity';
+import { Product } from './product.entity';
 import { SizeValue } from './size-value.entity';
 
 @Unique(['product', 'color', 'sizeValue'])

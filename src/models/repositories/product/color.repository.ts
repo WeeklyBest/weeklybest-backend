@@ -1,7 +1,7 @@
 import { Repository } from 'typeorm';
 
 import { EntityRepository } from '@/common';
-import { Color } from '@/models/entities';
+import { Color } from '@/models';
 
 @EntityRepository(Color)
 export class ColorRepository extends Repository<Color> {

@@ -4,8 +4,9 @@ import { ApiTags } from '@nestjs/swagger';
 import { User } from '@/models';
 import { CurrentUser, JwtAuthGuard } from '@/modules/auth';
 
-import { UsersControllerDoc as Doc } from './controller.doc';
 import { UserResponse } from './dtos';
+
+import { UsersControllerDoc as Doc } from './controller.doc';
 
 @ApiTags('회원 API')
 @Controller('users')

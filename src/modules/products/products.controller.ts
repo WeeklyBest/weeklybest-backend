@@ -3,14 +3,15 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { Pagination } from '@/common';
 
-import { ProductsService } from './products.service';
 import {
   ProductCardResponse,
   ProductDetailResponse,
   ProductIdParam,
   ProductListQuery,
 } from './dtos';
+
 import { ProductsControllerDoc as Doc } from './controller.doc';
+import { ProductsService } from './products.service';
 
 @ApiTags('상품 API')
 @Controller('products')

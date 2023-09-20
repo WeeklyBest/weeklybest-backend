@@ -8,8 +8,6 @@ import { AuthConfig } from '@/configs';
 import { CONFIG, COOKIE } from '@/constants';
 import { User } from '@/models';
 
-import { AuthService } from './auth.service';
-import { AuthControllerDoc as Doc } from './controller.doc';
 import { CurrentUser } from './decorators';
 import { JoinForm, LoginResponse } from './dtos';
 import {
@@ -20,6 +18,9 @@ import {
   NaverAuthGuard,
 } from './guards';
 import { IJwtPayload } from './interface';
+
+import { AuthService } from './auth.service';
+import { AuthControllerDoc as Doc } from './controller.doc';
 
 @ApiTags('인증/인가 API')
 @Controller('auth')

@@ -8,8 +8,9 @@ import { AuthConfig } from '@/configs';
 import { CONFIG } from '@/constants';
 import { UsersService } from '@/modules/users';
 
-import { STRATEGY } from '../auth.constant';
 import { IJwtPayload } from '../interface';
+
+import { STRATEGY } from '../auth.constant';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, STRATEGY.JWT) {

@@ -10,16 +10,17 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { User } from '@/models';
 
-import { CurrentUser, JwtAuthGuard } from '../auth';
+import { CurrentUser, JwtAuthGuard } from '@/modules/auth';
 
-import { CartItemControllerDoc as Doc } from './controller.doc';
-import { CartService } from './cart.service';
 import {
   AddCartItemRequest,
   EditVariantParam,
   CartItemIdParam,
   EditCartItemRequest,
 } from './dtos';
+
+import { CartService } from './cart.service';
+import { CartItemControllerDoc as Doc } from './controller.doc';
 
 @ApiTags('장바구니 API')
 @Controller('cart-items')

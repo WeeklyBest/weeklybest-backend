@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { TypeOrmCustomModule } from '@/common';
 import { ProductRepository } from '@/models';
+
 import { UsersModule } from '@/modules/users';
 
 import { AdminController } from './admin.controller';

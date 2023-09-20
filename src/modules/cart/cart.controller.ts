@@ -3,7 +3,8 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { User } from '@/models';
 
-import { CurrentUser, JwtAuthGuard } from '../auth';
+import { CurrentUser, JwtAuthGuard } from '@/modules/auth';
+
 import { CartItemResponse } from './dtos';
 
 import { CartService } from './cart.service';

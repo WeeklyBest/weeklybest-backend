@@ -8,9 +8,10 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { AuthConfig } from '@/configs';
 import { CONFIG, COOKIE } from '@/constants';
 
+import { IJwtPayload } from '../interface';
+
 import { STRATEGY } from '../auth.constant';
 import { AuthService } from '../auth.service';
-import { IJwtPayload } from '../interface';
 
 @Injectable()
 export class JwtRefreshStrategy extends PassportStrategy(
