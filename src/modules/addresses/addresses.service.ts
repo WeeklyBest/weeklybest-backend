@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { ADDRESS_ERROR, Address, User } from '@/models';
 
 import { AddressResponse, CreateAddressRequest } from './dtos';
+import { PagingQuery } from '@/common';
 
 @Injectable()
 export class AddressesService {
@@ -40,6 +41,25 @@ export class AddressesService {
     }
 
     return new AddressResponse(address);
+  }
+
+  async getMe(
+    { pageNum, pageSize }: PagingQuery,
+    user: User,
+  ): Promise<AddressResponse[]> {
+    const addresses = await this.addressesRepository.find({
+      where: {
+        user,
+      },
+      skip: (pageNum - 1) * pageSize,
+      take: pageSize,
+      order: {
+        isDefault: 'DESC',
+        createdAt: 'DESC',
+      },
+    });
+
+    return addresses.map((address) => new AddressResponse(address));
   }
 
   async remove(id: number, user: User) {
