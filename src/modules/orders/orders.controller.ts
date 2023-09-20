@@ -24,7 +24,9 @@ import {
 import { OrdersControllerDoc as Doc } from './controller.doc';
 import { OrdersService } from './orders.service';
 import { PagingQuery } from '@/common';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('주문 API')
 @Controller('orders')
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
