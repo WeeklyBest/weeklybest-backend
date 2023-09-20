@@ -29,4 +29,18 @@ export class AddressesService {
       );
     }
   }
+
+  async remove(id: number, user: User) {
+    const result = await this.addressesRepository.delete({
+      id,
+      user,
+    });
+
+    if (result.affected <= 0) {
+      throw new HttpException(
+        ADDRESS_ERROR.DELETE_ERROR,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
 }
