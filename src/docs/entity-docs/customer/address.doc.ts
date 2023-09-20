@@ -64,4 +64,13 @@ export const AddressDoc = {
       }),
     );
   },
+
+  usedAt() {
+    return applyDecorators(
+      ApiProperty({
+        description: '마지막 사용일',
+        example: '2023-09-20 21:36:26',
+      }),
+    );
+  },
 };

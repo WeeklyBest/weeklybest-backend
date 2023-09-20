@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 
 import { ADDRESS_ERROR, Address, User } from '@/models';
 
-import { CreateAddressRequest } from './dtos';
+import { AddressResponse, CreateAddressRequest } from './dtos';
 
 @Injectable()
 export class AddressesService {
@@ -28,6 +28,18 @@ export class AddressesService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  async getOne(id: number, user: User): Promise<AddressResponse> {
+    const address = await this.addressesRepository.findOne({
+      where: { id, user },
+    });
+
+    if (!address) {
+      throw new HttpException(ADDRESS_ERROR.NOT_FOUND, HttpStatus.NOT_FOUND);
+    }
+
+    return new AddressResponse(address);
   }
 
   async remove(id: number, user: User) {
