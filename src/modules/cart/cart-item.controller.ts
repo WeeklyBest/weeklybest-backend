@@ -15,7 +15,7 @@ import { CurrentUser, JwtAuthGuard } from '../auth';
 
 import { CartService } from './cart.service';
 import { CartItemControllerDocs as Docs } from './cart.controller.docs';
-import { CartItemIdParam, CartItemResponse, AddCartItemRequest } from './dtos';
+import { CartParamDto, CartItemResponse, AddCartItemRequest } from './dtos';
 
 @ApiTags('장바구니 API')
 @Controller('cart-items')
@@ -39,7 +39,7 @@ export class CartItemController {
   @Docs.remove('장바구니에서 상품 제거')
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
-  async remove(@Param() { id }: CartItemIdParam, @CurrentUser() user: User) {
+  async remove(@Param() { id }: CartParamDto, @CurrentUser() user: User) {
     await this.cartService.removeItem(id, user);
   }
 }
