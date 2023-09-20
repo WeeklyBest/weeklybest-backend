@@ -1,16 +1,21 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 import { ADDRESS_ERROR, Address, User } from '@/models';
 
-import { AddressResponse, CreateAddressRequest } from './dtos';
-import { PagingQuery } from '@/common';
+import {
+  AddressResponse,
+  CreateAddressRequest,
+  EditAddressRequest,
+} from './dtos';
+import { PagingQuery, useTransaction } from '@/common';
 
 @Injectable()
 export class AddressesService {
   constructor(
+    private readonly dataSource: DataSource,
     @InjectRepository(Address)
     private readonly addressesRepository: Repository<Address>,
   ) {}
@@ -60,6 +65,39 @@ export class AddressesService {
     });
 
     return addresses.map((address) => new AddressResponse(address));
+  }
+
+  async edit(id: number, dto: EditAddressRequest, user: User): Promise<void> {
+    await useTransaction(this.dataSource, async (manager) => {
+      const addressRepository = manager.getRepository(Address);
+
+      if (dto.isDefault) {
+        await addressRepository.update(
+          {
+            isDefault: true,
+            user,
+          },
+          {
+            isDefault: false,
+          },
+        );
+      }
+
+      const result = await addressRepository.update(
+        {
+          id,
+          user,
+        },
+        dto,
+      );
+
+      if (result.affected <= 0) {
+        throw new HttpException(
+          ADDRESS_ERROR.UPDATE_ERROR,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
   }
 
   async remove(id: number, user: User) {

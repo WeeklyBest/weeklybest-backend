@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Query,
   UseGuards,
@@ -15,7 +16,12 @@ import { User } from '@/models';
 
 import { CurrentUser, JwtAuthGuard } from '../auth';
 
-import { AddressIdParam, AddressResponse, CreateAddressRequest } from './dtos';
+import {
+  AddressIdParam,
+  AddressResponse,
+  CreateAddressRequest,
+  EditAddressRequest,
+} from './dtos';
 
 import { AddressesService } from './addresses.service';
 import { AddressesControllerDoc as Doc } from './controller.doc';
@@ -50,6 +56,17 @@ export class AddressesController {
     @CurrentUser() user: User,
   ): Promise<AddressResponse[]> {
     return this.addressesService.getMe(pagingquery, user);
+  }
+
+  @Doc.edit('주소 수정')
+  @Patch(':id')
+  @UseGuards(JwtAuthGuard)
+  async edit(
+    @Param() { id }: AddressIdParam,
+    @Body() dto: EditAddressRequest,
+    @CurrentUser() user: User,
+  ): Promise<void> {
+    await this.addressesService.edit(id, dto, user);
   }
 
   @Doc.remove('주소 삭제')

@@ -1,10 +1,10 @@
 import { DataSource, EntityManager } from 'typeorm';
 
 export async function useTransaction(
-  datasource: DataSource,
+  dataSource: DataSource,
   fn: (entityManager: EntityManager) => Promise<void>,
 ) {
-  const queryRunner = datasource.createQueryRunner();
+  const queryRunner = dataSource.createQueryRunner();
   await queryRunner.connect();
 
   await queryRunner.startTransaction();
