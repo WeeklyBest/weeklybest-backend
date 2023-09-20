@@ -3,18 +3,19 @@ import {
   Controller,
   Delete,
   Param,
+  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { ReviewsService } from './reviews.service';
 
 import { User } from '@/models';
 
 import { CurrentUser, JwtAuthGuard } from '../auth';
 
-import { CreateReviewRequest, ReviewIdParam } from './dtos';
+import { CreateReviewRequest, EditReviewRequest, ReviewIdParam } from './dtos';
 
 import { ReviewControllerDoc as Doc } from './controller.doc';
+import { ReviewsService } from './reviews.service';
 
 @Controller('reviews')
 export class ReviewsController {
@@ -28,6 +29,17 @@ export class ReviewsController {
     @CurrentUser() user: User,
   ): Promise<void> {
     await this.reviewsService.addReview(dto, user);
+  }
+
+  @Doc.editReview('리뷰 수정')
+  @Patch(':id')
+  @UseGuards(JwtAuthGuard)
+  async editReview(
+    @Param() { id }: ReviewIdParam,
+    @Body() dto: EditReviewRequest,
+    @CurrentUser() user: User,
+  ) {
+    await this.reviewsService.editReview(id, dto, user);
   }
 
   @Doc.removeReview('리뷰 삭제')
