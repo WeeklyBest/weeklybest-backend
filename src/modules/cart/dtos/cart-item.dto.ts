@@ -6,6 +6,9 @@ import { CartItem } from '@/models';
 import { ColorResponse } from '@/modules/colors';
 
 export class CartItemResponse {
+  @SwaggerDoc.id('장바구니 아이템 식별자')
+  id: number;
+
   @SwaggerDoc.id('상품 식별자')
   productId: number;
 
@@ -46,6 +49,7 @@ export class CartItemResponse {
     const variant = cartItem.variant;
     const product = variant.product;
 
+    this.id = cartItem.id;
     this.productId = product.id;
     this.variantId = variant.id;
 

@@ -1,18 +1,12 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
-import { CommonEntity } from '@/common';
+import { CommonIdEntity } from '@/common';
 
 import { Cart } from './cart.entity';
 import { Variant } from './variant.entity';
 
 @Entity()
-export class CartItem extends CommonEntity {
-  @PrimaryColumn()
-  cartId: number;
-
-  @PrimaryColumn()
-  variantId: number;
-
+export class CartItem extends CommonIdEntity {
   @ManyToOne(() => Cart, (cart) => cart.items, {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
