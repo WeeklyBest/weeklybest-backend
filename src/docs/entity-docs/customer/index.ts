@@ -1,2 +1,2 @@
-export * from './cart.docs';
-export * from './user.docs';
+export * from './cart.doc';
+export * from './user.doc';

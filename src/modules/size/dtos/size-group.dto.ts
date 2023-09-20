@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 import { SwaggerDoc } from '@/common';
-import { SizeGroupDocs } from '@/docs';
+import { SizeGroupDoc } from '@/docs';
 import { SizeGroup } from '@/models';
 
 import { SizeValueResponse } from './size-value.dto';
@@ -10,7 +10,7 @@ export class SizeGroupResponse {
   @SwaggerDoc.id('사이즈 그룹 식별자')
   id: number;
 
-  @SizeGroupDocs.label()
+  @SizeGroupDoc.label()
   label: string;
 
   @ApiProperty({

@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 import { SwaggerDoc } from '@/common';
-import { ProductDocs } from '@/docs';
+import { ProductDoc } from '@/docs';
 import { Product } from '@/models';
 
 import { CategoryResponse } from './category.dto';
@@ -10,28 +10,28 @@ export class ProductCardResponse {
   @SwaggerDoc.id('상품 식별자')
   id: number;
 
-  @ProductDocs.name()
+  @ProductDoc.name()
   name: string;
 
-  @ProductDocs.retailPrice()
+  @ProductDoc.retailPrice()
   retailPrice: number;
 
-  @ProductDocs.sellingPrice()
+  @ProductDoc.sellingPrice()
   sellingPrice: number;
 
-  @ProductDocs.salesVolume()
+  @ProductDoc.salesVolume()
   salesVolume: number;
 
-  @ProductDocs.reviewCount()
+  @ProductDoc.reviewCount()
   reviewCount: number;
 
-  @ProductDocs.wishCount()
+  @ProductDoc.wishCount()
   wishCount: number;
 
-  @ProductDocs.display()
+  @ProductDoc.display()
   display: boolean;
 
-  @ProductDocs.onSale()
+  @ProductDoc.onSale()
   onSale: boolean;
 
   @SwaggerDoc.createdAt()

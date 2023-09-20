@@ -1,15 +1,15 @@
 import { SwaggerDoc } from '@/common';
-import { ColorDocs } from '@/docs';
+import { ColorDoc } from '@/docs';
 import { Color } from '@/models';
 
 export class ColorResponse {
   @SwaggerDoc.id('색상 식별자')
   id: number;
 
-  @ColorDocs.label()
+  @ColorDoc.label()
   label: string;
 
-  @ColorDocs.hexCode()
+  @ColorDoc.hexCode()
   hexCode: string;
 
   constructor(color: Color) {

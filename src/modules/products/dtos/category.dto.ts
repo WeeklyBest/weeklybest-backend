@@ -1,15 +1,15 @@
 import { SwaggerDoc } from '@/common';
-import { CategoryDocs } from '@/docs';
+import { CategoryDoc } from '@/docs';
 import { Category } from '@/models';
 
 export class CategoryResponse {
   @SwaggerDoc.id('카테고리 식별자')
   id: number;
 
-  @CategoryDocs.name()
+  @CategoryDoc.name()
   name: string;
 
-  @CategoryDocs.code()
+  @CategoryDoc.code()
   code: string;
 
   constructor(category: Category) {

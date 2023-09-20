@@ -1,9 +1,9 @@
-import { UserDocs } from '@/docs';
+import { UserDoc } from '@/docs';
 
 export class LoginForm {
-  @UserDocs.email()
+  @UserDoc.email()
   email: string;
 
-  @UserDocs.password()
+  @UserDoc.password()
   password: string;
 }

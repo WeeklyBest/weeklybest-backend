@@ -1,7 +1,7 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-export const VariantDocs = {
+export const VariantDoc = {
   quantity() {
     return applyDecorators(
       ApiProperty({

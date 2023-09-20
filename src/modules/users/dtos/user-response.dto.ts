@@ -1,7 +1,7 @@
 import { Exclude, Expose, plainToInstance } from 'class-transformer';
 
 import { SwaggerDoc } from '@/common';
-import { UserDocs } from '@/docs';
+import { UserDoc } from '@/docs';
 import { SNSProvider, User, UserRole } from '@/models';
 
 @Exclude()
@@ -10,23 +10,23 @@ export class UserResponse {
   @Expose()
   id: number;
 
-  @UserDocs.email()
+  @UserDoc.email()
   @Expose()
   email: string;
 
-  @UserDocs.name()
+  @UserDoc.name()
   @Expose()
   name: string;
 
-  @UserDocs.role()
+  @UserDoc.role()
   @Expose()
   role: UserRole;
 
-  @UserDocs.provider()
+  @UserDoc.provider()
   @Expose()
   provider: SNSProvider;
 
-  @UserDocs.snsId()
+  @UserDoc.snsId()
   @Expose()
   snsId: string;
 

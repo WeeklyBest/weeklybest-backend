@@ -12,7 +12,7 @@ import { Column } from 'typeorm';
 
 import { SNSProvider, USER, UserRole } from '@/models';
 
-export const UserDocs = {
+export const UserDoc = {
   userId() {
     return applyDecorators();
   },
