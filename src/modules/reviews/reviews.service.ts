@@ -3,9 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
+import { PagingQuery } from '@/common';
 import { REVIEW_ERROR, Review, User } from '@/models';
 
-import { CreateReviewRequest, EditReviewRequest } from './dtos';
+import { CreateReviewRequest, EditReviewRequest, ReviewResponse } from './dtos';
 
 @Injectable()
 export class ReviewsService {
@@ -67,5 +68,26 @@ export class ReviewsService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  async getReviewsByProductId(
+    productId: number,
+    { pageNum, pageSize }: PagingQuery,
+  ): Promise<ReviewResponse[]> {
+    const reviews = await this.reviewRepository.find({
+      relations: ['user'],
+      where: {
+        product: {
+          id: productId,
+        },
+      },
+      skip: (pageNum - 1) * pageSize,
+      take: pageSize,
+      order: {
+        createdAt: 'DESC',
+      },
+    });
+
+    return reviews.map((review) => new ReviewResponse(review));
   }
 }

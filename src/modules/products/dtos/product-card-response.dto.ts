@@ -4,7 +4,7 @@ import { SwaggerDoc } from '@/common';
 import { ProductDoc } from '@/docs';
 import { Product } from '@/models';
 
-import { CategoryResponse } from './category.dto';
+import { CategoryResponse } from './category-response.dto';
 
 export class ProductCardResponse {
   @SwaggerDoc.id('상품 식별자')
