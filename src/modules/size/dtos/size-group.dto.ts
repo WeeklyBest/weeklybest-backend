@@ -1,3 +1,5 @@
+import { ApiProperty } from '@nestjs/swagger';
+
 import { SwaggerDoc } from '@/common';
 import { SizeGroupDocs } from '@/docs';
 import { SizeGroup } from '@/models';
@@ -11,6 +13,10 @@ export class SizeGroupResponse {
   @SizeGroupDocs.label()
   label: string;
 
+  @ApiProperty({
+    description: '사이즈 값 목록',
+    type: [SizeValueResponse],
+  })
   values: SizeValueResponse[];
 
   constructor(sizeGroup: SizeGroup) {
