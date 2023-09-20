@@ -6,13 +6,20 @@ import {
   Patch,
   Post,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 
 import { User } from '@/models';
 
 import { CurrentUser, JwtAuthGuard } from '../auth';
 
-import { CreateOrderRequest, OrderIdParam, OrderResponse } from './dtos';
+import {
+  CreateOrderRequest,
+  EditOrderRequest,
+  OrderIdParam,
+  OrderResponse,
+} from './dtos';
 
 import { OrdersControllerDoc as Doc } from './controller.doc';
 import { OrdersService } from './orders.service';
@@ -50,6 +57,18 @@ export class OrdersController {
     @CurrentUser() user: User,
   ): Promise<OrderResponse[]> {
     return this.ordersService.getMe(pagingQuery, user);
+  }
+
+  @Doc.edit('주문 정보 수정')
+  @Patch(':id')
+  @UseGuards(JwtAuthGuard)
+  @UsePipes(ValidationPipe)
+  async edit(
+    @Param() { id }: OrderIdParam,
+    @Body() dto: EditOrderRequest,
+    @CurrentUser() user: User,
+  ): Promise<void> {
+    await this.ordersService.edit(id, dto, user);
   }
 
   @Doc.cancel('주문 취소')
