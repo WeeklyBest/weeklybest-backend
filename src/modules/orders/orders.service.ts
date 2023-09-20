@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 
 import { ORDER_ERROR, Order, User } from '@/models';
 
-import { CreateOrderRequest } from './dtos';
+import { CreateOrderRequest, OrderResponse } from './dtos';
 
 @Injectable()
 export class OrdersService {
@@ -24,5 +24,15 @@ export class OrdersService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  async getOne(id: number, user: User): Promise<OrderResponse> {
+    const order = await this.orderRepository.findOne({ where: { id, user } });
+
+    if (!order) {
+      throw new HttpException(ORDER_ERROR.NOT_FOUND, HttpStatus.NOT_FOUND);
+    }
+
+    return new OrderResponse(order);
   }
 }

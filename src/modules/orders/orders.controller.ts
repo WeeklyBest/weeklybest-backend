@@ -1,10 +1,10 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 
 import { User } from '@/models';
 
 import { CurrentUser, JwtAuthGuard } from '../auth';
 
-import { CreateOrderRequest } from './dtos';
+import { CreateOrderRequest, OrderIdParam, OrderResponse } from './dtos';
 
 import { OrdersControllerDoc as Doc } from './controller.doc';
 import { OrdersService } from './orders.service';
@@ -21,5 +21,15 @@ export class OrdersController {
     @CurrentUser() user: User,
   ): Promise<void> {
     await this.ordersService.register(dto, user);
+  }
+
+  @Doc.getOne('주문 조회')
+  @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  async getOne(
+    @Param() { id }: OrderIdParam,
+    @CurrentUser() user: User,
+  ): Promise<OrderResponse> {
+    return this.ordersService.getOne(id, user);
   }
 }
