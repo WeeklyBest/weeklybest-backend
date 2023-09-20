@@ -1,3 +1,3 @@
-export * from './cart.constant';
 export * from './color.constant';
 export * from './product.constant';
+export * from './size.constant';

@@ -4,6 +4,7 @@ import { CartModule } from './cart';
 import { ProductsModule } from './products';
 import { UsersModule } from './users';
 import { ColorsModule } from './colors';
+import { SizeModule } from './size';
 
 export const modules = [
   AdminModule,
@@ -11,5 +12,6 @@ export const modules = [
   CartModule,
   ColorsModule,
   ProductsModule,
+  SizeModule,
   UsersModule,
 ];

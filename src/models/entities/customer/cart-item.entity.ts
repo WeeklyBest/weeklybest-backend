@@ -3,7 +3,7 @@ import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { CommonIdEntity } from '@/common';
 
 import { Cart } from './cart.entity';
-import { Variant } from './variant.entity';
+import { Variant } from '../product';
 
 @Entity()
 export class CartItem extends CommonIdEntity {

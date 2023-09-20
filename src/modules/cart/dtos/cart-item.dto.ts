@@ -3,7 +3,9 @@ import { ApiProperty } from '@nestjs/swagger';
 import { SwaggerDoc } from '@/common';
 import { CartDocs, ProductDocs } from '@/docs';
 import { CartItem } from '@/models';
+
 import { ColorResponse } from '@/modules/colors';
+import { SizeValueResponse } from '@/modules/size';
 
 export class CartItemResponse {
   @SwaggerDoc.id('장바구니 아이템 식별자')
@@ -45,6 +47,12 @@ export class CartItemResponse {
   })
   color: ColorResponse;
 
+  @ApiProperty({
+    description: '사이즈 옵션',
+    type: SizeValueResponse,
+  })
+  size: SizeValueResponse;
+
   constructor(cartItem: CartItem) {
     const variant = cartItem.variant;
     const product = variant.product;
@@ -62,5 +70,6 @@ export class CartItemResponse {
     this.disabled = variant.hide || !product.onSale;
 
     this.color = new ColorResponse(variant.color);
+    this.size = new SizeValueResponse(variant.sizeValue);
   }
 }
