@@ -35,4 +35,18 @@ export class QuestionsService {
       );
     }
   }
+
+  async removeQuestion(id: number, user: User): Promise<void> {
+    const result = await this.questionRepository.delete({
+      id,
+      user,
+    });
+
+    if (!result) {
+      throw new HttpException(
+        QUESTION_ERROR.DELETE_ERROR,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
 }
