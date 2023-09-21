@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   Post,
   UseGuards,
@@ -10,9 +11,13 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { User } from '@/models';
 
-import { CurrentUser, JwtAuthGuard } from '../auth';
+import { CurrentUser, JwtAuthGuard, JwtAuthOrGuestGuard } from '../auth';
 
-import { CreateQuestionRequest, QuestionIdParam } from './dtos';
+import {
+  CreateQuestionRequest,
+  QuestionIdParam,
+  QuestionResponse,
+} from './dtos';
 
 import { QuestionsControllerDoc as Doc } from './controller.doc';
 import { QuestionsService } from './questions.service';
@@ -30,6 +35,16 @@ export class QuestionsController {
     @CurrentUser() user: User,
   ): Promise<void> {
     await this.questionsService.registerQuestion(dto, user);
+  }
+
+  @Doc.getQuestion('상품 문의 조회')
+  @Get(':id')
+  @UseGuards(JwtAuthOrGuestGuard)
+  async getQuestion(
+    @Param() { id }: QuestionIdParam,
+    @CurrentUser() user: User,
+  ): Promise<QuestionResponse> {
+    return this.questionsService.getQuestion(id, user);
   }
 
   @Doc.removeQuestion('상품 문의 제거')

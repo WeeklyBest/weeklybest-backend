@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, RelationId } from 'typeorm';
 
 import { CommonIdEntity } from '@/common';
 
@@ -39,4 +39,7 @@ export class Question extends CommonIdEntity {
     nullable: false,
   })
   product: Product;
+
+  @RelationId((question: Question) => question.product)
+  productId: number;
 }

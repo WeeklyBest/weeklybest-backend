@@ -3,9 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { QUESTION_ERROR, Question, User } from '@/models';
+import { QUESTION_ERROR, Question, User, UserRole } from '@/models';
 
-import { CreateQuestionRequest } from './dtos';
+import { CreateQuestionRequest, QuestionResponse } from './dtos';
 
 @Injectable()
 export class QuestionsService {
@@ -36,6 +36,26 @@ export class QuestionsService {
     }
   }
 
+  async getQuestion(id: number, user: User): Promise<QuestionResponse> {
+    const question = await this.questionRepository.findOne({
+      where: {
+        id: id,
+      },
+      relations: ['user'],
+    });
+
+    if (!question) {
+      throw new HttpException(QUESTION_ERROR.NOT_FOUND, HttpStatus.NOT_FOUND);
+    }
+
+    const isAuthorized = this.authPrivateQuestion(question, user);
+    if (isAuthorized) {
+      throw new HttpException(QUESTION_ERROR.FORBIDDEN, HttpStatus.FORBIDDEN);
+    }
+
+    return new QuestionResponse(question);
+  }
+
   async removeQuestion(id: number, user: User): Promise<void> {
     const result = await this.questionRepository.delete({
       id,
@@ -48,5 +68,13 @@ export class QuestionsService {
         HttpStatus.BAD_REQUEST,
       );
     }
+  }
+
+  private authPrivateQuestion(question: Question, user: User) {
+    return (
+      question.isPrivate &&
+      question.user.id !== user.id &&
+      user.role !== UserRole.ADMIN
+    );
   }
 }
