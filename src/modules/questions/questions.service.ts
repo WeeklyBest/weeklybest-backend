@@ -5,7 +5,11 @@ import { Repository } from 'typeorm';
 
 import { QUESTION_ERROR, Question, User, UserRole } from '@/models';
 
-import { CreateQuestionRequest, QuestionResponse } from './dtos';
+import {
+  CreateQuestionRequest,
+  EditQuestionRequest,
+  QuestionResponse,
+} from './dtos';
 
 @Injectable()
 export class QuestionsService {
@@ -54,6 +58,23 @@ export class QuestionsService {
     }
 
     return new QuestionResponse(question);
+  }
+
+  async editQuestion(id: number, dto: EditQuestionRequest, user: User) {
+    const result = await this.questionRepository.update(
+      {
+        id,
+        user,
+      },
+      dto,
+    );
+
+    if (result.affected === 0) {
+      throw new HttpException(
+        QUESTION_ERROR.UPDATE_ERROR,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   async removeQuestion(id: number, user: User): Promise<void> {
