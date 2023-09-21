@@ -1,5 +1,5 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Logger, Module } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 
 import { TypeOrmCustomModule } from '@/common';
@@ -17,7 +17,6 @@ import { AuthService } from './auth.service';
   imports: [
     TypeOrmCustomModule.forFeature([UserRepository]),
     JwtModule.registerAsync({
-      imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get<AuthConfig>(CONFIG.AUTH).accessTokenSecret,
         signOptions: {
@@ -30,6 +29,6 @@ import { AuthService } from './auth.service';
     UsersModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, ...strategies],
+  providers: [Logger, AuthService, ...strategies],
 })
 export class AuthModule {}

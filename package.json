@@ -36,6 +36,7 @@
     "mysql2": "^3.6.1",
     "nest-winston": "^1.9.4",
     "passport": "^0.6.0",
+    "passport-custom": "^1.1.1",
     "passport-jwt": "^4.0.1",
     "passport-kakao": "^1.0.1",
     "passport-local": "^1.0.0",

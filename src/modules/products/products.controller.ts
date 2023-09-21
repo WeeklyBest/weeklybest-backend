@@ -3,7 +3,8 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { Pagination, PagingQuery } from '@/common';
 
-import { ReviewsService } from '../reviews';
+import { QuestionResponse, QuestionsService } from '../questions';
+import { ReviewResponse, ReviewsService } from '../reviews';
 
 import {
   ProductCardResponse,
@@ -21,6 +22,7 @@ export class ProductsController {
   constructor(
     private readonly productsService: ProductsService,
     private readonly reviewsService: ReviewsService,
+    private readonly questionsService: QuestionsService,
   ) {}
 
   @Doc.getAll('상품 목록 조회')
@@ -44,7 +46,16 @@ export class ProductsController {
   async getReviews(
     @Param() { productId }: ProductIdParam,
     @Query() pagingQuery: PagingQuery,
-  ) {
+  ): Promise<ReviewResponse[]> {
     return this.reviewsService.getReviewsByProductId(productId, pagingQuery);
+  }
+
+  @Doc.getQuestions('상품 관련 문의 목록 조회')
+  @Get(':productId/questions')
+  async getQuestions(
+    @Param() { productId }: ProductIdParam,
+    @Query() pagingQuery: PagingQuery,
+  ): Promise<QuestionResponse[]> {
+    return this.questionsService.getQuestionByProductId(productId, pagingQuery);
   }
 }
