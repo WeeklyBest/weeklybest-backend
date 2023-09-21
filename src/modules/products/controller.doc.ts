@@ -7,10 +7,12 @@ import {
   getSchemaPath,
 } from '@nestjs/swagger';
 
+import { QuestionResponse } from '../questions';
+import { ReviewResponse } from '../reviews/dtos';
+
 import { ProductCardResponse, ProductDetailResponse } from './dtos';
 
 import { ProductsController } from './products.controller';
-import { ReviewResponse } from '../reviews/dtos';
 
 export const ProductsControllerDoc: SwaggerMethodDocType<ProductsController> = {
   getAll(summary: string) {
@@ -43,7 +45,7 @@ export const ProductsControllerDoc: SwaggerMethodDocType<ProductsController> = {
     return applyDecorators(
       ApiOperation({
         summary,
-        description: '',
+        description: '상품에 달린 리뷰 목록을 조회합니다.',
       }),
       ApiOkResponse({
         description: '리뷰 목록 조회 성공',
@@ -66,6 +68,15 @@ export const ProductsControllerDoc: SwaggerMethodDocType<ProductsController> = {
   },
 
   getQuestions(summary: string) {
-    return applyDecorators();
+    return applyDecorators(
+      ApiOperation({
+        summary,
+        description: '상품에 관한 고객 문의 목록을 조회합니다.',
+      }),
+      ApiOkResponse({
+        description: '문의 목록 조회 성공',
+        type: [QuestionResponse],
+      }),
+    );
   },
 };

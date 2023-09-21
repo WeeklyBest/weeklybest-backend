@@ -3,6 +3,7 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { Pagination, PagingQuery } from '@/common';
 
+import { QuestionResponse, QuestionsService } from '../questions';
 import { ReviewResponse, ReviewsService } from '../reviews';
 
 import {
@@ -14,7 +15,6 @@ import {
 
 import { ProductsControllerDoc as Doc } from './controller.doc';
 import { ProductsService } from './products.service';
-import { QuestionResponse, QuestionsService } from '../questions';
 
 @ApiTags('상품 API')
 @Controller('products')
