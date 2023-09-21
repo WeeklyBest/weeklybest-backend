@@ -64,4 +64,8 @@ export const ProductsControllerDoc: SwaggerMethodDocType<ProductsController> = {
       }),
     );
   },
+
+  getQuestions(summary: string) {
+    return applyDecorators();
+  },
 };
