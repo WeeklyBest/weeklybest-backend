@@ -18,6 +18,10 @@ export class UserResponse {
   @Expose()
   name: string;
 
+  @UserDoc.phone()
+  @Expose()
+  phone: string;
+
   @UserDoc.role()
   @Expose()
   role: UserRole;
