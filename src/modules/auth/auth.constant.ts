@@ -19,4 +19,5 @@ export const STRATEGY = {
   NAVER: 'NAVER',
   JWT: 'jwt',
   JWT_REFRESH: 'jwt-refresh',
+  GUEST: 'guest',
 };
