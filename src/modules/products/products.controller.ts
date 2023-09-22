@@ -54,8 +54,11 @@ export class ProductsController {
   @Get(':productId/questions')
   async getQuestions(
     @Param() { productId }: ProductIdParam,
-    @Query() pagingQuery: PagingQuery,
-  ): Promise<QuestionResponse[]> {
-    return this.questionsService.getQuestionByProductId(productId, pagingQuery);
+    @Query() { pageNum = 1, pageSize = 5 }: PagingQuery,
+  ): Promise<Pagination<QuestionResponse>> {
+    return this.questionsService.getQuestionByProductId(productId, {
+      pageNum,
+      pageSize,
+    });
   }
 }

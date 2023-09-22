@@ -10,7 +10,7 @@ import {
   EditQuestionRequest,
   QuestionResponse,
 } from './dtos';
-import { PagingQuery } from '@/common';
+import { Pagination, PagingQuery, getPagination } from '@/common';
 
 @Injectable()
 export class QuestionsService {
@@ -95,8 +95,8 @@ export class QuestionsService {
   async getQuestionByProductId(
     productId: number,
     { pageNum, pageSize }: PagingQuery,
-  ): Promise<QuestionResponse[]> {
-    const questions = await this.questionRepository.find({
+  ): Promise<Pagination<QuestionResponse>> {
+    const [questions, count] = await this.questionRepository.findAndCount({
       relations: ['user'],
       where: {
         product: {
@@ -110,7 +110,11 @@ export class QuestionsService {
       },
     });
 
-    return questions.map((question) => new QuestionResponse(question));
+    const questionList = questions.map(
+      (question) => new QuestionResponse(question),
+    );
+
+    return getPagination(questionList, count, { pageNum, pageSize });
   }
 
   private authPrivateQuestion(question: Question, user: User) {
