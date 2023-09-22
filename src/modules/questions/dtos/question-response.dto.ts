@@ -1,4 +1,6 @@
-import { SwaggerDoc } from '@/common';
+import { ApiProperty } from '@nestjs/swagger';
+
+import { SwaggerDoc, maskUsername } from '@/common';
 import { QuestionDoc } from '@/docs';
 import { Question } from '@/models';
 
@@ -12,14 +14,20 @@ export class QuestionResponse {
   @QuestionDoc.content()
   content: string;
 
+  @SwaggerDoc.id('작성자 식별자')
+  userId: number;
+
+  @ApiProperty({
+    description: '작성자 이름',
+    example: '김**',
+  })
+  username: string;
+
   @QuestionDoc.isPrivate()
   isPrivate: boolean;
 
   @SwaggerDoc.id('상품 식별자')
   productId: number;
-
-  @SwaggerDoc.id('작성자 식별자')
-  userId: number;
 
   @SwaggerDoc.createdAt()
   createdAt: Date;
@@ -29,12 +37,15 @@ export class QuestionResponse {
 
   constructor(question: Question) {
     this.id = question.id;
+
     this.title = question.title;
     this.content = question.content;
+    this.userId = question.user.id;
+    this.username = maskUsername(question.user.name);
+
     this.isPrivate = question.isPrivate;
 
     this.productId = question.productId;
-    this.userId = question.user.id;
 
     this.createdAt = question.createdAt;
     this.updatedAt = question.updatedAt;
