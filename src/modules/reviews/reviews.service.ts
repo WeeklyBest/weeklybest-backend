@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { PagingQuery } from '@/common';
+import { Pagination, PagingQuery, getPagination } from '@/common';
 import { REVIEW_ERROR, Review, User } from '@/models';
 
 import { CreateReviewRequest, EditReviewRequest, ReviewResponse } from './dtos';
@@ -88,8 +88,8 @@ export class ReviewsService {
   async getReviewsByProductId(
     productId: number,
     { pageNum, pageSize }: PagingQuery,
-  ): Promise<ReviewResponse[]> {
-    const reviews = await this.reviewRepository.find({
+  ): Promise<Pagination<ReviewResponse>> {
+    const [reviews, count] = await this.reviewRepository.findAndCount({
       relations: ['user'],
       where: {
         product: {
@@ -103,6 +103,8 @@ export class ReviewsService {
       },
     });
 
-    return reviews.map((review) => new ReviewResponse(review));
+    const reviewList = reviews.map((review) => new ReviewResponse(review));
+
+    return getPagination(reviewList, count, { pageNum, pageSize });
   }
 }

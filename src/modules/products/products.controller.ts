@@ -45,9 +45,12 @@ export class ProductsController {
   @Get(':productId/reviews')
   async getReviews(
     @Param() { productId }: ProductIdParam,
-    @Query() pagingQuery: PagingQuery,
-  ): Promise<ReviewResponse[]> {
-    return this.reviewsService.getReviewsByProductId(productId, pagingQuery);
+    @Query() { pageNum = 1, pageSize = 5 }: PagingQuery,
+  ): Promise<Pagination<ReviewResponse>> {
+    return this.reviewsService.getReviewsByProductId(productId, {
+      pageNum,
+      pageSize,
+    });
   }
 
   @Doc.getQuestions('상품 관련 문의 목록 조회')
