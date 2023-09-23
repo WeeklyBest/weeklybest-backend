@@ -20,6 +20,9 @@ export class CartItemResponse {
   @ProductDoc.name()
   productName: string;
 
+  @ProductDoc.thumbnail()
+  thumbnail: string;
+
   @ProductDoc.retailPrice()
   retailPrice: number;
 
@@ -56,19 +59,20 @@ export class CartItemResponse {
   constructor(cartItem: CartItem) {
     const variant = cartItem.variant;
     const product = variant.product;
-
     this.id = cartItem.id;
     this.productId = product.id;
     this.variantId = variant.id;
 
     this.productName = product.name;
+    if (product.images.length > 0) {
+      this.thumbnail = product.images[0].url;
+    }
     this.retailPrice = product.retailPrice;
     this.sellingPrice = product.sellingPrice;
 
     this.quantity = cartItem.quantity;
     this.stock = variant.quantity;
     this.disabled = variant.hide || !product.onSale;
-
     this.color = new ColorResponse(variant.color);
     this.size = new SizeValueResponse(variant.sizeValue);
   }

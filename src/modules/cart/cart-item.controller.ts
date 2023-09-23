@@ -1,9 +1,11 @@
 import {
   Body,
   Controller,
+  Get,
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
@@ -17,6 +19,7 @@ import {
   EditVariantParam,
   CartItemIdParam,
   EditCartItemRequest,
+  CartItemIdsQuery,
 } from './dtos';
 
 import { CartService } from './cart.service';
@@ -32,6 +35,16 @@ export class CartItemController {
   @UseGuards(JwtAuthGuard)
   async add(@Body() dto: AddCartItemRequest, @CurrentUser() user: User) {
     await this.cartService.addItem(dto, user);
+  }
+
+  @Doc.getCartItems('장바구니 상품 목록 조회')
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  async getCartItems(
+    @Query() { id: ids }: CartItemIdsQuery,
+    @CurrentUser() user: User,
+  ) {
+    return this.cartService.getCartItems(ids, user);
   }
 
   @Doc.editVariant('장바구니 아이템 옵션 변경')

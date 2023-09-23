@@ -4,7 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmCustomModule } from '@/common';
 import { CartItem, CartRepository, Variant } from '@/models';
 
-import { CartController } from './cart.controller';
 import { CartItemController } from './cart-item.controller';
 import { CartService } from './cart.service';
 
@@ -13,7 +12,7 @@ import { CartService } from './cart.service';
     TypeOrmCustomModule.forFeature([CartRepository]),
     TypeOrmModule.forFeature([CartItem, Variant]),
   ],
-  controllers: [CartController, CartItemController],
+  controllers: [CartItemController],
   providers: [CartService],
 })
 export class CartModule {}
