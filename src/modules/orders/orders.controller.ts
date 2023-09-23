@@ -9,7 +9,9 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
+import { PagingQuery } from '@/common';
 import { User } from '@/models';
 
 import { CurrentUser, JwtAuthGuard } from '../auth';
@@ -23,8 +25,6 @@ import {
 
 import { OrdersControllerDoc as Doc } from './controller.doc';
 import { OrdersService } from './orders.service';
-import { PagingQuery } from '@/common';
-import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('주문 API')
 @Controller('orders')
@@ -37,8 +37,8 @@ export class OrdersController {
   async register(
     @Body() dto: CreateOrderRequest,
     @CurrentUser() user: User,
-  ): Promise<void> {
-    await this.ordersService.register(dto, user);
+  ): Promise<number> {
+    return this.ordersService.register(dto, user);
   }
 
   @Doc.getOne('주문 조회')
