@@ -7,12 +7,17 @@ import { Color, Product, SizeValue } from '@/models';
 import { ColorResponse } from '@/modules/colors';
 import { SizeValueResponse } from '@/modules/size';
 
+import { VariantResponse } from './variant-response.dto';
+
 export class ProductDetailResponse {
   @SwaggerDoc.id('상품 식별자')
   id: number;
 
   @ProductDoc.name()
   name: string;
+
+  @ProductDoc.images()
+  images: string[];
 
   @ProductDoc.retailPrice()
   retailPrice: number;
@@ -36,6 +41,12 @@ export class ProductDetailResponse {
   onSale: boolean;
 
   @ApiProperty({
+    description: '상품 품목 목록',
+    type: [VariantResponse],
+  })
+  variants: VariantResponse[];
+
+  @ApiProperty({
     description: '상품 색상 목록',
     type: [ColorResponse],
   })
@@ -50,14 +61,21 @@ export class ProductDetailResponse {
   constructor(product: Product, colors: Color[], sizeValues: SizeValue[]) {
     this.id = product.id;
     this.name = product.name;
+    this.images = product.images.map((image) => image.url);
+
     this.retailPrice = product.retailPrice;
     this.sellingPrice = product.sellingPrice;
+
     this.salesVolume = product.salesVolume;
     this.reviewCount = product.reviewCount;
     this.wishCount = product.wishCount;
+
     this.display = product.display;
     this.onSale = product.onSale;
 
+    this.variants = product.variants.map(
+      (variant) => new VariantResponse(variant),
+    );
     this.colors = colors.map((color) => new ColorResponse(color));
     this.sizes = sizeValues.map(
       (sizeValue) => new SizeValueResponse(sizeValue),

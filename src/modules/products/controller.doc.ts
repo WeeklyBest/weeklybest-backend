@@ -49,7 +49,19 @@ export const ProductsControllerDoc: SwaggerMethodDocType<ProductsController> = {
       }),
       ApiOkResponse({
         description: '리뷰 목록 조회 성공',
-        type: [ReviewResponse],
+        schema: {
+          allOf: [
+            { $ref: getSchemaPath(Pagination) },
+            {
+              properties: {
+                data: {
+                  type: 'array',
+                  items: { $ref: getSchemaPath(ReviewResponse) },
+                },
+              },
+            },
+          ],
+        },
       }),
     );
   },

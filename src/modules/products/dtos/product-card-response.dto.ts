@@ -13,6 +13,9 @@ export class ProductCardResponse {
   @ProductDoc.name()
   name: string;
 
+  @ProductDoc.thumbnail()
+  thumbnail: string;
+
   @ProductDoc.retailPrice()
   retailPrice: number;
 
@@ -49,6 +52,9 @@ export class ProductCardResponse {
   constructor(product: Product) {
     this.id = product.id;
     this.name = product.name;
+    if (product.images.length > 0) {
+      this.thumbnail = product.images[0].url;
+    }
     this.retailPrice = product.retailPrice;
     this.sellingPrice = product.sellingPrice;
 

@@ -4,6 +4,7 @@ import { CommonIdEntity } from '@/common';
 import { PRODUCT } from '@/models';
 
 import { Category } from './category.entity';
+import { ProductImage } from './product-image.entity';
 import { Variant } from './variant.entity';
 
 @Entity()
@@ -67,4 +68,9 @@ export class Product extends CommonIdEntity {
     cascade: ['insert'],
   })
   variants: Variant[];
+
+  @OneToMany(() => ProductImage, (image) => image.product, {
+    cascade: ['insert'],
+  })
+  images: ProductImage[];
 }

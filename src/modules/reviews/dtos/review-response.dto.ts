@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-import { SwaggerDoc } from '@/common';
+import { SwaggerDoc, maskUsername } from '@/common';
 import { ReviewDoc } from '@/docs';
 import { Review } from '@/models';
 
@@ -40,6 +40,6 @@ export class ReviewResponse {
     this.createdAt = review.createdAt;
     this.updatedAt = review.updatedAt;
     this.authorId = review.user.id;
-    this.author = `${review.user.name.charAt(0)}**`;
+    this.author = maskUsername(review.user.name);
   }
 }

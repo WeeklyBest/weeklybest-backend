@@ -3,10 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { PagingQuery } from '@/common';
-import { REVIEW_ERROR, Review, User } from '@/models';
+import { Pagination, getPagination } from '@/common';
+import { REVIEW_ERROR, Review, ReviewSort, User } from '@/models';
 
-import { CreateReviewRequest, EditReviewRequest, ReviewResponse } from './dtos';
+import {
+  CreateReviewRequest,
+  EditReviewRequest,
+  ReviewListQuery,
+  ReviewResponse,
+} from './dtos';
 
 @Injectable()
 export class ReviewsService {
@@ -87,9 +92,28 @@ export class ReviewsService {
 
   async getReviewsByProductId(
     productId: number,
-    { pageNum, pageSize }: PagingQuery,
-  ): Promise<ReviewResponse[]> {
-    const reviews = await this.reviewRepository.find({
+    { pageNum, pageSize, sort }: ReviewListQuery,
+  ): Promise<Pagination<ReviewResponse>> {
+    let order: Record<string, 'ASC' | 'DESC'> = {
+      createdAt: 'DESC',
+    };
+
+    switch (sort) {
+      case ReviewSort.RATING_DESC:
+        order = {
+          rating: 'DESC',
+          createdAt: 'DESC',
+        };
+        break;
+      case ReviewSort.RATING_ASC:
+        order = {
+          rating: 'ASC',
+          createdAt: 'DESC',
+        };
+        break;
+    }
+
+    const [reviews, count] = await this.reviewRepository.findAndCount({
       relations: ['user'],
       where: {
         product: {
@@ -98,11 +122,11 @@ export class ReviewsService {
       },
       skip: (pageNum - 1) * pageSize,
       take: pageSize,
-      order: {
-        createdAt: 'DESC',
-      },
+      order,
     });
 
-    return reviews.map((review) => new ReviewResponse(review));
+    const reviewList = reviews.map((review) => new ReviewResponse(review));
+
+    return getPagination(reviewList, count, { pageNum, pageSize });
   }
 }
