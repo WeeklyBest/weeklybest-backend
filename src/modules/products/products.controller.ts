@@ -4,7 +4,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { Pagination, PagingQuery } from '@/common';
 
 import { QuestionResponse, QuestionsService } from '../questions';
-import { ReviewResponse, ReviewsService } from '../reviews';
+import { ReviewListQuery, ReviewResponse, ReviewsService } from '../reviews';
 
 import {
   ProductCardResponse,
@@ -45,11 +45,12 @@ export class ProductsController {
   @Get(':productId/reviews')
   async getReviews(
     @Param() { productId }: ProductIdParam,
-    @Query() { pageNum = 1, pageSize = 5 }: PagingQuery,
+    @Query() { pageNum = 1, pageSize = 5, sort }: ReviewListQuery,
   ): Promise<Pagination<ReviewResponse>> {
     return this.reviewsService.getReviewsByProductId(productId, {
       pageNum,
       pageSize,
+      sort,
     });
   }
 
