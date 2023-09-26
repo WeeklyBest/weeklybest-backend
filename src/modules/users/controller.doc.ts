@@ -1,5 +1,5 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 
 export const UsersControllerDoc = {
   getMe(summary: string) {
@@ -7,6 +7,18 @@ export const UsersControllerDoc = {
       ApiOperation({
         summary,
         description: '로그인된 회원 본인의 요약된 정보를 가져옵니다.',
+      }),
+    );
+  },
+
+  getMyWishlist(summary: string) {
+    return applyDecorators(
+      ApiOperation({
+        summary,
+        description: '로그인된 회원이 추가한 위시리스트를 가져옵니다.',
+      }),
+      ApiOkResponse({
+        description: '내 위시리스트 목록 조회 성공',
       }),
     );
   },

@@ -122,7 +122,6 @@ export class ProductsService {
   }
 
   async addToWishlist(productId: number, user: User) {
-    console.log('위시리스트 추가', productId, user);
     const result = await this.wishlistRepository.insert({
       product: { id: productId },
       user,
