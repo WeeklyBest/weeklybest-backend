@@ -40,6 +40,9 @@ export class ProductDetailResponse {
   @ProductDoc.onSale()
   onSale: boolean;
 
+  @ProductDoc.wished()
+  wished: boolean;
+
   @ApiProperty({
     description: '상품 품목 목록',
     type: [VariantResponse],
@@ -58,7 +61,12 @@ export class ProductDetailResponse {
   })
   sizes: SizeValueResponse[];
 
-  constructor(product: Product, colors: Color[], sizeValues: SizeValue[]) {
+  constructor(
+    product: Product,
+    colors: Color[],
+    sizeValues: SizeValue[],
+    wished: boolean,
+  ) {
     this.id = product.id;
     this.name = product.name;
     this.images = product.images.map((image) => image.url);
@@ -72,6 +80,7 @@ export class ProductDetailResponse {
 
     this.display = product.display;
     this.onSale = product.onSale;
+    this.wished = wished;
 
     this.variants = product.variants.map(
       (variant) => new VariantResponse(variant),

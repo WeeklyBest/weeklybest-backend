@@ -37,6 +37,9 @@ export class ProductCardResponse {
   @ProductDoc.onSale()
   onSale: boolean;
 
+  @ProductDoc.wished()
+  wished = false;
+
   @SwaggerDoc.createdAt()
   createdAt: Date;
 
@@ -64,6 +67,7 @@ export class ProductCardResponse {
 
     this.display = product.display;
     this.onSale = product.onSale;
+    if (product.wishlist?.length > 0) this.wished = true;
 
     this.createdAt = product.createdAt;
     this.updatedAt = product.updatedAt;
