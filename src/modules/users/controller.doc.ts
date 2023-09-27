@@ -2,6 +2,15 @@ import { applyDecorators } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 
 export const UsersControllerDoc = {
+  editUserInfo(summary: string) {
+    return applyDecorators(
+      ApiOperation({
+        summary,
+        description: '로그인된 회원의 개인 정보를 수정합니다.',
+      }),
+    );
+  },
+
   getMe(summary: string) {
     return applyDecorators(
       ApiOperation({

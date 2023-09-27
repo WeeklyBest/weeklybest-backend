@@ -7,6 +7,7 @@ import { PagingQuery, getPagination } from '@/common';
 import { USER_ERROR, User, UserRepository, Wishlist } from '@/models';
 
 import { ProductCardResponse } from '../products';
+import { EditUserRequest } from './dtos';
 
 @Injectable()
 export class UsersService {
@@ -24,6 +25,20 @@ export class UsersService {
     }
 
     return user;
+  }
+
+  async editUserInfo({ name, phone }: EditUserRequest, user: User) {
+    const result = await this.userRepository.update(user.id, {
+      name,
+      phone,
+    });
+
+    if (!result) {
+      throw new HttpException(
+        '회원 정보 수정 중 오류가 발생했습니다.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   async getMyWishlist(user: User, pagingQuery: PagingQuery) {

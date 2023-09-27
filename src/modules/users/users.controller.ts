@@ -1,4 +1,4 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Query, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { PagingQuery } from '@/common';
@@ -6,7 +6,7 @@ import { User } from '@/models';
 
 import { CurrentUser, JwtAuthGuard } from '@/modules/auth';
 
-import { UserResponse } from './dtos';
+import { EditUserRequest, UserResponse } from './dtos';
 
 import { UsersControllerDoc as Doc } from './controller.doc';
 import { UsersService } from './users.service';
@@ -15,6 +15,12 @@ import { UsersService } from './users.service';
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersSerivce: UsersService) {}
+
+  @Patch('me')
+  @UseGuards(JwtAuthGuard)
+  async editUserInfo(@Body() dto: EditUserRequest, @CurrentUser() user: User) {
+    await this.usersSerivce.editUserInfo(dto, user);
+  }
 
   @Doc.getMe('본인 정보 조회')
   @Get('me')
