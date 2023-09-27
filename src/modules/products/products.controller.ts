@@ -1,4 +1,12 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { Pagination, PagingQuery } from '@/common';
@@ -15,6 +23,8 @@ import {
 
 import { ProductsControllerDoc as Doc } from './controller.doc';
 import { ProductsService } from './products.service';
+import { CurrentUser, JwtAuthGuard, JwtAuthOrGuestGuard } from '../auth';
+import { User } from '@/models';
 
 @ApiTags('상품 API')
 @Controller('products')
@@ -35,10 +45,12 @@ export class ProductsController {
 
   @Doc.getOne('상품 상세 정보 조회')
   @Get(':productId')
+  @UseGuards(JwtAuthOrGuestGuard)
   async getOne(
     @Param() { productId }: ProductIdParam,
+    @CurrentUser() user: User,
   ): Promise<ProductDetailResponse> {
-    return this.productsService.getOne(productId);
+    return this.productsService.getOne(productId, user);
   }
 
   @Doc.getReviews('상품 관련 리뷰 목록 조회')
@@ -64,5 +76,25 @@ export class ProductsController {
       pageNum,
       pageSize,
     });
+  }
+
+  @Doc.addToWishlist('위시리스트에 상품 추가')
+  @Post(':productId/wishlist')
+  @UseGuards(JwtAuthGuard)
+  async addToWishlist(
+    @Param() { productId }: ProductIdParam,
+    @CurrentUser() user: User,
+  ) {
+    await this.productsService.addToWishlist(productId, user);
+  }
+
+  @Doc.removeFromWishlist('위시리스트에서 상품 제거')
+  @Delete(':productId/wishlist')
+  @UseGuards(JwtAuthGuard)
+  async removeFromWishlist(
+    @Param() { productId }: ProductIdParam,
+    @CurrentUser() user: User,
+  ) {
+    await this.productsService.removeFromWishlist(productId, user);
   }
 }
