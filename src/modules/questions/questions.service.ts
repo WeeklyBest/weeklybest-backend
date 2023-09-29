@@ -84,7 +84,7 @@ export class QuestionsService {
       user,
     });
 
-    if (!result) {
+    if (result.affected === 0) {
       throw new HttpException(
         QUESTION_ERROR.DELETE_ERROR,
         HttpStatus.BAD_REQUEST,
