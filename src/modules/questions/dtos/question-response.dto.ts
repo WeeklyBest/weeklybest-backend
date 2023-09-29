@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 import { SwaggerDoc, maskUsername } from '@/common';
-import { QuestionDoc } from '@/docs';
+import { ProductDoc, QuestionDoc } from '@/docs';
 import { Question, User } from '@/models';
 
 export class QuestionResponse {
@@ -29,6 +29,9 @@ export class QuestionResponse {
   @SwaggerDoc.id('상품 식별자')
   productId: number;
 
+  @ProductDoc.name()
+  productName: string;
+
   @SwaggerDoc.createdAt()
   createdAt: Date;
 
@@ -51,6 +54,7 @@ export class QuestionResponse {
     }
 
     this.productId = question.productId;
+    this.productName = question.product.name;
 
     this.createdAt = question.createdAt;
     this.updatedAt = question.updatedAt;

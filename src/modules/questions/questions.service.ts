@@ -46,7 +46,7 @@ export class QuestionsService {
       where: {
         id: id,
       },
-      relations: ['user'],
+      relations: ['user', 'product'],
     });
 
     if (!question) {
@@ -98,7 +98,7 @@ export class QuestionsService {
     user: User,
   ): Promise<Pagination<QuestionResponse>> {
     const [questions, count] = await this.questionRepository.findAndCount({
-      relations: ['user'],
+      relations: ['user', 'product'],
       where: {
         product: {
           id: productId,

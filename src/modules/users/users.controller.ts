@@ -49,4 +49,14 @@ export class UsersController {
   ) {
     await this.usersService.changePassword(dto, user);
   }
+
+  @Doc.getMyQuestions('내 문의 목록 조회')
+  @Get('me/questions')
+  @UseGuards(JwtAuthGuard)
+  async getMyQuestions(
+    @CurrentUser() user: User,
+    @Query() { pageNum = 1, pageSize = 5 }: PagingQuery,
+  ) {
+    return this.usersService.getMyQuestions(user, { pageNum, pageSize });
+  }
 }
