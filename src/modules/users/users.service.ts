@@ -67,7 +67,15 @@ export class UsersService {
   }
 
   async changePassword(changePasswordForm: ChangePasswordForm, user: User) {
-    const { currentPassword, newPassword } = changePasswordForm;
+    const { currentPassword, newPassword, confirmNewPassword } =
+      changePasswordForm;
+
+    if (newPassword !== confirmNewPassword) {
+      throw new HttpException(
+        '새 비밀번호와 비밀번호 확인란이 일치하지 않습니다.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
 
     const isMatch = await bcrypt.compare(currentPassword, user.password);
     if (!isMatch) {
