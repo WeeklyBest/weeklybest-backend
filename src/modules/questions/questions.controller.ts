@@ -51,6 +51,7 @@ export class QuestionsController {
 
   @Doc.editQuestion('상품 문의 수정')
   @Patch(':id')
+  @UseGuards(JwtAuthOrGuestGuard)
   async editQuestion(
     @Param() { id }: QuestionIdParam,
     @Body() dto: EditQuestionRequest,
