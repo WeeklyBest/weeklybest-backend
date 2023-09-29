@@ -31,4 +31,13 @@ export const UsersControllerDoc = {
       }),
     );
   },
+
+  changePassword(summary: string) {
+    return applyDecorators(
+      ApiOperation({
+        summary,
+        description: '로그인된 회원의 비밀번호를 변경합니다.',
+      }),
+    );
+  },
 };
