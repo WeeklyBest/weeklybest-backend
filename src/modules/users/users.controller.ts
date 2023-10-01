@@ -59,4 +59,14 @@ export class UsersController {
   ) {
     return this.usersService.getMyQuestions(user, { pageNum, pageSize });
   }
+
+  @Doc.getMyReviews('내 후기 목록 조회')
+  @Get('me/reviews')
+  @UseGuards(JwtAuthGuard)
+  async getMyReviews(
+    @CurrentUser() user: User,
+    @Query() { pageNum = 1, pageSize = 5 }: PagingQuery,
+  ) {
+    return this.usersService.getMyReviews(user, { pageNum, pageSize });
+  }
 }

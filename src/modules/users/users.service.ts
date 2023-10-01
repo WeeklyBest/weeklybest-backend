@@ -6,12 +6,20 @@ import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
 
 import { Pagination, PagingQuery, getPagination } from '@/common';
-import { Question, USER_ERROR, User, UserRepository, Wishlist } from '@/models';
+import {
+  Question,
+  Review,
+  USER_ERROR,
+  User,
+  UserRepository,
+  Wishlist,
+} from '@/models';
 
 import { ProductCardResponse } from '../products';
 import { ChangePasswordForm, EditUserRequest } from './dtos';
 import { AUTH } from '../auth';
 import { MyQuestionResponse } from '../questions';
+import { MyReviewResponse } from '../reviews';
 
 @Injectable()
 export class UsersService {
@@ -21,6 +29,8 @@ export class UsersService {
     private readonly wishlistRepository: Repository<Wishlist>,
     @InjectRepository(Question)
     private readonly questionRepository: Repository<Question>,
+    @InjectRepository(Review)
+    private readonly reviewRepository: Repository<Review>,
   ) {}
 
   async getUserById(id: number) {
@@ -112,6 +122,29 @@ export class UsersService {
     });
 
     const dtos = myQuestions.map((item) => new MyQuestionResponse(item, user));
+
+    return getPagination(dtos, count, pagingQuery);
+  }
+
+  async getMyReviews(
+    user: User,
+    pagingQuery: PagingQuery,
+  ): Promise<Pagination<MyReviewResponse>> {
+    const { pageNum, pageSize } = pagingQuery;
+
+    const [myReviews, count] = await this.reviewRepository.findAndCount({
+      relations: ['user', 'product', 'product.images'],
+      where: {
+        user,
+      },
+      skip: (pageNum - 1) * pageSize,
+      take: pageSize,
+      order: {
+        createdAt: 'DESC',
+      },
+    });
+
+    const dtos = myReviews.map((item) => new MyReviewResponse(item));
 
     return getPagination(dtos, count, pagingQuery);
   }
