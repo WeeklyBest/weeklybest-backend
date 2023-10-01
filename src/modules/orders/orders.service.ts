@@ -1,11 +1,19 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { PagingQuery } from '@/common';
-import { MESSAGE } from '@/constants';
-import { ORDER_ERROR, Order, OrderStatus, User, UserRole } from '@/models';
+import { APP, MESSAGE } from '@/constants';
+import {
+  CartItem,
+  ORDER_ERROR,
+  Order,
+  OrderDetail,
+  OrderStatus,
+  User,
+  UserRole,
+} from '@/models';
 
 import { CreateOrderRequest, EditOrderRequest, OrderResponse } from './dtos';
 
@@ -14,10 +22,65 @@ export class OrdersService {
   constructor(
     @InjectRepository(Order)
     private readonly orderRepository: Repository<Order>,
+    @InjectRepository(CartItem)
+    private readonly cartItemRepository: Repository<CartItem>,
+    @InjectRepository(OrderDetail)
+    private readonly orderDetailRepository: Repository<OrderDetail>,
   ) {}
 
+  /**
+   * DTO : ① 배송 기본 정보 ② 주문할 아이템 ID 목록을 받아옵니다.
+   *
+   * - Logic A : 가격 정보를 가공합니다.
+   * - Logic B : 배송비 추가 여부 및 금액을 결정합니다.
+   *
+   * * Mapping 주문 : DTO + 가격 정보 + User
+   * * Mapping 주문 상세 : Order + CartItem + Variant + Product 가격
+   *
+   * 를 가공해 DB에 저장합니다.
+   *  */
   async register(dto: CreateOrderRequest, user: User): Promise<number> {
-    const requestOrder = dto.toEntity(user);
+    const cartItems = await this.cartItemRepository.find({
+      where: {
+        id: In(dto.cartItemIds),
+        cart: {
+          user,
+        },
+      },
+      relations: ['cart', 'variant', 'variant.product'],
+    });
+
+    // Logic A : 가격 정보 계산
+    let [totalPrice, paymentReal] = [0, 0];
+    cartItems.forEach((item) => {
+      const { retailPrice, sellingPrice } = item.variant.product;
+      const { quantity } = item;
+
+      totalPrice += retailPrice * quantity;
+      paymentReal += sellingPrice * quantity;
+    });
+
+    // Logic B : 배송비 추가
+    if (paymentReal < APP.MINIMUM_AMOUNT_FOR_FREE_SHIPPING) {
+      paymentReal += APP.SHIPPING_FEE;
+    }
+
+    // 주문 Mapping : DTO → 주문 Entity
+    const requestOrder = dto.toEntity(user, totalPrice, paymentReal);
+
+    // 주문 상세 Mapping : CartItem[] → OrderDetail[]
+    requestOrder.orderDetails = cartItems.map((item) => {
+      const { sellingPrice } = item.variant.product;
+      const { quantity, variant } = item;
+
+      return this.orderDetailRepository.create({
+        price: sellingPrice,
+        quantity: quantity,
+        variant: variant,
+      });
+    });
+
+    // DB 저장
     const savedOrder = await this.orderRepository.save(requestOrder);
 
     if (!savedOrder) {
@@ -26,7 +89,6 @@ export class OrdersService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
-
     return savedOrder.id;
   }
 

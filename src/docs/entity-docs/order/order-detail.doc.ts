@@ -6,7 +6,7 @@ export const OrderDetailDoc = {
     return applyDecorators(
       ApiProperty({
         description: '가격',
-        example: 1000,
+        example: 10000,
       }),
     );
   },
