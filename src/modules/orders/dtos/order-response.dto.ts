@@ -9,8 +9,17 @@ export class OrderResponse {
   @OrderDoc.totalPrice()
   totalPrice: number;
 
-  @OrderDoc.discount()
-  discount: number;
+  @OrderDoc.paymentReal()
+  paymentReal: number;
+
+  @OrderDoc.purchaser()
+  purchaser: string;
+
+  @OrderDoc.purchaserPhone()
+  purchaserPhone: string;
+
+  @OrderDoc.purchaserEmail()
+  purchaserEmail: string;
 
   @OrderDoc.recipient()
   recipient: string;
@@ -48,12 +57,18 @@ export class OrderResponse {
   constructor(order: Order) {
     this.id = order.id;
     this.totalPrice = order.totalPrice;
-    this.discount = order.discount;
+    this.paymentReal = order.paymentReal;
+
+    this.purchaser = order.purchaser;
+    this.purchaserPhone = order.purchaserPhone;
+    this.purchaserEmail = order.purchaserEmail;
+
     this.recipient = order.recipient;
     this.recipientPhone = order.recipientPhone;
     this.postalCode = order.postalCode;
     this.shippingAddress = order.shippingAddress;
     this.message = order.message;
+
     this.status = order.status;
     this.paymentMethod = order.paymentMethod;
 

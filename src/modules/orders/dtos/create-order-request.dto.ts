@@ -1,12 +1,17 @@
+import { ApiProperty } from '@nestjs/swagger';
+
 import { OrderDoc } from '@/docs';
-import { Order, OrderStatus, PaymentMethod, User } from '@/models';
+import { Order, User } from '@/models';
 
 export class CreateOrderRequest {
-  @OrderDoc.totalPrice()
-  totalPrice: number;
+  @OrderDoc.purchaser()
+  purchaser: string;
 
-  @OrderDoc.discount()
-  discount: number;
+  @OrderDoc.purchaserPhone()
+  purchaserPhone: string;
+
+  @OrderDoc.purchaserEmail()
+  purchaserEmail: string;
 
   @OrderDoc.recipient()
   recipient: string;
@@ -23,32 +28,28 @@ export class CreateOrderRequest {
   @OrderDoc.message()
   message: string;
 
-  @OrderDoc.status()
-  status: OrderStatus;
+  @ApiProperty({
+    description: '장바구니 아이템 식별자 목록',
+    example: [1, 2],
+  })
+  cartItemIds: number[];
 
-  @OrderDoc.paymentMethod()
-  paymentMethod: PaymentMethod;
-
-  @OrderDoc.arrivedAt()
-  arrivedAt: Date;
-
-  @OrderDoc.paidAt()
-  paidAt: Date;
-
-  toEntity(user: User) {
+  toEntity(user: User, totalPrice: number, paymentReal: number) {
     const entity = new Order();
 
-    entity.totalPrice = this.totalPrice;
-    entity.discount = this.discount;
+    entity.totalPrice = totalPrice;
+    entity.paymentReal = paymentReal;
+
+    entity.purchaser = this.purchaser;
+    entity.purchaserPhone = this.purchaserPhone;
+    entity.purchaserEmail = this.purchaserEmail;
+
     entity.recipient = this.recipient;
     entity.recipientPhone = this.recipientPhone;
     entity.postalCode = this.postalCode;
     entity.shippingAddress = this.shippingAddress;
     entity.message = this.message;
-    entity.status = this.status;
-    entity.paymentMethod = this.paymentMethod;
-    entity.arrivedAt = this.arrivedAt;
-    entity.paidAt = this.paidAt;
+
     entity.user = user;
 
     return entity;
