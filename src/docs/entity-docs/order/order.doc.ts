@@ -107,7 +107,7 @@ export const OrderDoc = {
     return applyDecorators(
       ApiProperty({
         description: '결제 수단',
-        example: PaymentMethod.ACCOUNT_TRANSFER,
+        example: PaymentMethod.card,
       }),
     );
   },

@@ -1,9 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { In, Repository } from 'typeorm';
+import { DataSource, In, Repository } from 'typeorm';
 
-import { PagingQuery } from '@/common';
+import {
+  Pagination,
+  PagingQuery,
+  getPagination,
+  useTransaction,
+} from '@/common';
 import { APP, MESSAGE } from '@/constants';
 import {
   CartItem,
@@ -11,28 +16,33 @@ import {
   Order,
   OrderDetail,
   OrderStatus,
+  Product,
   User,
   UserRole,
+  Variant,
 } from '@/models';
+
+import { PaymentsService } from '@/modules/payments';
 
 import { CreateOrderRequest, EditOrderRequest, OrderResponse } from './dtos';
 
 @Injectable()
 export class OrdersService {
   constructor(
+    private readonly dataSource: DataSource,
     @InjectRepository(Order)
     private readonly orderRepository: Repository<Order>,
     @InjectRepository(CartItem)
     private readonly cartItemRepository: Repository<CartItem>,
     @InjectRepository(OrderDetail)
     private readonly orderDetailRepository: Repository<OrderDetail>,
+    private readonly paymentsService: PaymentsService,
   ) {}
 
   /**
    * DTO : ① 배송 기본 정보 ② 주문할 아이템 ID 목록을 받아옵니다.
    *
-   * - Logic A : 가격 정보를 가공합니다.
-   * - Logic B : 배송비 추가 여부 및 금액을 결정합니다.
+   * - Logic A : 가격 정보를 처리합니다.
    *
    * * Mapping 주문 : DTO + 가격 정보 + User
    * * Mapping 주문 상세 : Order + CartItem + Variant + Product 가격
@@ -51,53 +61,69 @@ export class OrdersService {
     });
 
     // Logic A : 가격 정보 계산
-    let [totalPrice, paymentReal] = [0, 0];
-    cartItems.forEach((item) => {
-      const { retailPrice, sellingPrice } = item.variant.product;
-      const { quantity } = item;
+    const [totalPrice, paymentReal] = this.calculateOrderPrices(cartItems);
 
-      totalPrice += retailPrice * quantity;
-      paymentReal += sellingPrice * quantity;
-    });
-
-    // Logic B : 배송비 추가
-    if (paymentReal < APP.MINIMUM_AMOUNT_FOR_FREE_SHIPPING) {
-      paymentReal += APP.SHIPPING_FEE;
-    }
+    // 결제 위변조 검사
+    const { merchantUID, paidAt, paymentMethod, orderStatus } =
+      await this.paymentsService.verify(dto.impUID, 100);
 
     // 주문 Mapping : DTO → 주문 Entity
-    const requestOrder = dto.toEntity(user, totalPrice, paymentReal);
-
-    // 주문 상세 Mapping : CartItem[] → OrderDetail[]
-    requestOrder.orderDetails = cartItems.map((item) => {
-      const { sellingPrice } = item.variant.product;
-      const { quantity, variant } = item;
-
-      return this.orderDetailRepository.create({
-        price: sellingPrice,
-        quantity: quantity,
-        variant: variant,
-      });
-    });
+    const order = dto.toEntity(user, totalPrice, paymentReal);
+    order.orderDetails = this.mapCartItemsToOrderDetails(cartItems);
+    order.merchantUID = merchantUID;
+    order.paidAt = paidAt;
+    order.paymentMethod = paymentMethod;
+    order.status = orderStatus;
 
     // DB 저장
-    const savedOrder = await this.orderRepository.save(requestOrder);
+    let response: number;
 
-    if (!savedOrder) {
-      throw new HttpException(
-        ORDER_ERROR.CREATE_ERROR,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-    return savedOrder.id;
+    await useTransaction(this.dataSource, async (manager) => {
+      // 주문 등록
+      const orderRepository = manager.getRepository(Order);
+
+      const savedOrder = await orderRepository.save(order);
+
+      if (!savedOrder) {
+        throw new HttpException(
+          ORDER_ERROR.CREATE_ERROR,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      // 아이템 판매처리
+      cartItems.forEach(async (item) => {
+        const { variant } = item;
+
+        const calculatedQuantity = variant.quantity - item.quantity;
+
+        if (calculatedQuantity < 0) {
+          throw new HttpException(
+            '재고 수량이 부족합니다.',
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+
+        variant.quantity = calculatedQuantity;
+
+        variant.product.salesVolume += item.quantity;
+
+        await manager.getRepository(Variant).save(variant);
+      });
+
+      // 판매 처리된 장바구니 아이템 제거
+      await manager.getRepository(CartItem).remove(cartItems);
+
+      response = savedOrder.id;
+    });
+
+    return response;
   }
 
   async getOne(id: number, user: User): Promise<OrderResponse> {
     const order = await this.orderRepository.findOne({ where: { id, user } });
 
-    if (!order) {
-      throw new HttpException(ORDER_ERROR.NOT_FOUND, HttpStatus.NOT_FOUND);
-    }
+    this.checkOrderExistence(order);
 
     return new OrderResponse(order);
   }
@@ -105,8 +131,8 @@ export class OrdersService {
   async getMe(
     { pageNum, pageSize }: PagingQuery,
     user: User,
-  ): Promise<OrderResponse[]> {
-    const orders = await this.orderRepository.find({
+  ): Promise<Pagination<OrderResponse>> {
+    const [orders, count] = await this.orderRepository.findAndCount({
       where: {
         user,
       },
@@ -117,7 +143,9 @@ export class OrdersService {
       },
     });
 
-    return orders.map((order) => new OrderResponse(order));
+    const list = orders.map((order) => new OrderResponse(order));
+
+    return getPagination(list, count, { pageNum, pageSize });
   }
 
   async edit(id: number, dto: EditOrderRequest, user: User) {
@@ -145,18 +173,87 @@ export class OrdersService {
   }
 
   async cancel(id: number, user: User): Promise<void> {
-    const result = await this.orderRepository.update(
-      { id, user },
-      {
-        status: OrderStatus.CANCELLED,
-      },
-    );
+    await useTransaction(this.dataSource, async (manager) => {
+      const orderRepository = manager.getRepository(Order);
+      const variantRepository = manager.getRepository(Variant);
+      const productRepository = manager.getRepository(Product);
 
-    if (result.affected <= 0) {
-      throw new HttpException(
-        ORDER_ERROR.CANCEL_FAILURE,
-        HttpStatus.BAD_REQUEST,
-      );
+      const order = await orderRepository.findOne({
+        relations: [
+          'orderDetails',
+          'orderDetails.variant',
+          'orderDetails.variant.product',
+        ],
+        where: { id, user },
+      });
+
+      this.checkOrderExistence(order);
+
+      if (
+        order.status !== OrderStatus.AWAITING_PAYMENT &&
+        order.status !== OrderStatus.PAYMENT_ACCEPTED &&
+        order.status !== OrderStatus.AWAITING_SHIPMENT
+      ) {
+        throw new HttpException(
+          '취소할 수 없는 주문입니다.',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      // 취소 수량 되돌리기
+      order.orderDetails.forEach(async (orderDetail) => {
+        const variant = orderDetail.variant;
+        const product = variant.product;
+
+        variant.quantity += orderDetail.quantity;
+
+        const calcedSalesVolume = product.salesVolume - orderDetail.quantity;
+        product.salesVolume = Math.max(0, calcedSalesVolume);
+
+        console.log(variant);
+        await variantRepository.save(variant);
+        await productRepository.save(product);
+      });
+
+      order.status = OrderStatus.CANCELLED;
+
+      await orderRepository.save(order);
+    });
+  }
+
+  private calculateOrderPrices(cartItems: CartItem[]): [number, number] {
+    let [totalPrice, paymentReal] = [0, 0];
+    cartItems.forEach(async (item) => {
+      const { retailPrice, sellingPrice } = item.variant.product;
+      const { quantity } = item;
+
+      totalPrice += retailPrice * quantity;
+      paymentReal += sellingPrice * quantity;
+    });
+
+    // Logic B : 주문 금액이 적으면 배송비 추가
+    if (paymentReal < APP.MINIMUM_AMOUNT_FOR_FREE_SHIPPING) {
+      paymentReal += APP.SHIPPING_FEE;
     }
+    return [totalPrice, paymentReal];
+  }
+
+  private checkOrderExistence(order: Order) {
+    if (!order) {
+      throw new HttpException(ORDER_ERROR.NOT_FOUND, HttpStatus.NOT_FOUND);
+    }
+  }
+
+  private mapCartItemsToOrderDetails(cartItems: CartItem[]) {
+    return cartItems.map((item) => {
+      const { sellingPrice } = item.variant.product;
+      const { quantity, variant } = item;
+
+      return this.orderDetailRepository.create({
+        price: sellingPrice,
+        quantity: quantity,
+        variant: variant,
+      });
+    });
   }
 }

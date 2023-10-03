@@ -23,8 +23,10 @@ export class Variant extends CommonIdEntity {
 
   // 연관 관계
   @ManyToOne(() => Product, {
+    onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
     nullable: false,
+    cascade: true,
   })
   product: Product;
 

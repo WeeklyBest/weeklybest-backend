@@ -66,10 +66,13 @@ export class Order extends CommonIdEntity {
   })
   status: OrderStatus;
 
-  @Column({
-    nullable: true,
-  })
+  @Column()
   paymentMethod: PaymentMethod;
+
+  @Column({
+    unique: true,
+  })
+  merchantUID: string;
 
   @Column({
     nullable: true,
@@ -89,7 +92,7 @@ export class Order extends CommonIdEntity {
   user: User;
 
   @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.order, {
-    cascade: ['insert'],
+    cascade: ['insert', 'update'],
   })
   orderDetails: OrderDetail[];
 }

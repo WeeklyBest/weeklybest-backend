@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-import { OrderDoc } from '@/docs';
+import { OrderDoc, PaymentDoc } from '@/docs';
 import { Order, User } from '@/models';
 
 export class CreateOrderRequest {
@@ -27,6 +27,9 @@ export class CreateOrderRequest {
 
   @OrderDoc.message()
   message: string;
+
+  @PaymentDoc.impUID()
+  impUID: string;
 
   @ApiProperty({
     description: '장바구니 아이템 식별자 목록',

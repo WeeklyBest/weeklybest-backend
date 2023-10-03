@@ -11,8 +11,9 @@ export async function useTransaction(
   try {
     await fn(queryRunner.manager);
     await queryRunner.commitTransaction();
-  } catch (err) {
+  } catch (error) {
     await queryRunner.rollbackTransaction();
+    throw error;
   } finally {
     await queryRunner.release();
   }

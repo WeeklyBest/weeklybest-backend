@@ -9,17 +9,19 @@ import { OrdersModule } from './orders';
 import { AddressesModule } from './addresses';
 import { ReviewsModule } from './reviews';
 import { QuestionsModule } from './questions';
+import { PaymentsModule } from './payments';
 
 export const modules = [
   AdminModule,
   AuthModule,
   CartModule,
   ColorsModule,
-  OrdersModule,
   ProductsModule,
   SizeModule,
   UsersModule,
   AddressesModule,
   ReviewsModule,
   QuestionsModule,
+  OrdersModule,
+  PaymentsModule,
 ];
