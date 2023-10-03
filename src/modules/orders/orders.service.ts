@@ -15,6 +15,8 @@ import {
   UserRole,
 } from '@/models';
 
+import { PaymentsService } from '@/modules/payments';
+
 import { CreateOrderRequest, EditOrderRequest, OrderResponse } from './dtos';
 
 @Injectable()
@@ -26,13 +28,13 @@ export class OrdersService {
     private readonly cartItemRepository: Repository<CartItem>,
     @InjectRepository(OrderDetail)
     private readonly orderDetailRepository: Repository<OrderDetail>,
+    private readonly paymentsService: PaymentsService,
   ) {}
 
   /**
    * DTO : ① 배송 기본 정보 ② 주문할 아이템 ID 목록을 받아옵니다.
    *
-   * - Logic A : 가격 정보를 가공합니다.
-   * - Logic B : 배송비 추가 여부 및 금액을 결정합니다.
+   * - Logic A : 가격 정보를 처리합니다.
    *
    * * Mapping 주문 : DTO + 가격 정보 + User
    * * Mapping 주문 상세 : Order + CartItem + Variant + Product 가격
@@ -51,37 +53,22 @@ export class OrdersService {
     });
 
     // Logic A : 가격 정보 계산
-    let [totalPrice, paymentReal] = [0, 0];
-    cartItems.forEach((item) => {
-      const { retailPrice, sellingPrice } = item.variant.product;
-      const { quantity } = item;
+    const [totalPrice, paymentReal] = this.calculateOrderPrices(cartItems);
 
-      totalPrice += retailPrice * quantity;
-      paymentReal += sellingPrice * quantity;
-    });
-
-    // Logic B : 배송비 추가
-    if (paymentReal < APP.MINIMUM_AMOUNT_FOR_FREE_SHIPPING) {
-      paymentReal += APP.SHIPPING_FEE;
-    }
+    // 결제 위변조 검사
+    const { merchantUID, paidAt, paymentMethod, orderStatus } =
+      await this.paymentsService.verify(dto.impUID, 100);
 
     // 주문 Mapping : DTO → 주문 Entity
-    const requestOrder = dto.toEntity(user, totalPrice, paymentReal);
-
-    // 주문 상세 Mapping : CartItem[] → OrderDetail[]
-    requestOrder.orderDetails = cartItems.map((item) => {
-      const { sellingPrice } = item.variant.product;
-      const { quantity, variant } = item;
-
-      return this.orderDetailRepository.create({
-        price: sellingPrice,
-        quantity: quantity,
-        variant: variant,
-      });
-    });
+    const order = dto.toEntity(user, totalPrice, paymentReal);
+    order.orderDetails = this.mapCartItemsToOrderDetails(cartItems);
+    order.merchantUID = merchantUID;
+    order.paidAt = paidAt;
+    order.paymentMethod = paymentMethod;
+    order.status = orderStatus;
 
     // DB 저장
-    const savedOrder = await this.orderRepository.save(requestOrder);
+    const savedOrder = await this.orderRepository.save(order);
 
     if (!savedOrder) {
       throw new HttpException(
@@ -158,5 +145,35 @@ export class OrdersService {
         HttpStatus.BAD_REQUEST,
       );
     }
+  }
+
+  private calculateOrderPrices(cartItems: CartItem[]): [number, number] {
+    let [totalPrice, paymentReal] = [0, 0];
+    cartItems.forEach((item) => {
+      const { retailPrice, sellingPrice } = item.variant.product;
+      const { quantity } = item;
+
+      totalPrice += retailPrice * quantity;
+      paymentReal += sellingPrice * quantity;
+    });
+
+    // Logic B : 배송비 추가
+    if (paymentReal < APP.MINIMUM_AMOUNT_FOR_FREE_SHIPPING) {
+      paymentReal += APP.SHIPPING_FEE;
+    }
+    return [totalPrice, paymentReal];
+  }
+
+  private mapCartItemsToOrderDetails(cartItems: CartItem[]) {
+    return cartItems.map((item) => {
+      const { sellingPrice } = item.variant.product;
+      const { quantity, variant } = item;
+
+      return this.orderDetailRepository.create({
+        price: sellingPrice,
+        quantity: quantity,
+        variant: variant,
+      });
+    });
   }
 }

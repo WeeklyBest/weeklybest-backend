@@ -2,7 +2,7 @@ import { applyDecorators } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 
 export const OrderDetailDoc = {
-  pricate() {
+  price() {
     return applyDecorators(
       ApiProperty({
         description: '가격',
