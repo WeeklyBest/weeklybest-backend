@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-import { PagingQuery } from '@/common';
+import { Pagination, PagingQuery } from '@/common';
 import { User } from '@/models';
 
 import { CurrentUser, JwtAuthGuard } from '../auth';
@@ -55,10 +55,10 @@ export class OrdersController {
   @Get('me')
   @UseGuards(JwtAuthGuard)
   async getMe(
-    @Param() pagingQuery: PagingQuery,
+    @Param() { pageNum = 1, pageSize = 5 }: PagingQuery,
     @CurrentUser() user: User,
-  ): Promise<OrderResponse[]> {
-    return this.ordersService.getMe(pagingQuery, user);
+  ): Promise<Pagination<OrderResponse>> {
+    return this.ordersService.getMe({ pageNum, pageSize }, user);
   }
 
   @Doc.edit('주문 정보 수정')

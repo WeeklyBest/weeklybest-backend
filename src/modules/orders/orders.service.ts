@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { In, Repository } from 'typeorm';
 
-import { PagingQuery } from '@/common';
+import { Pagination, PagingQuery, getPagination } from '@/common';
 import { APP, MESSAGE } from '@/constants';
 import {
   CartItem,
@@ -92,8 +92,8 @@ export class OrdersService {
   async getMe(
     { pageNum, pageSize }: PagingQuery,
     user: User,
-  ): Promise<OrderResponse[]> {
-    const orders = await this.orderRepository.find({
+  ): Promise<Pagination<OrderResponse>> {
+    const [orders, count] = await this.orderRepository.findAndCount({
       where: {
         user,
       },
@@ -104,7 +104,9 @@ export class OrdersService {
       },
     });
 
-    return orders.map((order) => new OrderResponse(order));
+    const list = orders.map((order) => new OrderResponse(order));
+
+    return getPagination(list, count, { pageNum, pageSize });
   }
 
   async edit(id: number, dto: EditOrderRequest, user: User) {
