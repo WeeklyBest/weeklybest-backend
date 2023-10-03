@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 
 import { Pagination, getPagination } from '@/common';
 import {
+  Category,
   ColorRepository,
   PRODUCT_ERROR,
   Product,
@@ -25,6 +26,8 @@ export class ProductsService {
   constructor(
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
+    @InjectRepository(Category)
+    private readonly categoryRepository: Repository<Category>,
     private readonly colorRepository: ColorRepository,
     private readonly sizeValueRepository: SizeValueRepository,
     @InjectRepository(Wishlist)
@@ -69,8 +72,27 @@ export class ProductsService {
         query.orderBy(`${productAlias}.createdAt`, 'DESC');
     }
 
-    // // 상품 그룹별 필터링
-    if (category) {
+    // 상품 그룹별 필터링
+    if (category === 'sale') {
+      query.where(`${productAlias}.retailPrice > ${productAlias}.sellingPrice`);
+    } else if (category === 'new') {
+      query.where(
+        `${productAlias}.createdAt BETWEEN DATE_ADD(NOW(), INTERVAL -1 MONTH) AND NOW()`,
+      );
+    } else if (category) {
+      const dbCategory = await this.categoryRepository.findOne({
+        where: {
+          code: category,
+        },
+      });
+
+      if (!dbCategory) {
+        throw new HttpException(
+          '카테고리를 찾을 수 없습니다.',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
       query.where(`${categoryAlias}.code = :code`, {
         code: category,
       });

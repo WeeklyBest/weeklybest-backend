@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TypeOrmCustomModule } from '@/common';
 import {
+  Category,
   ColorRepository,
   Product,
   SizeValueRepository,
@@ -17,7 +18,7 @@ import { ProductsService } from './products.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Product, Wishlist]),
+    TypeOrmModule.forFeature([Product, Category, Wishlist]),
     TypeOrmCustomModule.forFeature([ColorRepository, SizeValueRepository]),
     ReviewsModule,
     QuestionsModule,
