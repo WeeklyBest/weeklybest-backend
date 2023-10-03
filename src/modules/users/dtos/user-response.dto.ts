@@ -34,6 +34,14 @@ export class UserResponse {
   @Expose()
   snsId: string;
 
+  @SwaggerDoc.createdAt()
+  @Expose()
+  createdAt: Date;
+
+  @SwaggerDoc.updatedAt()
+  @Expose()
+  updatedAt: Date;
+
   constructor(user: User) {
     Object.assign(this, plainToInstance(UserResponse, user));
   }
