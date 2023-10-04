@@ -4,6 +4,7 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { CookieOptions, Response } from 'express';
 
+import { removeCookie } from '@/common';
 import { AuthConfig } from '@/configs';
 import { CONFIG, COOKIE } from '@/constants';
 import { User } from '@/models';
@@ -55,10 +56,7 @@ export class AuthController {
   ) {
     await this.authService.removeRefreshToken(user.id);
 
-    res.cookie(COOKIE.REFRESH_TOKEN, '', {
-      maxAge: 0,
-      httpOnly: true,
-    });
+    removeCookie(res, COOKIE.REFRESH_TOKEN, { httpOnly: true });
   }
 
   @Doc.kakao('카카오 회원가입/로그인')
