@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, DeleteDateColumn, Entity, ManyToOne } from 'typeorm';
 
 import { CommonIdEntity } from '@/common';
 import { SNSProvider, USER, UserRole, Wishlist } from '@/models';
@@ -53,6 +53,9 @@ export class User extends CommonIdEntity {
     select: false,
   })
   refreshToken: string;
+
+  @DeleteDateColumn()
+  deletedAt: Date;
 
   // 관계 설정
   @ManyToOne(() => Wishlist, (wishlist) => wishlist.user)
