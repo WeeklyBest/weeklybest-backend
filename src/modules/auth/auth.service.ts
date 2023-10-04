@@ -26,6 +26,7 @@ export class AuthService {
 
     const existsUser: User = await this.userRepository.findOne({
       where: { email },
+      withDeleted: true,
     });
 
     if (existsUser) {
@@ -52,6 +53,14 @@ export class AuthService {
     }
   }
 
+  async deleteAccount(user: User) {
+    await this.userRepository.softDelete(user.id);
+  }
+
+  async removeRefreshToken(userId: number) {
+    this.userRepository.update(userId, { refreshToken: null });
+  }
+
   async validateLocalUser(email: string, password: string): Promise<User> {
     const user = await this.userRepository.findWithPassword(email);
 
@@ -68,10 +77,6 @@ export class AuthService {
     }
 
     return user;
-  }
-
-  async removeRefreshToken(userId: number) {
-    this.userRepository.update(userId, { refreshToken: null });
   }
 
   async getUserIfRefreshTokenMatches(id: number, refreshToken: string) {

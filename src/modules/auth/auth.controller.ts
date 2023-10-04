@@ -1,9 +1,18 @@
-import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Post,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
 
 import { CookieOptions, Response } from 'express';
 
+import { removeCookie } from '@/common';
 import { AuthConfig } from '@/configs';
 import { CONFIG, COOKIE } from '@/constants';
 import { User } from '@/models';
@@ -36,6 +45,17 @@ export class AuthController {
     await this.authService.join(joinForm);
   }
 
+  @Doc.deleteLocalAccount('회원탈퇴')
+  @Delete('local')
+  @UseGuards(JwtAuthGuard)
+  async deleteLocalAccount(
+    @CurrentUser() user: User,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<void> {
+    await this.authService.deleteAccount(user);
+    removeCookie(res, COOKIE.REFRESH_TOKEN, { httpOnly: true });
+  }
+
   @Doc.login('로그인')
   @Post('login')
   @UseGuards(LocalAuthGuard)
@@ -55,10 +75,7 @@ export class AuthController {
   ) {
     await this.authService.removeRefreshToken(user.id);
 
-    res.cookie(COOKIE.REFRESH_TOKEN, '', {
-      maxAge: 0,
-      httpOnly: true,
-    });
+    removeCookie(res, COOKIE.REFRESH_TOKEN, { httpOnly: true });
   }
 
   @Doc.kakao('카카오 회원가입/로그인')
