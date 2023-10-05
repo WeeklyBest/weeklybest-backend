@@ -1,16 +1,16 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import {
-  CART_ERROR,
-  Cart,
-  CartItem,
-  CartRepository,
-  User,
-  Variant,
-} from '@/models';
+import { ERROR } from '@/docs';
+import { Cart, CartItem, CartRepository, User, Variant } from '@/models';
 
 import {
   CartItemResponse,
@@ -29,7 +29,9 @@ export class CartService {
   ) {}
 
   async addItem({ variantId, quantity }: AddCartItemRequest, user: User) {
-    let cart = await this.cartRepository.findOne({ where: { user } });
+    let cart = await this.cartRepository.findOne({
+      where: { user: { id: user.id } },
+    });
 
     if (!cart) {
       cart = await this.cartRepository.save({
@@ -41,7 +43,7 @@ export class CartService {
     let cartItem = await this.cartItemRepository.findOne({
       relations: ['variant'],
       where: {
-        cart,
+        cart: { id: cart.id },
         variant: {
           id: variantId,
         },
@@ -68,10 +70,7 @@ export class CartService {
     const result = await this.cartItemRepository.save(cartItem);
 
     if (!result) {
-      throw new HttpException(
-        CART_ERROR.CREATE_ERROR,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new InternalServerErrorException(ERROR.CART.CREATE_ERROR);
     }
   }
 
@@ -99,7 +98,7 @@ export class CartService {
     const duplicatedCartItem = await this.cartItemRepository.findOne({
       relations: ['variant'],
       where: {
-        cart,
+        cart: { id: cart.id },
         variant: {
           id: variantId,
         },
@@ -107,7 +106,7 @@ export class CartService {
     });
 
     if (duplicatedCartItem) {
-      throw new HttpException(CART_ERROR.VARIANT_CONFLICT, HttpStatus.CONFLICT);
+      throw new ConflictException(ERROR.CART.VARIANT_CONFLICT);
     }
 
     const oldVariant = existsCartItem.variant;
@@ -119,10 +118,7 @@ export class CartService {
 
     // 3. 존재하지 않는 옵션이거나 다른 상품의 옵션인지 체크 ✅
     if (!newVariant || oldVariant.productId !== newVariant.productId) {
-      throw new HttpException(
-        CART_ERROR.NOT_SUPPORT_VARIANT,
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new BadRequestException(ERROR.CART.NOT_SUPPORT_VARIANT);
     }
 
     // 4. 장바구니 아이템 옵션 업데이트
@@ -144,14 +140,14 @@ export class CartService {
     // 2. 구매 제한 재고 수량 체크 ✅
     const maxQuantity = existsCartItem.variant.quantity;
     if (quantity > maxQuantity) {
-      throw new HttpException(CART_ERROR.OUT_OF_STOCK, HttpStatus.CONFLICT);
+      throw new ConflictException(ERROR.CART.OUT_OF_STOCK);
     }
 
     // 3. 장바구니 아이템 데이터 업데이트
     const result = await this.cartItemRepository.update(
       {
         id: cartItemId,
-        cart,
+        cart: { id: cart.id },
       },
       {
         quantity,
@@ -160,7 +156,7 @@ export class CartService {
 
     // 4. 업데이트된 레코드 유무 체크 ✅
     if (result.affected <= 0) {
-      throw new HttpException(CART_ERROR.UPDATE_ERROR, HttpStatus.NOT_FOUND);
+      throw new NotFoundException(ERROR.CART.UPDATE_ERROR);
     }
   }
 
@@ -169,19 +165,18 @@ export class CartService {
 
     const result = await this.cartItemRepository.delete({
       id,
-      cart,
+      cart: { id: cart.id },
     });
-    if (result.affected <= 0) {
-      throw new HttpException(CART_ERROR.NOT_FOUND, HttpStatus.NOT_FOUND);
-    }
+
+    this.checkCartExistence(result.affected > 0);
   }
 
   private async getUserCart(user: User) {
-    const cart = await this.cartRepository.findOne({ where: { user } });
+    const cart = await this.cartRepository.findOne({
+      where: { user: { id: user.id } },
+    });
 
-    if (!cart) {
-      throw new HttpException(CART_ERROR.NOT_FOUND, HttpStatus.NOT_FOUND);
-    }
+    this.checkCartExistence(!!cart);
 
     return cart;
   }
@@ -190,7 +185,7 @@ export class CartService {
     const existsCartItem = await this.cartItemRepository.findOne({
       where: {
         id: cartItemId,
-        cart,
+        cart: { id: cart.id },
       },
       relations: {
         variant: true,
@@ -198,9 +193,15 @@ export class CartService {
     });
 
     if (!existsCartItem) {
-      throw new HttpException(CART_ERROR.ITEM_NOT_FOUND, HttpStatus.NOT_FOUND);
+      throw new NotFoundException(ERROR.CART.ITEM_NOT_FOUND);
     }
 
     return existsCartItem;
+  }
+
+  private checkCartExistence(trueCondition: boolean) {
+    if (!trueCondition) {
+      throw new NotFoundException(ERROR.CART.NOT_FOUND);
+    }
   }
 }

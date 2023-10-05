@@ -1,9 +1,15 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { QUESTION_ERROR, Question, User, UserRole } from '@/models';
+import { ERROR } from '@/docs';
+import { Question, User, UserRole } from '@/models';
 
 import {
   CreateQuestionRequest,
@@ -34,10 +40,7 @@ export class QuestionsService {
     );
 
     if (!newQuestion) {
-      throw new HttpException(
-        QUESTION_ERROR.CREATE_ERROR,
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new BadRequestException(ERROR.QUESTION.CREATE_ERROR);
     }
   }
 
@@ -49,13 +52,11 @@ export class QuestionsService {
       relations: ['user', 'product'],
     });
 
-    if (!question) {
-      throw new HttpException(QUESTION_ERROR.NOT_FOUND, HttpStatus.NOT_FOUND);
-    }
+    this.checkQuestionExistence(!!question);
 
     const isAuthorized = this.authPrivateQuestion(question, user);
     if (isAuthorized) {
-      throw new HttpException(QUESTION_ERROR.FORBIDDEN, HttpStatus.FORBIDDEN);
+      throw new ForbiddenException(ERROR.QUESTION.FORBIDDEN);
     }
 
     return new QuestionResponse(question);
@@ -65,30 +66,24 @@ export class QuestionsService {
     const result = await this.questionRepository.update(
       {
         id,
-        user,
+        user: { id: user.id },
       },
       dto,
     );
 
     if (result.affected === 0) {
-      throw new HttpException(
-        QUESTION_ERROR.UPDATE_ERROR,
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new BadRequestException(ERROR.QUESTION.UPDATE_ERROR);
     }
   }
 
   async removeQuestion(id: number, user: User): Promise<void> {
     const result = await this.questionRepository.delete({
       id,
-      user,
+      user: { id: user.id },
     });
 
     if (result.affected === 0) {
-      throw new HttpException(
-        QUESTION_ERROR.DELETE_ERROR,
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new BadRequestException(ERROR.QUESTION.DELETE_ERROR);
     }
   }
 
@@ -124,5 +119,11 @@ export class QuestionsService {
       question.user.id !== user.id &&
       user.role !== UserRole.ADMIN
     );
+  }
+
+  private checkQuestionExistence(trueCondition: boolean) {
+    if (!trueCondition) {
+      throw new NotFoundException(ERROR.QUESTION.NOT_FOUND);
+    }
   }
 }

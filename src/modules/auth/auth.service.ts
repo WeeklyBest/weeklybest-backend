@@ -1,4 +1,8 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 
@@ -6,12 +10,13 @@ import * as bcrypt from 'bcrypt';
 
 import { AuthConfig } from '@/configs';
 import { CONFIG } from '@/constants';
+import { ERROR } from '@/docs';
 import { User, UserRepository, UserRole } from '@/models';
 
 import { JoinForm, OAuthRequest } from './dtos';
 import { IJwtPayload } from './interface';
 
-import { AUTH, AUTH_ERROR } from './auth.constant';
+import { AUTH } from './auth.constant';
 
 @Injectable()
 export class AuthService {
@@ -30,10 +35,7 @@ export class AuthService {
     });
 
     if (existsUser) {
-      throw new HttpException(
-        AUTH_ERROR.DUPLICATE_EMAIL,
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new BadRequestException(ERROR.AUTH.DUPLICATE_EMAIL);
     }
 
     try {
@@ -46,10 +48,7 @@ export class AuthService {
         }),
       );
     } catch (error) {
-      throw new HttpException(
-        AUTH_ERROR.JOIN_ERROR,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new InternalServerErrorException(ERROR.AUTH.JOIN_ERROR);
     }
   }
 
@@ -69,12 +68,7 @@ export class AuthService {
     const isPasswordValid = await bcrypt.compare(password, user.password);
     delete user.password;
 
-    if (!isPasswordValid) {
-      throw new HttpException(
-        AUTH_ERROR.BAD_AUTH_REQUEST,
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+    this.checkAuthValidity(isPasswordValid);
 
     return user;
   }
@@ -123,28 +117,25 @@ export class AuthService {
       });
 
       if (result.affected === 0) {
-        throw new HttpException(
-          AUTH_ERROR.REFRESH_FAILURE,
-          HttpStatus.BAD_REQUEST,
-        );
+        throw new BadRequestException(ERROR.AUTH.REFRESH_FAILURE);
       }
 
       return refreshToken;
     } catch (error) {
-      throw new HttpException(
-        AUTH_ERROR.JWT_ERROR,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new InternalServerErrorException(ERROR.AUTH.JWT_ERROR);
     }
   }
 
   async getOAuthUser(oAuthRequest: OAuthRequest): Promise<User> {
+    // 1. DB에서 email로 가입 여부를 확인합니다.
     const existsUser: User = await this.userRepository.findOne({
       where: { email: oAuthRequest.email },
     });
 
+    // 2. 가입되어 있지 않으면 null을 반환합니다.
     if (!existsUser) return null;
 
+    // 3. DB에 저장된 유저의 SNS 정보와 Request의 SNS 정보가 다르면 예외를 던집니다.
     this.checkOAuthInfo(existsUser, oAuthRequest);
 
     return existsUser;
@@ -152,10 +143,7 @@ export class AuthService {
 
   private checkOAuthInfo(user: User, { provider, snsId }: OAuthRequest) {
     if (user.provider !== provider || user.snsId != snsId) {
-      throw new HttpException(
-        AUTH_ERROR.MISMATCHED_SNS_INFO,
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new BadRequestException(ERROR.AUTH.MISMATCHED_SNS_INFO);
     }
   }
 
@@ -163,19 +151,13 @@ export class AuthService {
     try {
       return this.userRepository.save(this.userRepository.create(oAuthRequest));
     } catch (error) {
-      throw new HttpException(
-        AUTH_ERROR.JOIN_ERROR,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new InternalServerErrorException(ERROR.AUTH.JOIN_ERROR);
     }
   }
 
   private checkAuthValidity(condition: any) {
     if (!!!condition) {
-      throw new HttpException(
-        AUTH_ERROR.BAD_AUTH_REQUEST,
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new BadRequestException(ERROR.AUTH.BAD_AUTH_REQUEST);
     }
   }
 }

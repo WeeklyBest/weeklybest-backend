@@ -1,16 +1,21 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { DataSource, Repository } from 'typeorm';
 
-import { ADDRESS_ERROR, Address, User } from '@/models';
+import { PagingQuery, useTransaction } from '@/common';
+import { ERROR } from '@/docs';
+import { Address, User } from '@/models';
 
 import {
   AddressResponse,
   CreateAddressRequest,
   EditAddressRequest,
 } from './dtos';
-import { PagingQuery, useTransaction } from '@/common';
 
 @Injectable()
 export class AddressesService {
@@ -29,21 +34,16 @@ export class AddressesService {
     );
 
     if (!newAddress) {
-      throw new HttpException(
-        ADDRESS_ERROR.CREATE_ERROR,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new InternalServerErrorException(ERROR.ADDRESS.CREATE_ERROR);
     }
   }
 
   async getOne(id: number, user: User): Promise<AddressResponse> {
     const address = await this.addressesRepository.findOne({
-      where: { id, user },
+      where: { id, user: { id: user.id } },
     });
 
-    if (!address) {
-      throw new HttpException(ADDRESS_ERROR.NOT_FOUND, HttpStatus.NOT_FOUND);
-    }
+    this.checkAddressExistence(!!address);
 
     return new AddressResponse(address);
   }
@@ -54,7 +54,7 @@ export class AddressesService {
   ): Promise<AddressResponse[]> {
     const addresses = await this.addressesRepository.find({
       where: {
-        user,
+        user: { id: user.id },
       },
       skip: (pageNum - 1) * pageSize,
       take: pageSize,
@@ -75,7 +75,7 @@ export class AddressesService {
         await addressRepository.update(
           {
             isDefault: true,
-            user,
+            user: { id: user.id },
           },
           {
             isDefault: false,
@@ -86,16 +86,13 @@ export class AddressesService {
       const result = await addressRepository.update(
         {
           id,
-          user,
+          user: { id: user.id },
         },
         dto,
       );
 
       if (result.affected <= 0) {
-        throw new HttpException(
-          ADDRESS_ERROR.UPDATE_ERROR,
-          HttpStatus.BAD_REQUEST,
-        );
+        throw new InternalServerErrorException(ERROR.ADDRESS.UPDATE_ERROR);
       }
     });
   }
@@ -103,14 +100,17 @@ export class AddressesService {
   async remove(id: number, user: User) {
     const result = await this.addressesRepository.delete({
       id,
-      user,
+      user: { id: user.id },
     });
 
     if (result.affected <= 0) {
-      throw new HttpException(
-        ADDRESS_ERROR.DELETE_ERROR,
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new InternalServerErrorException(ERROR.ADDRESS.DELETE_ERROR);
+    }
+  }
+
+  private checkAddressExistence(trueCondition: boolean) {
+    if (!trueCondition) {
+      throw new NotFoundException(ERROR.ADDRESS.NOT_FOUND);
     }
   }
 }
