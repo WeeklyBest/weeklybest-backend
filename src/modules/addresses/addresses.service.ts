@@ -38,7 +38,7 @@ export class AddressesService {
 
   async getOne(id: number, user: User): Promise<AddressResponse> {
     const address = await this.addressesRepository.findOne({
-      where: { id, user },
+      where: { id, user: { id: user.id } },
     });
 
     if (!address) {
@@ -54,7 +54,7 @@ export class AddressesService {
   ): Promise<AddressResponse[]> {
     const addresses = await this.addressesRepository.find({
       where: {
-        user,
+        user: { id: user.id },
       },
       skip: (pageNum - 1) * pageSize,
       take: pageSize,
@@ -75,7 +75,7 @@ export class AddressesService {
         await addressRepository.update(
           {
             isDefault: true,
-            user,
+            user: { id: user.id },
           },
           {
             isDefault: false,
@@ -86,7 +86,7 @@ export class AddressesService {
       const result = await addressRepository.update(
         {
           id,
-          user,
+          user: { id: user.id },
         },
         dto,
       );
@@ -103,7 +103,7 @@ export class AddressesService {
   async remove(id: number, user: User) {
     const result = await this.addressesRepository.delete({
       id,
-      user,
+      user: { id: user.id },
     });
 
     if (result.affected <= 0) {

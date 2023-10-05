@@ -131,7 +131,7 @@ export class ProductsService {
     const wished = await this.wishlistRepository.findOne({
       where: {
         product: { id: productId },
-        user,
+        user: { id: user.id },
       },
     });
 
@@ -162,7 +162,7 @@ export class ProductsService {
       product: {
         id: productId,
       },
-      user,
+      user: { id: user.id },
     });
 
     if (result.affected === 0) {

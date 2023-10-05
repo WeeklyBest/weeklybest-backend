@@ -76,4 +76,17 @@ export class Product extends CommonIdEntity {
 
   @OneToMany(() => Wishlist, (wishlist) => wishlist.product)
   wishlist?: Wishlist[];
+
+  public increaseReviewCount() {
+    this.reviewCount++;
+  }
+
+  public decreaseReviewCount() {
+    if (this.reviewCount <= 0) {
+      this.reviewCount = 0;
+      return;
+    }
+
+    this.reviewCount--;
+  }
 }

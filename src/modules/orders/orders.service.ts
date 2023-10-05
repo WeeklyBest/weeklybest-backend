@@ -54,7 +54,7 @@ export class OrdersService {
       where: {
         id: In(dto.cartItemIds),
         cart: {
-          user,
+          user: { id: user.id },
         },
       },
       relations: ['cart', 'variant', 'variant.product'],
@@ -121,7 +121,9 @@ export class OrdersService {
   }
 
   async getOne(id: number, user: User): Promise<OrderResponse> {
-    const order = await this.orderRepository.findOne({ where: { id, user } });
+    const order = await this.orderRepository.findOne({
+      where: { id, user: { id: user.id } },
+    });
 
     this.checkOrderExistence(order);
 
@@ -134,7 +136,7 @@ export class OrdersService {
   ): Promise<Pagination<OrderResponse>> {
     const [orders, count] = await this.orderRepository.findAndCount({
       where: {
-        user,
+        user: { id: user.id },
       },
       skip: (pageNum - 1) * pageSize,
       take: pageSize,
@@ -165,7 +167,10 @@ export class OrdersService {
       }
     }
 
-    const result = await this.orderRepository.update({ id, user }, dto);
+    const result = await this.orderRepository.update(
+      { id, user: { id: user.id } },
+      dto,
+    );
 
     if (result.affected <= 0) {
       throw new HttpException(ORDER_ERROR.NOT_FOUND, HttpStatus.NOT_FOUND);
@@ -184,7 +189,7 @@ export class OrdersService {
           'orderDetails.variant',
           'orderDetails.variant.product',
         ],
-        where: { id, user },
+        where: { id, user: { id: user.id } },
       });
 
       this.checkOrderExistence(order);

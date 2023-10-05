@@ -38,6 +38,7 @@ export class Review extends CommonIdEntity {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
     nullable: false,
+    cascade: ['update'],
   })
   product: Product;
 }

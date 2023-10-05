@@ -65,7 +65,7 @@ export class QuestionsService {
     const result = await this.questionRepository.update(
       {
         id,
-        user,
+        user: { id: user.id },
       },
       dto,
     );
@@ -81,7 +81,7 @@ export class QuestionsService {
   async removeQuestion(id: number, user: User): Promise<void> {
     const result = await this.questionRepository.delete({
       id,
-      user,
+      user: { id: user.id },
     });
 
     if (result.affected === 0) {

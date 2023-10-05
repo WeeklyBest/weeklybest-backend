@@ -29,7 +29,9 @@ export class CartService {
   ) {}
 
   async addItem({ variantId, quantity }: AddCartItemRequest, user: User) {
-    let cart = await this.cartRepository.findOne({ where: { user } });
+    let cart = await this.cartRepository.findOne({
+      where: { user: { id: user.id } },
+    });
 
     if (!cart) {
       cart = await this.cartRepository.save({
@@ -41,7 +43,7 @@ export class CartService {
     let cartItem = await this.cartItemRepository.findOne({
       relations: ['variant'],
       where: {
-        cart,
+        cart: { id: cart.id },
         variant: {
           id: variantId,
         },
@@ -99,7 +101,7 @@ export class CartService {
     const duplicatedCartItem = await this.cartItemRepository.findOne({
       relations: ['variant'],
       where: {
-        cart,
+        cart: { id: cart.id },
         variant: {
           id: variantId,
         },
@@ -151,7 +153,7 @@ export class CartService {
     const result = await this.cartItemRepository.update(
       {
         id: cartItemId,
-        cart,
+        cart: { id: cart.id },
       },
       {
         quantity,
@@ -169,7 +171,7 @@ export class CartService {
 
     const result = await this.cartItemRepository.delete({
       id,
-      cart,
+      cart: { id: cart.id },
     });
     if (result.affected <= 0) {
       throw new HttpException(CART_ERROR.NOT_FOUND, HttpStatus.NOT_FOUND);
@@ -177,7 +179,9 @@ export class CartService {
   }
 
   private async getUserCart(user: User) {
-    const cart = await this.cartRepository.findOne({ where: { user } });
+    const cart = await this.cartRepository.findOne({
+      where: { user: { id: user.id } },
+    });
 
     if (!cart) {
       throw new HttpException(CART_ERROR.NOT_FOUND, HttpStatus.NOT_FOUND);
@@ -190,7 +194,7 @@ export class CartService {
     const existsCartItem = await this.cartItemRepository.findOne({
       where: {
         id: cartItemId,
-        cart,
+        cart: { id: cart.id },
       },
       relations: {
         variant: true,

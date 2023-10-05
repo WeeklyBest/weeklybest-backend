@@ -63,7 +63,7 @@ export class UsersService {
     const [wishlist, count] = await this.wishlistRepository.findAndCount({
       relations: ['product', 'product.images'],
       where: {
-        user,
+        user: { id: user.id },
       },
       skip: (pageNum - 1) * pageSize,
       take: pageSize,
@@ -112,7 +112,7 @@ export class UsersService {
     const [myQuestions, count] = await this.questionRepository.findAndCount({
       relations: ['product', 'product.images', 'user'],
       where: {
-        user,
+        user: { id: user.id },
       },
       skip: (pageNum - 1) * pageSize,
       take: pageSize,
@@ -135,7 +135,7 @@ export class UsersService {
     const [myReviews, count] = await this.reviewRepository.findAndCount({
       relations: ['user', 'product', 'product.images'],
       where: {
-        user,
+        user: { id: user.id },
       },
       skip: (pageNum - 1) * pageSize,
       take: pageSize,
