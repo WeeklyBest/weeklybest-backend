@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import * as bcrypt from 'bcrypt';
@@ -6,14 +11,8 @@ import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
 
 import { Pagination, PagingQuery, getPagination } from '@/common';
-import {
-  Question,
-  Review,
-  USER_ERROR,
-  User,
-  UserRepository,
-  Wishlist,
-} from '@/models';
+import { ERROR } from '@/docs';
+import { Question, Review, User, UserRepository, Wishlist } from '@/models';
 
 import { ProductCardResponse } from '../products';
 import { ChangePasswordForm, EditUserRequest } from './dtos';
@@ -37,7 +36,7 @@ export class UsersService {
     const user = await this.userRepository.findOne({ where: { id } });
 
     if (!user) {
-      throw new HttpException(USER_ERROR.NOT_FOUND, HttpStatus.UNAUTHORIZED);
+      throw new NotFoundException(ERROR.USER.NOT_FOUND);
     }
 
     return user;

@@ -4,7 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 
 import { Pagination, getPagination, useTransaction } from '@/common';
-import { Product, REVIEW_ERROR, Review, ReviewSort, User } from '@/models';
+import { ERROR } from '@/docs';
+import { Product, Review, ReviewSort, User } from '@/models';
 
 import {
   CreateReviewRequest,
@@ -56,7 +57,7 @@ export class ReviewsService {
     } catch (error) {
       error ||
         new HttpException(
-          REVIEW_ERROR.CREATE_ERROR,
+          ERROR.REVIEW.CREATE_ERROR,
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
     }
@@ -83,11 +84,11 @@ export class ReviewsService {
       );
 
       if (result.affected <= 0) {
-        throw new HttpException(REVIEW_ERROR.NOT_FOUND, HttpStatus.NOT_FOUND);
+        throw new HttpException(ERROR.REVIEW.NOT_FOUND, HttpStatus.NOT_FOUND);
       }
     } catch (error) {
       throw new HttpException(
-        REVIEW_ERROR.UPDATE_ERROR,
+        ERROR.REVIEW.UPDATE_ERROR,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -114,14 +115,14 @@ export class ReviewsService {
         const result = await reviewRepository.delete(review.id);
 
         if (result.affected <= 0) {
-          throw new HttpException(REVIEW_ERROR.NOT_FOUND, HttpStatus.NOT_FOUND);
+          throw new HttpException(ERROR.REVIEW.NOT_FOUND, HttpStatus.NOT_FOUND);
         }
 
         await productRepository.save(review.product);
       });
     } catch (error) {
       throw new HttpException(
-        REVIEW_ERROR.DELETE_ERROR,
+        ERROR.REVIEW.DELETE_ERROR,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -169,7 +170,7 @@ export class ReviewsService {
 
   private checkReviewExistence(review: Review) {
     if (!review) {
-      throw new HttpException(REVIEW_ERROR.NOT_FOUND, HttpStatus.NOT_FOUND);
+      throw new HttpException(ERROR.REVIEW.NOT_FOUND, HttpStatus.NOT_FOUND);
     }
   }
 }
