@@ -1,9 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
-import { Pagination, getPagination } from '@/common';
+import { Pagination, getPagination, useTransaction } from '@/common';
 import {
   Category,
   ColorRepository,
@@ -24,6 +24,7 @@ import {
 @Injectable()
 export class ProductsService {
   constructor(
+    private readonly dataSource: DataSource,
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
     @InjectRepository(Category)
@@ -144,33 +145,61 @@ export class ProductsService {
   }
 
   async addToWishlist(productId: number, user: User) {
-    const result = await this.wishlistRepository.insert({
-      product: { id: productId },
-      user,
-    });
+    await useTransaction(this.dataSource, async (manager) => {
+      const wishlistRepository = manager.getRepository(Wishlist);
+      const productRepository = manager.getRepository(Product);
 
-    if (result.raw === 0) {
-      throw new HttpException(
-        '위시리스트에 상품 추가 중 오류가 발생했습니다.',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+      const product = await this.productRepository.findOne({
+        where: { id: productId },
+      });
+
+      this.checkProductExistence(product);
+
+      const result = await wishlistRepository.insert({
+        product: { id: productId },
+        user: { id: user.id },
+      });
+
+      if (result.raw === 0) {
+        throw new HttpException(
+          '위시리스트에 상품 추가 중 오류가 발생했습니다.',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      product.increaseReviewCount();
+      await productRepository.save(product);
+    });
   }
 
   async removeFromWishlist(productId: number, user: User) {
-    const result = await this.wishlistRepository.delete({
-      product: {
-        id: productId,
-      },
-      user: { id: user.id },
-    });
+    await useTransaction(this.dataSource, async (manager) => {
+      const wishlistRepository = manager.getRepository(Wishlist);
+      const productRepository = manager.getRepository(Product);
 
-    if (result.affected === 0) {
-      throw new HttpException(
-        '위시리스트에서 상품 제거 중 오류가 발생했습니다.',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+      const product = await productRepository.findOne({
+        where: { id: productId },
+      });
+
+      this.checkProductExistence(product);
+
+      const result = await wishlistRepository.delete({
+        product: {
+          id: productId,
+        },
+        user: { id: user.id },
+      });
+
+      if (result.affected === 0) {
+        throw new HttpException(
+          '위시리스트에서 상품 제거 중 오류가 발생했습니다.',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      product.decreaseReviewCount();
+      await this.productRepository.save(product);
+    });
   }
 
   private checkProductExistence(product: Product) {
