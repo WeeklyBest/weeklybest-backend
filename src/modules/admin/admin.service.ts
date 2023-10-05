@@ -1,8 +1,15 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 
 import { PRODUCT, Product, ProductRepository } from '@/models';
 
 import { UploadProductForm } from './dtos';
+import { ERROR } from '@/docs';
 
 @Injectable()
 export class AdminService {
@@ -17,10 +24,7 @@ export class AdminService {
     });
 
     if (existsProduct) {
-      throw new HttpException(
-        PRODUCT.CREATE.DUPLICATE_PRODUCT,
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new BadRequestException(ERROR.PRODUCT.DUPLICATE_PRODUCT);
     }
 
     try {
@@ -35,10 +39,7 @@ export class AdminService {
         }),
       );
     } catch (error) {
-      throw new HttpException(
-        PRODUCT.CREATE.ERROR,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new InternalServerErrorException(ERROR.PRODUCT.NOT_FOUND);
     }
   }
 }

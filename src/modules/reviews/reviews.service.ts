@@ -1,4 +1,10 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { DataSource, Repository } from 'typeorm';
@@ -55,11 +61,9 @@ export class ReviewsService {
         );
       });
     } catch (error) {
-      error ||
-        new HttpException(
-          ERROR.REVIEW.CREATE_ERROR,
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
+      throw (
+        error || new InternalServerErrorException(ERROR.REVIEW.CREATE_ERROR)
+      );
     }
   }
 
@@ -71,7 +75,7 @@ export class ReviewsService {
       },
     });
 
-    this.checkReviewExistence(review);
+    this.checkReviewExistence(!!review);
 
     return new ReviewResponse(review);
   }
@@ -83,14 +87,9 @@ export class ReviewsService {
         dto,
       );
 
-      if (result.affected <= 0) {
-        throw new HttpException(ERROR.REVIEW.NOT_FOUND, HttpStatus.NOT_FOUND);
-      }
+      this.checkReviewExistence(result.affected > 0);
     } catch (error) {
-      throw new HttpException(
-        ERROR.REVIEW.UPDATE_ERROR,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new InternalServerErrorException(ERROR.REVIEW.UPDATE_ERROR);
     }
   }
 
@@ -108,23 +107,18 @@ export class ReviewsService {
           },
         });
 
-        this.checkReviewExistence(review);
+        this.checkReviewExistence(!!review);
 
         review.product.decreaseReviewCount();
 
         const result = await reviewRepository.delete(review.id);
 
-        if (result.affected <= 0) {
-          throw new HttpException(ERROR.REVIEW.NOT_FOUND, HttpStatus.NOT_FOUND);
-        }
+        this.checkReviewExistence(result.affected > 0);
 
         await productRepository.save(review.product);
       });
     } catch (error) {
-      throw new HttpException(
-        ERROR.REVIEW.DELETE_ERROR,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new InternalServerErrorException(ERROR.REVIEW.DELETE_ERROR);
     }
   }
 
@@ -168,9 +162,9 @@ export class ReviewsService {
     return getPagination(reviewList, count, { pageNum, pageSize });
   }
 
-  private checkReviewExistence(review: Review) {
-    if (!review) {
-      throw new HttpException(ERROR.REVIEW.NOT_FOUND, HttpStatus.NOT_FOUND);
+  private checkReviewExistence(trueCondition: boolean) {
+    if (!trueCondition) {
+      throw new NotFoundException(ERROR.REVIEW.NOT_FOUND);
     }
   }
 }

@@ -1,13 +1,18 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { DataSource, Repository } from 'typeorm';
 
 import { Pagination, getPagination, useTransaction } from '@/common';
+import { ERROR } from '@/docs';
 import {
   Category,
   ColorRepository,
-  PRODUCT_ERROR,
   Product,
   ProductSort,
   SizeValueRepository,
@@ -129,6 +134,8 @@ export class ProductsService {
       .orderBy(`${productImageAlias}.order`, 'ASC')
       .getOne();
 
+    this.checkProductExistence(!!product);
+
     const wished = await this.wishlistRepository.findOne({
       where: {
         product: { id: productId },
@@ -153,7 +160,7 @@ export class ProductsService {
         where: { id: productId },
       });
 
-      this.checkProductExistence(product);
+      this.checkProductExistence(!!product);
 
       const result = await wishlistRepository.insert({
         product: { id: productId },
@@ -181,7 +188,7 @@ export class ProductsService {
         where: { id: productId },
       });
 
-      this.checkProductExistence(product);
+      this.checkProductExistence(!!product);
 
       const result = await wishlistRepository.delete({
         product: {
@@ -202,9 +209,9 @@ export class ProductsService {
     });
   }
 
-  private checkProductExistence(product: Product) {
-    if (!product) {
-      throw new HttpException(PRODUCT_ERROR.NOT_FOUND, HttpStatus.NOT_FOUND);
+  private checkProductExistence(trueCondition: boolean) {
+    if (!trueCondition) {
+      throw new NotFoundException(ERROR.PRODUCT.NOT_FOUND);
     }
   }
 }
