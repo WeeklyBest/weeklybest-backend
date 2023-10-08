@@ -3,7 +3,7 @@ export type SwaggerMethodDocType<T> = {
 };
 
 export type SwaggerFiledDocType<T> = {
-  [K in keyof T]?: () => PropertyDecorator;
+  [K in keyof T]?: (prop?: any) => PropertyDecorator;
 };
 
 export type SwaggerEntityDocType<Entity> = SwaggerFiledDocType<Entity>;
