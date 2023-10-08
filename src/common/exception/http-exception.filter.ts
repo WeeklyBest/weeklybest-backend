@@ -8,7 +8,7 @@ import {
 
 import { Response } from 'express';
 
-import { IErrorResponse, IResponseEntity } from '../interface';
+import { IErrorResponse, IResponseEntity } from '../interfaces';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {

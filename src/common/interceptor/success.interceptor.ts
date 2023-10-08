@@ -8,7 +8,7 @@ import {
 import { Response } from 'express';
 import { map, Observable } from 'rxjs';
 
-import { IResponseEntity } from '../interface';
+import { IResponseEntity } from '../interfaces';
 
 @Injectable()
 export class SuccessInterceptor implements NestInterceptor {

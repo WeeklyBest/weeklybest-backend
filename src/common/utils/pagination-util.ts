@@ -1,5 +1,5 @@
 import { Pagination } from '../dtos';
-import { IPagingOptions } from '../interface';
+import { IPagingOptions } from '../interfaces';
 
 export function getPagination<T>(
   list: T[],
