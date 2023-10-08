@@ -15,8 +15,10 @@ export type SwaggerMethodDocType<T> = {
 };
 
 export type SwaggerFiledDocType<T> = {
-  [K in keyof T]: () => PropertyDecorator;
+  [K in keyof T]?: () => PropertyDecorator;
 };
+
+export type SwaggerEntityDocType<Entity> = SwaggerFiledDocType<Entity>;
 
 export interface IPagingOptions {
   pageNum: number;

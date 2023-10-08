@@ -1,12 +1,12 @@
-import { UserDoc } from '@/docs';
+import { UserDtoDec } from '../decorator';
 
 export class JoinForm {
-  @UserDoc.email()
+  @UserDtoDec.email()
   email: string;
 
-  @UserDoc.password()
+  @UserDtoDec.password()
   password: string;
 
-  @UserDoc.name()
+  @UserDtoDec.name()
   name: string;
 }
