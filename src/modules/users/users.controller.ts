@@ -6,7 +6,7 @@ import { User } from '@/models';
 
 import { CurrentUser, JwtAuthGuard } from '@/modules/auth';
 
-import { ChangePasswordForm, EditUserRequest, UserResponse } from './dtos';
+import { EditUserRequest, UserResponse, ChangePasswordForm } from './dtos';
 
 import { UsersControllerDoc as Doc } from './controller.doc';
 import { UsersService } from './users.service';

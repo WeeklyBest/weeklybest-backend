@@ -1,59 +1,47 @@
-import { ApiProperty } from '@nestjs/swagger';
-
-import { SwaggerDoc } from '@/common';
-import { CartDoc, ProductDoc } from '@/docs';
+import { VariantDoc } from '@/docs';
 import { CartItem } from '@/models';
 
 import { ColorResponse } from '@/modules/colors';
+import { ProductResponseDto } from '@/modules/products';
 import { SizeValueResponse } from '@/modules/size';
 
+import { CartItemResponseDto, CartResponseDto } from '../decorators';
+
 export class CartItemResponse {
-  @SwaggerDoc.id('장바구니 아이템 식별자')
+  @CartItemResponseDto.cartItemId()
   id: number;
 
-  @SwaggerDoc.id('상품 식별자')
+  @ProductResponseDto.productId()
   productId: number;
 
-  @SwaggerDoc.id('상품 품목 식별자')
+  @VariantDoc.variantId()
   variantId: number;
 
-  @ProductDoc.name()
+  @ProductResponseDto.name()
   productName: string;
 
-  @ProductDoc.thumbnail()
+  @ProductResponseDto.thumbnail()
   thumbnail: string;
 
-  @ProductDoc.retailPrice()
+  @ProductResponseDto.retailPrice()
   retailPrice: number;
 
-  @ProductDoc.sellingPrice()
+  @ProductResponseDto.sellingPrice()
   sellingPrice: number;
 
-  @CartDoc.quantity()
+  @CartResponseDto.quantity()
   quantity: number;
 
-  @ApiProperty({
-    description: '재고 수량',
-    example: 10,
-  })
+  @CartItemResponseDto.stock()
   stock: number;
 
-  @ApiProperty({
-    description: '구매 불가 상태',
-    example: false,
-  })
+  @CartItemResponseDto.disabled()
   disabled: boolean;
 
-  @ApiProperty({
-    description: '색상 옵션',
-    type: ColorResponse,
-  })
+  @CartItemResponseDto.color()
   color: ColorResponse;
 
-  @ApiProperty({
-    description: '사이즈 옵션',
-    type: SizeValueResponse,
-  })
+  @CartItemResponseDto.size()
   size: SizeValueResponse;
 
   constructor(cartItem: CartItem) {

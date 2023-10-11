@@ -51,7 +51,7 @@ export function getIsNotEmptyMessage({ property }: IPropsWithPropertyName) {
 
 // 타입 관련 함수
 function getTypeCheckMessage(property: string, type: string) {
-  return `${property} 필드는 ${type} 형식이어야 합니다.`;
+  return `${property} 필드는 ${type}이어야 합니다.`;
 }
 
 export function getIsStringMessage({ property }: IPropsWithPropertyName) {
@@ -66,11 +66,19 @@ export function getIsNumberStringMessage({ property }: IPropsWithPropertyName) {
   return getTypeCheckMessage(property, '숫자형 문자열');
 }
 
-export function getIdDateMessage({ property }: IPropsWithPropertyName) {
-  return getTypeCheckMessage(property, '날짜');
+export function getIsDateMessage({ property }: IPropsWithPropertyName) {
+  return getTypeCheckMessage(property, '날짜 형식');
+}
+
+export function getIsBooleanMessage({ property }: IPropsWithPropertyName) {
+  return getTypeCheckMessage(property, '논리형');
 }
 
 // String 타입 관련 함수
+export function getIsUrlMessage({ property }: IPropsWithPropertyName) {
+  return getTypeCheckMessage(property, 'URL 형식');
+}
+
 export function getStringTypeMessage({
   property,
   description,

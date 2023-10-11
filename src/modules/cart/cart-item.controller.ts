@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -66,5 +67,15 @@ export class CartItemController {
     @CurrentUser() user: User,
   ) {
     await this.cartService.editItem(id, dto, user);
+  }
+
+  @Doc.remove('장바구니에서 상품 제거')
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  async remove(
+    @Param() { id: id }: CartItemIdParam,
+    @CurrentUser() user: User,
+  ) {
+    await this.cartService.removeItem(id, user);
   }
 }

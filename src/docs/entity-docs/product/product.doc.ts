@@ -25,14 +25,6 @@ export const ProductDoc = {
     );
   },
 
-  images() {
-    return applyDecorators(
-      ApiProperty({
-        description: '상품 이미지 목록',
-      }),
-    );
-  },
-
   retailPrice() {
     return applyDecorators(
       ApiPropertyOptional({

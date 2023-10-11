@@ -3,11 +3,12 @@ import { ApiProperty } from '@nestjs/swagger';
 
 import { Column } from 'typeorm';
 
+import { SwaggerDoc } from '@/common';
 import { SNSProvider, USER } from '@/models';
 
 export const UserDoc = {
   userId() {
-    return applyDecorators();
+    return applyDecorators(SwaggerDoc.id('회원 식별자'));
   },
 
   email() {
