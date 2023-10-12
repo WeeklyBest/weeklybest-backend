@@ -4,6 +4,7 @@ import {
   ApiConflictResponse,
   ApiCreatedResponse,
   ApiNotFoundResponse,
+  ApiOkResponse,
   ApiOperation,
 } from '@nestjs/swagger';
 
@@ -66,6 +67,20 @@ export const CartItemControllerDoc = {
       ApiOperation({
         summary,
         description: '장바구니에 등록된 상품을 하나 제거합니다.',
+      }),
+      cartItemNotFoundResponse(),
+    );
+  },
+
+  count(summary: string) {
+    return applyDecorators(
+      ApiOperation({
+        summary,
+        description: '장바구니에 등록된 상품 개수를 조회합니다.',
+      }),
+      ApiOkResponse({
+        description: '장바구니 상품 개수 조회 성공',
+        type: Number,
       }),
     );
   },
