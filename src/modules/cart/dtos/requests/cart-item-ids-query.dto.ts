@@ -5,5 +5,5 @@ import { CartItemRequestDto } from '../decorators';
 export class CartItemIdsQuery {
   @CartItemRequestDto.cartItemIds()
   @IsOptional()
-  id: number[];
+  ids: number[];
 }
