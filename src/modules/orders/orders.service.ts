@@ -1,10 +1,4 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { DataSource, In, Repository } from 'typeorm';
@@ -13,10 +7,12 @@ import {
   Pagination,
   PagingQuery,
   getPagination,
+  handleException,
+  throwExceptionOrNot,
   useTransaction,
 } from '@/common';
-import { APP, MESSAGE } from '@/constants';
-import { ERROR } from '@/docs';
+import { APP } from '@/constants';
+import { EXCEPTION } from '@/docs';
 import {
   CartItem,
   Order,
@@ -90,9 +86,7 @@ export class OrdersService {
 
       const savedOrder = await orderRepository.save(order);
 
-      if (!savedOrder) {
-        throw new InternalServerErrorException(ERROR.ORDER.CREATE_ERROR);
-      }
+      throwExceptionOrNot(savedOrder, EXCEPTION.ORDER.CREATE_ERROR);
 
       // 아이템 판매처리
       cartItems.forEach(async (item) => {
@@ -100,12 +94,10 @@ export class OrdersService {
 
         const calculatedQuantity = variant.quantity - item.quantity;
 
-        if (calculatedQuantity < 0) {
-          throw new HttpException(
-            '재고 수량이 부족합니다.',
-            HttpStatus.BAD_REQUEST,
-          );
-        }
+        throwExceptionOrNot(
+          calculatedQuantity >= 0,
+          EXCEPTION.ORDER.OUT_OF_STOCK,
+        );
 
         variant.quantity = calculatedQuantity;
 
@@ -128,7 +120,7 @@ export class OrdersService {
       where: { id, user: { id: user.id } },
     });
 
-    this.checkOrderExistence(!!order);
+    throwExceptionOrNot(order, EXCEPTION.ORDER.NOT_FOUND);
 
     return new OrderResponse(order);
   }
@@ -161,10 +153,7 @@ export class OrdersService {
         case OrderStatus.DELIVERED:
         case OrderStatus.EXCHANGED:
         case OrderStatus.REFUNDED:
-          throw new HttpException(
-            MESSAGE.ERROR.FORBIDDEN,
-            HttpStatus.FORBIDDEN,
-          );
+          handleException(EXCEPTION.COMMON.FORBIDDEN);
         default:
           break;
       }
@@ -180,7 +169,7 @@ export class OrdersService {
       dto,
     );
 
-    this.checkOrderExistence(result.affected > 0);
+    throwExceptionOrNot(result.affected, EXCEPTION.ORDER.NOT_FOUND);
   }
 
   async cancel(id: number, user: User): Promise<void> {
@@ -203,17 +192,13 @@ export class OrdersService {
         },
       });
 
-      this.checkOrderExistence(!!order);
+      throwExceptionOrNot(order, EXCEPTION.ORDER.NOT_FOUND);
 
-      if (
-        order.status !== OrderStatus.AWAITING_PAYMENT &&
-        order.status !== OrderStatus.PAYMENT_ACCEPTED
-      ) {
-        throw new HttpException(
-          '취소할 수 없는 주문입니다.',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
+      throwExceptionOrNot(
+        order.status === OrderStatus.AWAITING_PAYMENT ||
+          order.status === OrderStatus.PAYMENT_ACCEPTED,
+        EXCEPTION.ORDER.CANCEL_NOT_ALLOWED,
+      );
 
       // 취소 수량 되돌리기
       order.orderDetails.forEach(async (orderDetail) => {
@@ -251,12 +236,6 @@ export class OrdersService {
       paymentReal += APP.SHIPPING_FEE;
     }
     return [totalPrice, paymentReal];
-  }
-
-  private checkOrderExistence(trueCondition: boolean) {
-    if (!trueCondition) {
-      throw new NotFoundException(ERROR.ORDER.NOT_FOUND);
-    }
   }
 
   private mapCartItemsToOrderDetails(cartItems: CartItem[]) {

@@ -1,14 +1,10 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { DataSource, Repository } from 'typeorm';
 
-import { PagingQuery, useTransaction } from '@/common';
-import { ERROR } from '@/docs';
+import { PagingQuery, throwExceptionOrNot, useTransaction } from '@/common';
+import { EXCEPTION } from '@/docs';
 import { Address, User } from '@/models';
 
 import {
@@ -33,9 +29,7 @@ export class AddressesService {
       }),
     );
 
-    if (!newAddress) {
-      throw new InternalServerErrorException(ERROR.ADDRESS.CREATE_ERROR);
-    }
+    throwExceptionOrNot(newAddress, EXCEPTION.ADDRESS.CREATE_ERROR);
   }
 
   async getOne(id: number, user: User): Promise<AddressResponse> {
@@ -43,7 +37,7 @@ export class AddressesService {
       where: { id, user: { id: user.id } },
     });
 
-    this.checkAddressExistence(!!address);
+    throwExceptionOrNot(address, EXCEPTION.ADDRESS.NOT_FOUND);
 
     return new AddressResponse(address);
   }
@@ -91,9 +85,7 @@ export class AddressesService {
         dto,
       );
 
-      if (result.affected <= 0) {
-        throw new InternalServerErrorException(ERROR.ADDRESS.UPDATE_ERROR);
-      }
+      throwExceptionOrNot(result.affected, EXCEPTION.ADDRESS.UPDATE_ERROR);
     });
   }
 
@@ -103,14 +95,6 @@ export class AddressesService {
       user: { id: user.id },
     });
 
-    if (result.affected <= 0) {
-      throw new InternalServerErrorException(ERROR.ADDRESS.DELETE_ERROR);
-    }
-  }
-
-  private checkAddressExistence(trueCondition: boolean) {
-    if (!trueCondition) {
-      throw new NotFoundException(ERROR.ADDRESS.NOT_FOUND);
-    }
+    throwExceptionOrNot(result.affected, EXCEPTION.ADDRESS.DELETE_ERROR);
   }
 }

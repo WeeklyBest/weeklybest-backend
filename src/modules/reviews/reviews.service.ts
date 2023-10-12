@@ -1,16 +1,16 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { DataSource, Repository } from 'typeorm';
 
-import { Pagination, getPagination, useTransaction } from '@/common';
-import { ERROR } from '@/docs';
+import {
+  Pagination,
+  getPagination,
+  handleException,
+  throwExceptionOrNot,
+  useTransaction,
+} from '@/common';
+import { EXCEPTION } from '@/docs';
 import { Product, Review, ReviewSort, User } from '@/models';
 
 import {
@@ -41,12 +41,7 @@ export class ReviewsService {
           where: { id: productId },
         });
 
-        if (!product) {
-          throw new HttpException(
-            '상품을 찾을 수 없습니다.',
-            HttpStatus.NOT_FOUND,
-          );
-        }
+        throwExceptionOrNot(product, EXCEPTION.PRODUCT.NOT_FOUND);
 
         product.increaseReviewCount();
 
@@ -61,9 +56,7 @@ export class ReviewsService {
         );
       });
     } catch (error) {
-      throw (
-        error || new InternalServerErrorException(ERROR.REVIEW.CREATE_ERROR)
-      );
+      handleException(EXCEPTION.REVIEW.CREATE_ERROR, error);
     }
   }
 
@@ -75,51 +68,43 @@ export class ReviewsService {
       },
     });
 
-    this.checkReviewExistence(!!review);
+    throwExceptionOrNot(review, EXCEPTION.REVIEW.NOT_FOUND);
 
     return new ReviewResponse(review);
   }
 
   async editReview(id: number, dto: EditReviewRequest, user: User) {
-    try {
-      const result = await this.reviewRepository.update(
-        { id, user: { id: user.id } },
-        dto,
-      );
+    const result = await this.reviewRepository.update(
+      { id, user: { id: user.id } },
+      dto,
+    );
 
-      this.checkReviewExistence(result.affected > 0);
-    } catch (error) {
-      throw new InternalServerErrorException(ERROR.REVIEW.UPDATE_ERROR);
-    }
+    throwExceptionOrNot(result.affected, EXCEPTION.REVIEW.UPDATE_ERROR);
   }
 
   async removeReview(id: number, user: User) {
-    try {
-      await useTransaction(this.dataSource, async (manager) => {
-        const reviewRepository = manager.getRepository(Review);
-        const productRepository = manager.getRepository(Product);
+    await useTransaction(this.dataSource, async (manager) => {
+      const reviewRepository = manager.getRepository(Review);
+      const productRepository = manager.getRepository(Product);
 
-        const review = await reviewRepository.findOne({
-          relations: ['product'],
-          where: {
-            id,
-            user: { id: user.id },
-          },
-        });
-
-        this.checkReviewExistence(!!review);
-
-        review.product.decreaseReviewCount();
-
-        const result = await reviewRepository.delete(review.id);
-
-        this.checkReviewExistence(result.affected > 0);
-
-        await productRepository.save(review.product);
+      const review = await reviewRepository.findOne({
+        relations: ['product'],
+        where: {
+          id,
+          user: { id: user.id },
+        },
       });
-    } catch (error) {
-      throw new InternalServerErrorException(ERROR.REVIEW.DELETE_ERROR);
-    }
+
+      throwExceptionOrNot(review, EXCEPTION.REVIEW.NOT_FOUND);
+
+      review.product.decreaseReviewCount();
+
+      const result = await reviewRepository.delete(review.id);
+
+      throwExceptionOrNot(result.affected, EXCEPTION.REVIEW.DELETE_ERROR);
+
+      await productRepository.save(review.product);
+    });
   }
 
   async getReviewsByProductId(
@@ -160,11 +145,5 @@ export class ReviewsService {
     const reviewList = reviews.map((review) => new ReviewResponse(review));
 
     return getPagination(reviewList, count, { pageNum, pageSize });
-  }
-
-  private checkReviewExistence(trueCondition: boolean) {
-    if (!trueCondition) {
-      throw new NotFoundException(ERROR.REVIEW.NOT_FOUND);
-    }
   }
 }

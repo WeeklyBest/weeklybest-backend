@@ -1,17 +1,17 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import * as bcrypt from 'bcrypt';
 
 import { Repository } from 'typeorm';
 
-import { Pagination, PagingQuery, getPagination } from '@/common';
-import { ERROR } from '@/docs';
+import {
+  Pagination,
+  PagingQuery,
+  getPagination,
+  throwExceptionOrNot,
+} from '@/common';
+import { EXCEPTION } from '@/docs';
 import { Question, Review, User, UserRepository, Wishlist } from '@/models';
 
 import { EditUserRequest, ChangePasswordForm } from './dtos';
@@ -36,9 +36,7 @@ export class UsersService {
   async getUserById(id: number) {
     const user = await this.userRepository.findOne({ where: { id } });
 
-    if (!user) {
-      throw new NotFoundException(ERROR.USER.NOT_FOUND);
-    }
+    throwExceptionOrNot(user, EXCEPTION.USER.NOT_FOUND);
 
     return user;
   }
@@ -49,12 +47,7 @@ export class UsersService {
       phone,
     });
 
-    if (!result) {
-      throw new HttpException(
-        '회원 정보 수정 중 오류가 발생했습니다.',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+    throwExceptionOrNot(result, EXCEPTION.USER.UPDATE_ERROR);
   }
 
   async getMyWishlist(user: User, pagingQuery: PagingQuery) {

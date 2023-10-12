@@ -1,14 +1,9 @@
-import {
-  BadRequestException,
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { ERROR } from '@/docs';
+import { EXCEPTION } from '@/docs';
 import { Question, User, UserRole } from '@/models';
 
 import {
@@ -16,7 +11,12 @@ import {
   EditQuestionRequest,
   QuestionResponse,
 } from './dtos';
-import { Pagination, PagingQuery, getPagination } from '@/common';
+import {
+  Pagination,
+  PagingQuery,
+  getPagination,
+  throwExceptionOrNot,
+} from '@/common';
 
 @Injectable()
 export class QuestionsService {
@@ -40,7 +40,7 @@ export class QuestionsService {
     );
 
     if (!newQuestion) {
-      throw new BadRequestException(ERROR.QUESTION.CREATE_ERROR);
+      throwExceptionOrNot(newQuestion, EXCEPTION.QUESTION.CREATE_ERROR);
     }
   }
 
@@ -52,12 +52,10 @@ export class QuestionsService {
       relations: ['user', 'product'],
     });
 
-    this.checkQuestionExistence(!!question);
+    throwExceptionOrNot(question, EXCEPTION.QUESTION.NOT_FOUND);
 
     const isAuthorized = this.authPrivateQuestion(question, user);
-    if (isAuthorized) {
-      throw new ForbiddenException(ERROR.QUESTION.FORBIDDEN);
-    }
+    throwExceptionOrNot(isAuthorized, EXCEPTION.QUESTION.FORBIDDEN);
 
     return new QuestionResponse(question);
   }
@@ -71,9 +69,7 @@ export class QuestionsService {
       dto,
     );
 
-    if (result.affected === 0) {
-      throw new BadRequestException(ERROR.QUESTION.UPDATE_ERROR);
-    }
+    throwExceptionOrNot(result.affected, EXCEPTION.QUESTION.UPDATE_ERROR);
   }
 
   async removeQuestion(id: number, user: User): Promise<void> {
@@ -82,9 +78,7 @@ export class QuestionsService {
       user: { id: user.id },
     });
 
-    if (result.affected === 0) {
-      throw new BadRequestException(ERROR.QUESTION.DELETE_ERROR);
-    }
+    throwExceptionOrNot(result.affected, EXCEPTION.QUESTION.DELETE_ERROR);
   }
 
   async getQuestionByProductId(
@@ -119,11 +113,5 @@ export class QuestionsService {
       question.user.id !== user.id &&
       user.role !== UserRole.ADMIN
     );
-  }
-
-  private checkQuestionExistence(trueCondition: boolean) {
-    if (!trueCondition) {
-      throw new NotFoundException(ERROR.QUESTION.NOT_FOUND);
-    }
   }
 }
