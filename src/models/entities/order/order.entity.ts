@@ -28,6 +28,7 @@ export class Order extends CommonIdEntity {
   purchaser: string;
 
   @Column({
+    type: 'char',
     length: USER.PHONE.MAX_LENGTH,
   })
   purchaserPhone: string;
@@ -59,6 +60,7 @@ export class Order extends CommonIdEntity {
 
   @Column({
     length: ORDER.MESSAGE.MAX_LENGTH,
+    default: '',
   })
   message: string;
 
