@@ -16,6 +16,9 @@ export class ProductDetailResponse {
   @ProductResponseDto.name()
   name: string;
 
+  @ProductResponseDto.description()
+  description: string;
+
   @ProductResponseDto.retailPrice()
   retailPrice: number;
 

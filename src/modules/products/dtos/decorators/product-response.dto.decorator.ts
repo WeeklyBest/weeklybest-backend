@@ -12,6 +12,10 @@ export const ProductResponseDto = {
     return applyDecorators(ProductDoc.name());
   },
 
+  description() {
+    return applyDecorators(ProductDoc.description());
+  },
+
   thumbnail() {
     return applyDecorators(ProductDoc.thumbnail());
   },
