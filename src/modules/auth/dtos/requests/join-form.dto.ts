@@ -1,12 +1,16 @@
-import { UserDoc } from '@/docs';
+// 순환 의존성 문제로 인해 직접 참조
+import { UserRequestDto } from '@/modules/users/dtos/decorators';
 
 export class JoinForm {
-  @UserDoc.email()
+  @UserRequestDto.email()
   email: string;
 
-  @UserDoc.password()
+  @UserRequestDto.password()
   password: string;
 
-  @UserDoc.name()
+  @UserRequestDto.name()
   name: string;
+
+  @UserRequestDto.phone()
+  phone: string;
 }

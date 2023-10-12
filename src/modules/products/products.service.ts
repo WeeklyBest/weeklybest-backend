@@ -40,12 +40,10 @@ export class ProductsService {
     private readonly wishlistRepository: Repository<Wishlist>,
   ) {}
 
-  async getAll({
-    pageNum,
-    pageSize,
-    category,
-    sort,
-  }: ProductListQuery): Promise<Pagination<ProductCardResponse>> {
+  async getAll(
+    { pageNum, pageSize, category, sort }: ProductListQuery,
+    user: User,
+  ): Promise<Pagination<ProductCardResponse>> {
     const [productAlias, categoryAlias, productImageAlias] = [
       'product',
       'category',
@@ -107,8 +105,18 @@ export class ProductsService {
     // 상품 목록 조회 (+ 페이지네이션)
     const [productList, count] = await query.getManyAndCount();
 
-    const responseData = productList.map(
-      (item) => new ProductCardResponse(item),
+    const responseData = await Promise.all(
+      productList.map(async (item) => {
+        const wished =
+          user &&
+          (await this.wishlistRepository.findOne({
+            where: {
+              product: { id: item.id },
+              user: { id: user.id },
+            },
+          }));
+        return new ProductCardResponse(item, !!wished);
+      }),
     );
 
     return getPagination(responseData, count, { pageNum, pageSize });

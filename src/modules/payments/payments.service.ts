@@ -10,7 +10,8 @@ import { MESSAGE } from '@/constants';
 import { OrderStatus, PaymentMethod } from '@/models';
 
 import { ImpRefundRequest, ImpRestApiDto } from './dtos';
-import { IIMPPaymentResponse } from './interfaces';
+
+import { IIMPPaymentResponse } from './dtos/interfaces';
 
 @Injectable()
 export class PaymentsService {

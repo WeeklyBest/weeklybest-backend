@@ -1,10 +1,11 @@
-import { SwaggerDoc } from '@/common';
-import { CartDoc } from '@/docs';
+import { VariantRequestDto } from '@/modules/products';
+
+import { CartRequestDto } from '../decorators';
 
 export class AddCartItemRequest {
-  @SwaggerDoc.id('상품 품목 식별자')
+  @VariantRequestDto.variantId()
   variantId: number;
 
-  @CartDoc.quantity()
+  @CartRequestDto.quantity()
   quantity: number;
 }

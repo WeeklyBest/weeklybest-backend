@@ -1,4 +1,3 @@
-export * from './create-order-request.dto';
-export * from './edit-order-request.dto';
-export * from './order-id-param.dto';
-export * from './order-response.dto';
+export * from './decorators';
+export * from './requests';
+export * from './response';

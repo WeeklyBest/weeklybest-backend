@@ -6,7 +6,7 @@ import { User } from '@/models';
 
 import { CurrentUser, JwtAuthGuard } from '@/modules/auth';
 
-import { ChangePasswordForm, EditUserRequest, UserResponse } from './dtos';
+import { EditUserRequest, UserResponse, ChangePasswordForm } from './dtos';
 
 import { UsersControllerDoc as Doc } from './controller.doc';
 import { UsersService } from './users.service';
@@ -16,18 +16,18 @@ import { UsersService } from './users.service';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Doc.editUserInfo('본인 정보 수정')
-  @Patch('me')
-  @UseGuards(JwtAuthGuard)
-  async editUserInfo(@Body() dto: EditUserRequest, @CurrentUser() user: User) {
-    await this.usersService.editUserInfo(dto, user);
-  }
-
   @Doc.getMe('본인 정보 조회')
   @Get('me')
   @UseGuards(JwtAuthGuard)
   async getMe(@CurrentUser() user: User) {
     return new UserResponse(user);
+  }
+
+  @Doc.editUserInfo('본인 정보 수정')
+  @Patch('me')
+  @UseGuards(JwtAuthGuard)
+  async editUserInfo(@Body() dto: EditUserRequest, @CurrentUser() user: User) {
+    await this.usersService.editUserInfo(dto, user);
   }
 
   @Doc.getMyWishlist('내 위시리스트 목록 조회')

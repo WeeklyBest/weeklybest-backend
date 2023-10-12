@@ -1,9 +1,6 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { CartItemRequestDto } from '../decorators';
 
 export class CartItemIdParam {
-  @ApiProperty({
-    description: '장바구니 아이템 식별자',
-    example: 1,
-  })
+  @CartItemRequestDto.cartItemId()
   id: number;
 }

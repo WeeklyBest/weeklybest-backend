@@ -1,6 +1,6 @@
-import { CartDoc } from '@/docs';
+import { CartRequestDto } from '../decorators';
 
 export class EditCartItemRequest {
-  @CartDoc.quantity()
+  @CartRequestDto.quantity()
   quantity: number;
 }

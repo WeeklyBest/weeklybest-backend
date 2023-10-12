@@ -5,6 +5,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
   UsePipes,
   ValidationPipe,
@@ -55,7 +56,7 @@ export class OrdersController {
   @Get('me')
   @UseGuards(JwtAuthGuard)
   async getMe(
-    @Param() { pageNum = 1, pageSize = 5 }: PagingQuery,
+    @Query() { pageNum = 1, pageSize = 5 }: PagingQuery,
     @CurrentUser() user: User,
   ): Promise<Pagination<OrderResponse>> {
     return this.ordersService.getMe({ pageNum, pageSize }, user);

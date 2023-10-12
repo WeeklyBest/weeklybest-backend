@@ -14,9 +14,10 @@ import { Pagination, PagingQuery, getPagination } from '@/common';
 import { ERROR } from '@/docs';
 import { Question, Review, User, UserRepository, Wishlist } from '@/models';
 
-import { ProductCardResponse } from '../products';
-import { ChangePasswordForm, EditUserRequest } from './dtos';
+import { EditUserRequest, ChangePasswordForm } from './dtos';
+
 import { AUTH } from '../auth';
+import { ProductCardResponse } from '../products';
 import { MyQuestionResponse } from '../questions';
 import { MyReviewResponse } from '../reviews';
 
