@@ -5,7 +5,7 @@ import { TypeOrmCustomModule } from '@/common';
 import {
   Category,
   ColorRepository,
-  Product,
+  ProductRepository,
   SizeValueRepository,
   Wishlist,
 } from '@/models';
@@ -18,8 +18,12 @@ import { ProductsService } from './products.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Product, Category, Wishlist]),
-    TypeOrmCustomModule.forFeature([ColorRepository, SizeValueRepository]),
+    TypeOrmModule.forFeature([Category, Wishlist]),
+    TypeOrmCustomModule.forFeature([
+      ColorRepository,
+      ProductRepository,
+      SizeValueRepository,
+    ]),
     ReviewsModule,
     QuestionsModule,
   ],

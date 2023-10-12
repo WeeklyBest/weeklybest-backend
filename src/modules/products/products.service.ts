@@ -14,6 +14,7 @@ import {
   Category,
   ColorRepository,
   Product,
+  ProductRepository,
   ProductSort,
   PurchasedProductFilter,
   SizeValueRepository,
@@ -33,8 +34,7 @@ import {
 export class ProductsService {
   constructor(
     private readonly dataSource: DataSource,
-    @InjectRepository(Product)
-    private readonly productRepository: Repository<Product>,
+    private readonly productRepository: ProductRepository,
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
     private readonly colorRepository: ColorRepository,
@@ -47,10 +47,11 @@ export class ProductsService {
     { pageNum, pageSize, category, sort }: ProductListQuery,
     user: User,
   ): Promise<Pagination<ProductCardResponse>> {
-    const [productAlias, categoryAlias, productImageAlias] = [
+    const [productAlias, categoryAlias, productImageAlias, variantAlias] = [
       'product',
       'category',
       'image',
+      'variant',
     ];
 
     const query = this.productRepository
@@ -110,6 +111,12 @@ export class ProductsService {
 
     const responseData = await Promise.all(
       productList.map(async (item) => {
+        // 품절 여부 검사
+        const isSoldOut = await this.productRepository.isProductSoldOut(
+          item.id,
+        );
+
+        // 위시리스트 추가 여부 검사
         const wished =
           user &&
           (await this.wishlistRepository.findOne({
@@ -118,7 +125,7 @@ export class ProductsService {
               user: { id: user.id },
             },
           }));
-        return new ProductCardResponse(item, !!wished);
+        return new ProductCardResponse(item, !!wished, isSoldOut);
       }),
     );
 
@@ -159,7 +166,16 @@ export class ProductsService {
       productId,
     );
 
-    return new ProductDetailResponse(product, colors, sizeValues, !!wished);
+    // 품절 여부 검사
+    const isSoldOut = await this.productRepository.isProductSoldOut(productId);
+
+    return new ProductDetailResponse(
+      product,
+      colors,
+      sizeValues,
+      !!wished,
+      isSoldOut,
+    );
   }
 
   async addToWishlist(productId: number, user: User) {
