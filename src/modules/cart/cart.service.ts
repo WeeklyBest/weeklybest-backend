@@ -16,6 +16,7 @@ import {
   CartItemResponse,
   AddCartItemRequest,
   EditCartItemRequest,
+  AddCartItemResponse,
 } from './dtos';
 
 @Injectable()
@@ -28,7 +29,10 @@ export class CartService {
     private readonly variantRepository: Repository<Variant>,
   ) {}
 
-  async addItem({ variantId, quantity }: AddCartItemRequest, user: User) {
+  async addItem(
+    { variantId, quantity }: AddCartItemRequest,
+    user: User,
+  ): Promise<AddCartItemResponse> {
     let cart = await this.cartRepository.findOne({
       where: { user: { id: user.id } },
     });
@@ -41,7 +45,6 @@ export class CartService {
 
     // 이미 담겨있는 아이템인지 확인
     let cartItem = await this.cartItemRepository.findOne({
-      relations: ['variant'],
       where: {
         cart: { id: cart.id },
         variant: {
@@ -51,11 +54,8 @@ export class CartService {
     });
 
     if (cartItem) {
-      // 1) 이미 담겨있으면? 수량만 추가
-      cartItem.quantity = Math.min(
-        cartItem.variant.quantity,
-        cartItem.quantity + quantity,
-      );
+      // 1) 이미 담겨있으면? 수량만 변경
+      cartItem.quantity = quantity;
     } else {
       // 2) 새 아이템이면? 장바구니에 새로 등록
       cartItem = this.cartItemRepository.create({
@@ -67,11 +67,27 @@ export class CartService {
       });
     }
 
+    // 품목 재고 확인
+    const variant = await this.variantRepository.findOne({
+      where: { id: variantId },
+    });
+
+    let message: string | undefined = undefined;
+    if (cartItem.quantity > variant.quantity) {
+      message = `상품 재고가 부족하여 ${variant.quantity}개의 아이템만 추가됩니다.`;
+    }
+
+    // 장바구니 아이템 저장
     const result = await this.cartItemRepository.save(cartItem);
 
     if (!result) {
       throw new InternalServerErrorException(ERROR.CART.CREATE_ERROR);
     }
+
+    return {
+      id: result.id,
+      message,
+    };
   }
 
   async getCartItems(

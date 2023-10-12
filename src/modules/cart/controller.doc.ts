@@ -2,9 +2,12 @@ import { applyDecorators } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiConflictResponse,
+  ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOperation,
 } from '@nestjs/swagger';
+
+import { AddCartItemResponse } from './dtos';
 
 export const CartItemControllerDoc = {
   add(summary: string) {
@@ -12,6 +15,10 @@ export const CartItemControllerDoc = {
       ApiOperation({
         summary,
         description: '장바구니에 상품을 담습니다.',
+      }),
+      ApiCreatedResponse({
+        description: '장바구니 아이템 추가 성공',
+        type: AddCartItemResponse,
       }),
     );
   },

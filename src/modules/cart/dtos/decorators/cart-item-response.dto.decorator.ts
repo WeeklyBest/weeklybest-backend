@@ -46,4 +46,12 @@ export const CartItemResponseDto = {
       }),
     );
   },
+
+  addCartItemMessage() {
+    return applyDecorators(
+      ApiProperty({
+        description: '장바구니 아이템 추가 메시지',
+      }),
+    );
+  },
 };
