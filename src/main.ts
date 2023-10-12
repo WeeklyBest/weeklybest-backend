@@ -4,7 +4,6 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { SwaggerModule } from '@nestjs/swagger';
 
 import * as cookieParser from 'cookie-parser';
-import * as expressBasicAuth from 'express-basic-auth';
 
 import {
   CustomLoggerService,
@@ -30,18 +29,12 @@ class Application {
   }
 
   private async setUpOpenAPI() {
-    this.app.use(
-      [API_URL.SWAGGER.DOCS, API_URL.SWAGGER.DOCS_JSON],
-      expressBasicAuth({
-        challenge: true,
-        users: {
-          [process.env.ADMIN_USER]: process.env.ADMIN_PASSWORD,
-        },
-      }),
-    );
-
     const document = SwaggerModule.createDocument(this.app, swaggerConfig);
-    SwaggerModule.setup(API_URL.SWAGGER.DOCS, this.app, document);
+    SwaggerModule.setup(
+      `${APP.GLOBAL_PREFIX}${API_URL.SWAGGER.DOCS}`,
+      this.app,
+      document,
+    );
   }
 
   private async setUpGlobalMiddleware() {
