@@ -3,9 +3,9 @@ import {
   Catch,
   ExceptionFilter,
   HttpException,
-  HttpStatus,
 } from '@nestjs/common';
 
+import { isObject, isString } from 'class-validator';
 import { Response } from 'express';
 
 import { IErrorResponse } from '../interfaces';
@@ -18,15 +18,16 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const status = exception.getStatus();
     const error = exception.getResponse() as string | IErrorResponse;
 
-    const isValidationError =
-      typeof error !== 'string' &&
-      typeof error.message === 'object' &&
-      status === HttpStatus.BAD_REQUEST;
+    let errorResponse: IErrorResponse = { message: undefined };
 
-    const responseError = isValidationError
-      ? { message: error.message[0] }
-      : error;
+    if (isString(error)) {
+      errorResponse.message = error;
+    } else if (isObject(error.message)) {
+      errorResponse.message = error.message[0];
+    } else {
+      errorResponse = error;
+    }
 
-    response.status(status).json(responseError);
+    response.status(status).json(errorResponse);
   }
 }
