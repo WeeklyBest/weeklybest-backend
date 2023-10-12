@@ -1,1 +1,1 @@
-export * from './custom-repository.module';
+export * from './typeorm-custom.module';

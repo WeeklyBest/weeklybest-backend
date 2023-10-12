@@ -1,30 +1,48 @@
 export const USER = {
   EMAIL: {
-    MATCHES: /^[a-zA-Z0-9+-\_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
+    KR: '이메일',
     MAX_LENGTH: 255,
-    MESSAGE: {
-      IS_EMAIL: '이메일 형식에 맞게 입력해주세요.',
-      IS_NOT_EMPTY: '이메일을 입력해주세요.',
-    },
   },
+
   PASSWORD: {
-    MATCHES: /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/,
+    KR: '비밀번호',
     MIN_LENGTH: 8,
     MAX_LENGTH: 255,
-    MESSAGE: {
-      IS_PASSWORD:
-        '비밀번호는 영문, 숫자, 특수문자 조합으로 이루어진 8~15 글자이어야 합니다.',
-      IS_NOT_EMPTY: '비밀번호를 입력해주세요.',
+    get REG_EXP() {
+      return new RegExp(
+        `^(?=.*[0-9]).{${this.MIN_LENGTH},${this.MAX_LENGTH}}$`,
+      );
     },
   },
+
   NAME: {
+    KR: '이름',
     MIN_LENGTH: 2,
     MAX_LENGTH: 17,
+    REG_EXP: /^[a-zA-Z가-힣]+$/,
   },
-  MOBILE: {
-    MATCHES: /^01([0|1|6|7|8|9])-?(\d{3,4})-?(\d{4})$/,
-    MESSAGE: {
-      IS_PHONE: '휴대폰 번호 양식에 맞게 입력해주세요.',
-    },
+
+  PHONE: {
+    KR: '휴대폰 번호',
+    MIN_LENGTH: 10,
+    MAX_LENGTH: 11,
+  },
+
+  POINT: {
+    KR: '적립 포인트',
+  },
+
+  ROLE: {
+    KR: '권한',
+    MAX_LENGTH: 5,
+  },
+
+  PROVIDER: {
+    KR: 'SNS 서비스 회사',
+    MAX_LENGTH: 20,
+  },
+
+  SNS_ID: {
+    KR: '연동된 SNS 아이디',
   },
 };

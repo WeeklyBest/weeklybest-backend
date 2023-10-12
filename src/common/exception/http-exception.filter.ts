@@ -3,12 +3,12 @@ import {
   Catch,
   ExceptionFilter,
   HttpException,
-  HttpStatus,
 } from '@nestjs/common';
 
+import { isObject, isString } from 'class-validator';
 import { Response } from 'express';
 
-import { ErrorResponse, ResponseEntity } from '../interface';
+import { IErrorResponse } from '../interfaces';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -16,17 +16,18 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const context = host.switchToHttp();
     const response = context.getResponse<Response>();
     const status = exception.getStatus();
-    const error = exception.getResponse() as string | ErrorResponse;
+    const error = exception.getResponse() as string | IErrorResponse;
 
-    const isValidationError =
-      typeof error !== 'string' && error.statusCode === HttpStatus.BAD_REQUEST;
+    let errorResponse: IErrorResponse = { message: undefined };
 
-    const responseEntity: ResponseEntity = {
-      success: false,
-      statusCode: status,
-      data: isValidationError ? error.message : error,
-    };
+    if (isString(error)) {
+      errorResponse.message = error;
+    } else if (isObject(error.message)) {
+      errorResponse.message = error.message[0];
+    } else {
+      errorResponse = error;
+    }
 
-    response.status(status).json(responseEntity);
+    response.status(status).json(errorResponse);
   }
 }

@@ -1,1 +1,1 @@
-export * from './custom-repository.decorator';
+export * from './entity-repository.decorator';

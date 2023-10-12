@@ -1,7 +1,4 @@
 export const APP = {
-  VERSION: '0.0.1',
-  NODE_ENV: {
-    DEVELOPMENT: 'development',
-    PRODUCTION: 'production',
-  },
+  VERSION: '1.0.0',
+  GLOBAL_PREFIX: 'api',
 };
