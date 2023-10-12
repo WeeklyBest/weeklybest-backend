@@ -21,7 +21,7 @@ export class OrderDetail extends CommonIdEntity {
   quantity: number;
 
   // 연관 관계
-  @ManyToOne(() => Variant, {
+  @ManyToOne(() => Variant, (variant) => variant.orderDetails, {
     onUpdate: 'CASCADE',
     onDelete: 'SET NULL',
   })
