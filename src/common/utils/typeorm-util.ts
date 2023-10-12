@@ -1,4 +1,6 @@
-import { DataSource, EntityManager } from 'typeorm';
+import { DataSource, EntityManager, SelectQueryBuilder } from 'typeorm';
+
+import { PagingQuery } from '../dtos';
 
 export async function useTransaction(
   dataSource: DataSource,
@@ -17,4 +19,11 @@ export async function useTransaction(
   } finally {
     await queryRunner.release();
   }
+}
+
+export function setQuerySkipAndTake<T>(
+  query: SelectQueryBuilder<T>,
+  { pageNum, pageSize }: PagingQuery,
+) {
+  query.skip((pageNum - 1) * pageSize).take(pageSize);
 }
