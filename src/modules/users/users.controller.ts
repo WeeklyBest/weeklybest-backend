@@ -48,8 +48,8 @@ export class UsersController {
   @Patch('me/change-password')
   @UseGuards(JwtAuthGuard)
   async changePassword(
-    @Body() dto: ChangePasswordForm,
     @CurrentUser() user: User,
+    @Body() dto: ChangePasswordForm,
   ) {
     await this.usersService.changePassword(dto, user);
   }
