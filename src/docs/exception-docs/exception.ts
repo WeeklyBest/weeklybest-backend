@@ -1,6 +1,14 @@
+import { Dictionary } from '@/common';
 import { HttpStatus } from '@nestjs/common';
 
-export const ERROR = {
+export interface IErrorObject {
+  status: HttpStatus;
+  message: string;
+}
+
+type ErrorInfoType = Dictionary<Dictionary<IErrorObject>>;
+
+export const ERROR: ErrorInfoType = {
   ADDRESS: {
     CREATE_ERROR: {
       status: HttpStatus.INTERNAL_SERVER_ERROR,
