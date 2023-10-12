@@ -1,13 +1,24 @@
 import { Repository, SelectQueryBuilder } from 'typeorm';
 
 import { EntityRepository, PagingQuery, setQuerySkipAndTake } from '@/common';
-import { Product, ProductSort } from '@/models';
+import { Product, ProductSort, PurchasedProductFilter, User } from '@/models';
 
-const [productAlias, variantAlias, categoryAlias, productImageAlias] = [
+const [
+  productAlias,
+  variantAlias,
+  categoryAlias,
+  productImageAlias,
+  orderDetailAlias,
+  orderAlias,
+  reviewAlias,
+] = [
   'product',
   'variant',
   'category',
   'image',
+  'orderDetail',
+  'order',
+  'review',
 ];
 
 export interface IProductFilterOptions {
@@ -100,5 +111,34 @@ export class ProductRepository extends Repository<Product> {
       )
       .orderBy(`${productImageAlias}.order`, 'ASC')
       .getOne();
+  }
+
+  async getPurchasedProductsAndCount(
+    user: User,
+    pagingQuery: PagingQuery,
+    filter: PurchasedProductFilter,
+  ): Promise<[Product[], number]> {
+    let query = this.createQueryBuilder(productAlias)
+      .innerJoin(`${productAlias}.variants`, variantAlias)
+      .leftJoinAndSelect(`${productAlias}.images`, productImageAlias)
+      .innerJoin(`${variantAlias}.orderDetails`, orderDetailAlias)
+      .innerJoin(`${orderDetailAlias}.order`, orderAlias)
+      .where(`${orderAlias}.user.id = :userId`, { userId: user.id });
+
+    // 페이지네이션 처리
+    setQuerySkipAndTake(query, pagingQuery);
+
+    // 리뷰할 수 있는 상품 조회
+    if (filter === PurchasedProductFilter.REVIEWABLE) {
+      query = query
+        .leftJoin(
+          `${productAlias}.reviews`,
+          reviewAlias,
+          `${reviewAlias}.user.id = ${orderAlias}.user.id`,
+        )
+        .andWhere(`${reviewAlias}.user.id IS NULL`);
+    }
+
+    return query.getManyAndCount();
   }
 }
