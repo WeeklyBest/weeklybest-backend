@@ -13,6 +13,9 @@ export class OrderResponse {
   @OrderResponseDto.paymentReal()
   paymentReal: number;
 
+  @OrderResponseDto.point()
+  point: number;
+
   @OrderResponseDto.purchaser()
   purchaser: string;
 
@@ -59,6 +62,7 @@ export class OrderResponse {
     this.id = order.id;
     this.totalPrice = order.totalPrice;
     this.paymentReal = order.paymentReal;
+    this.point = order.point;
 
     this.purchaser = order.purchaser;
     this.purchaserPhone = order.purchaserPhone;
