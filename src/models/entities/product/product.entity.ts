@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
 import { CommonIdEntity } from '@/common';
-import { PRODUCT, Wishlist } from '@/models';
+import { PRODUCT, Review, Wishlist } from '@/models';
 
 import { Category } from './category.entity';
 import { ProductImage } from './product-image.entity';
@@ -82,6 +82,10 @@ export class Product extends CommonIdEntity {
   @OneToMany(() => Wishlist, (wishlist) => wishlist.product)
   wishlist?: Wishlist[];
 
+  @OneToMany(() => Review, (review) => review.product)
+  reviews: Review[];
+
+  // 메서드
   public increaseReviewCount() {
     this.reviewCount++;
   }

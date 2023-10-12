@@ -207,8 +207,7 @@ export class OrdersService {
 
       if (
         order.status !== OrderStatus.AWAITING_PAYMENT &&
-        order.status !== OrderStatus.PAYMENT_ACCEPTED &&
-        order.status !== OrderStatus.AWAITING_SHIPMENT
+        order.status !== OrderStatus.PAYMENT_ACCEPTED
       ) {
         throw new HttpException(
           '취소할 수 없는 주문입니다.',

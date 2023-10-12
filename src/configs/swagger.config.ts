@@ -16,4 +16,5 @@ export const swaggerConfig = new DocumentBuilder()
     },
     BEARER_AUTH_NAME,
   )
+  .addSecurityRequirements(BEARER_AUTH_NAME)
   .build();

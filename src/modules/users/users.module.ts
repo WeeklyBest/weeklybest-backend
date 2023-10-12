@@ -4,6 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmCustomModule } from '@/common';
 import { Question, Review, UserRepository, Wishlist } from '@/models';
 
+import { ProductsModule } from '../products';
+
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 
@@ -11,6 +13,7 @@ import { UsersService } from './users.service';
   imports: [
     TypeOrmCustomModule.forFeature([UserRepository]),
     TypeOrmModule.forFeature([Wishlist, Question, Review]),
+    ProductsModule,
   ],
   controllers: [UsersController],
   providers: [UsersService],

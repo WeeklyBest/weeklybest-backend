@@ -90,7 +90,23 @@ export class UsersService {
       );
     }
 
-    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    const userWithPassword = await this.userRepository.findOne({
+      where: { id: user.id },
+      select: ['password'],
+    });
+
+    if (!userWithPassword) {
+      throw new HttpException(
+        '사용자를 찾을 수 없습니다.',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const isMatch = await bcrypt.compare(
+      currentPassword,
+      userWithPassword.password,
+    );
+
     if (!isMatch) {
       throw new HttpException(
         '현재 비밀번호가 일치하지 않습니다.',
