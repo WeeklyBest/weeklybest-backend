@@ -126,9 +126,9 @@ export class AuthController {
         1000,
       httpOnly: true,
       signed: true,
-      secure:
-        this.configService.get(CONFIG.ENV_KEY.NODE_ENV) !==
-        CONFIG.NODE_ENV.DEVELOPMENT,
+      // secure:
+      //   this.configService.get(CONFIG.ENV_KEY.NODE_ENV) !==
+      //   CONFIG.NODE_ENV.DEVELOPMENT,
     };
 
     res.cookie(COOKIE.REFRESH_TOKEN, refreshToken, cookieOptions);

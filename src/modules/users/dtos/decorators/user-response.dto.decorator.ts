@@ -23,6 +23,10 @@ export const UserResponseDto = {
     return applyDecorators(UserDoc.phone());
   },
 
+  point() {
+    return applyDecorators(UserDoc.point());
+  },
+
   role() {
     return applyDecorators(UserDoc.role());
   },

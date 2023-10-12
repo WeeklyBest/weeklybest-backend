@@ -6,7 +6,7 @@ export const corsConfig = (DEV_MODE: boolean): CorsOptions => {
   const CLIENT_BASE_URL = `${process.env.HOST}:${process.env.CLIENT_PORT}`;
 
   if (DEV_MODE) {
-    corsOriginList.push(CLIENT_BASE_URL);
+    corsOriginList.push('*');
   } else {
     if (CLIENT_BASE_URL) {
       corsOriginList.push(CLIENT_BASE_URL);

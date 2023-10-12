@@ -1,4 +1,4 @@
-import { Column, DeleteDateColumn, Entity, ManyToOne } from 'typeorm';
+import { Column, DeleteDateColumn, Entity, OneToMany } from 'typeorm';
 
 import { CommonIdEntity } from '@/common';
 import { SNSProvider, USER, UserRole, Wishlist } from '@/models';
@@ -31,6 +31,11 @@ export class User extends CommonIdEntity {
   phone: string;
 
   @Column({
+    default: 0,
+  })
+  point: number;
+
+  @Column({
     type: 'char',
     length: USER.ROLE.MAX_LENGTH,
     default: UserRole.USER,
@@ -58,6 +63,6 @@ export class User extends CommonIdEntity {
   deletedAt: Date;
 
   // 관계 설정
-  @ManyToOne(() => Wishlist, (wishlist) => wishlist.user)
+  @OneToMany(() => Wishlist, (wishlist) => wishlist.user)
   wishlist: Wishlist[];
 }

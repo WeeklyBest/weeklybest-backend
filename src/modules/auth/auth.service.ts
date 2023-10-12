@@ -31,7 +31,7 @@ export class AuthService {
       withDeleted: true,
     });
 
-    throwExceptionOrNot(existsUser, EXCEPTION.AUTH.DUPLICATE_EMAIL);
+    throwExceptionOrNot(!existsUser, EXCEPTION.AUTH.DUPLICATE_EMAIL);
 
     try {
       await this.userRepository.insert(

@@ -21,7 +21,9 @@ export class KakaoStrategy extends PassportStrategy(Strategy, STRATEGY.KAKAO) {
   ) {
     super({
       clientID: configService.get<AuthConfig>(CONFIG.AUTH).kakaoRestApiKey,
-      clientSecret: configService.get<AuthConfig>(CONFIG.AUTH).kakaoCallbackUrl,
+      clientSecret: configService.get<AuthConfig>(CONFIG.AUTH)
+        .kakaoClientSecret,
+      callbackURL: configService.get<AuthConfig>(CONFIG.AUTH).kakaoCallbackUrl,
     });
   }
 
@@ -37,6 +39,10 @@ export class KakaoStrategy extends PassportStrategy(Strategy, STRATEGY.KAKAO) {
     };
 
     const user = await this.authService.getOAuthUser(oAuthRequest);
+
+    if (!user) {
+      return this.authService.oAuthJoin(oAuthRequest);
+    }
 
     return user;
   }

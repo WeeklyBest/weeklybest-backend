@@ -10,14 +10,14 @@ export const dbConfig = registerAs(CONFIG.DB, () => {
 
   return {
     namingStrategy: new SnakeNamingStrategy(),
-    type: 'mysql',
+    type: 'mariadb',
     host: process.env.DB_HOST,
     port: +process.env.DB_PORT,
     database: process.env.DB_DATABASE,
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     entities: getMetadataArgsStorage().tables.map((tbl) => tbl.target),
-    charset: 'utf8mb4_unicode_ci',
+    charset: 'utf8mb4_general_ci',
     synchronize: isDevMode,
     logging: isDevMode,
   };

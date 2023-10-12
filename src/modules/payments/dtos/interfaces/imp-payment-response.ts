@@ -1,4 +1,6 @@
-export interface IIMPPaymentResponse {
+import { IIMPCommonResponse } from './imp-common-response';
+
+export interface IIMPPaymentResponse extends IIMPCommonResponse {
   code?: number;
   message?: string;
   response: {
