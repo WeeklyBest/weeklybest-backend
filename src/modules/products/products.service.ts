@@ -15,6 +15,7 @@ import {
   ColorRepository,
   Product,
   ProductSort,
+  PurchasedProductFilter,
   SizeValueRepository,
   User,
   Wishlist,
@@ -24,6 +25,7 @@ import {
   ProductCardResponse,
   ProductDetailResponse,
   ProductListQuery,
+  ReviewableProductQuery,
 } from './dtos';
 
 @Injectable()
@@ -215,6 +217,44 @@ export class ProductsService {
       product.decreaseReviewCount();
       await this.productRepository.save(product);
     });
+  }
+
+  async getPurchasedProducts(
+    user: User,
+    { pageNum, pageSize, filter }: ReviewableProductQuery,
+  ) {
+    const [
+      productAlias,
+      variantAlias,
+      orderDetailAlias,
+      orderAlias,
+      reviewAlias,
+    ] = ['product', 'variant', 'orderDetail', 'order', 'review'];
+
+    // Query : 구매한 상품 조회
+    let productsQuery = this.productRepository
+      .createQueryBuilder(productAlias)
+      .innerJoin(`${productAlias}.variants`, variantAlias)
+      .innerJoin(`${variantAlias}.orderDetails`, orderDetailAlias)
+      .innerJoin(`${orderDetailAlias}.order`, orderAlias)
+      .where(`${orderAlias}.user.id = :userId`, { userId: user.id })
+      .skip((pageNum - 1) * pageSize)
+      .take(pageSize);
+
+    // Query : 리뷰할 수 있는 상품 조회
+    if (filter === PurchasedProductFilter.REVIEWABLE) {
+      productsQuery = productsQuery
+        .leftJoin(
+          `${productAlias}.reviews`,
+          reviewAlias,
+          `${reviewAlias}.user.id = ${orderAlias}.user.id`,
+        )
+        .andWhere(`${reviewAlias}.user.id IS NULL`);
+    }
+
+    const [products, count] = await productsQuery.getManyAndCount();
+
+    return getPagination(products, count, { pageNum: 1, pageSize: 10 });
   }
 
   private checkProductExistence(trueCondition: boolean) {
