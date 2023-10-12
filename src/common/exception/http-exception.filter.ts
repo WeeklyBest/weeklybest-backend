@@ -19,7 +19,9 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const error = exception.getResponse() as string | IErrorResponse;
 
     const isValidationError =
-      typeof error !== 'string' && status === HttpStatus.BAD_REQUEST;
+      typeof error !== 'string' &&
+      typeof error.message === 'object' &&
+      status === HttpStatus.BAD_REQUEST;
 
     const responseError = isValidationError
       ? { message: error.message[0] }
