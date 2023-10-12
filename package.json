@@ -2,9 +2,9 @@
   "name": "weeklybest-backend",
   "version": "1.0.0",
   "description": "",
-  "author": "",
+  "author": "marshot9420",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
