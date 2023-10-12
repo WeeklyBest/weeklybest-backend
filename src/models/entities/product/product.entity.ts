@@ -15,6 +15,11 @@ export class Product extends CommonIdEntity {
   name: string;
 
   @Column({
+    type: 'text',
+  })
+  description: string;
+
+  @Column({
     type: 'mediumint',
     unsigned: true,
     nullable: true,
