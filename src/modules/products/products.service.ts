@@ -87,24 +87,7 @@ export class ProductsService {
   }
 
   async getOne(productId: number, user: User): Promise<ProductDetailResponse> {
-    const [productAlias, productImageAlias, variantAlias] = [
-      'product',
-      'image',
-      'variant',
-      'wishlist',
-    ];
-
-    const product = await this.productRepository
-      .createQueryBuilder(productAlias)
-      .leftJoinAndSelect(`${productAlias}.images`, productImageAlias)
-      .where(`${productAlias}.id = :productId`, { productId })
-      .leftJoinAndSelect(
-        `${productAlias}.variants`,
-        variantAlias,
-        `${variantAlias}.product.id = ${productAlias}.id AND ${variantAlias}.hide = false`,
-      )
-      .orderBy(`${productImageAlias}.order`, 'ASC')
-      .getOne();
+    const product = await this.productRepository.getProductDetail(productId);
 
     throwExceptionOrNot(product, EXCEPTION.PRODUCT.NOT_FOUND);
 
