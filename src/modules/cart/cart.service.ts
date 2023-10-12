@@ -1,15 +1,10 @@
-import {
-  BadRequestException,
-  ConflictException,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { ERROR } from '@/docs';
+import { throwExceptionOrNot } from '@/common';
+import { EXCEPTION } from '@/docs';
 import { Cart, CartItem, CartRepository, User, Variant } from '@/models';
 
 import {
@@ -78,14 +73,11 @@ export class CartService {
     }
 
     // 장바구니 아이템 저장
-    const result = await this.cartItemRepository.save(cartItem);
-
-    if (!result) {
-      throw new InternalServerErrorException(ERROR.CART.CREATE_ERROR);
-    }
+    const savedCartItem = await this.cartItemRepository.save(cartItem);
+    throwExceptionOrNot(savedCartItem, EXCEPTION.CART.CREATE_ERROR);
 
     return {
-      id: result.id,
+      id: savedCartItem.id,
       message,
     };
   }
@@ -121,9 +113,7 @@ export class CartService {
       },
     });
 
-    if (duplicatedCartItem) {
-      throw new ConflictException(ERROR.CART.VARIANT_CONFLICT);
-    }
+    throwExceptionOrNot(!duplicatedCartItem, EXCEPTION.CART.VARIANT_CONFLICT);
 
     const oldVariant = existsCartItem.variant;
     const newVariant = await this.variantRepository.findOne({
@@ -132,10 +122,11 @@ export class CartService {
       },
     });
 
-    // 3. 존재하지 않는 옵션이거나 다른 상품의 옵션인지 체크 ✅
-    if (!newVariant || oldVariant.productId !== newVariant.productId) {
-      throw new BadRequestException(ERROR.CART.NOT_SUPPORT_VARIANT);
-    }
+    // 3. 존재하지 않는 옵션이거나 다른 상품의 옵션이면 예외 발생 ✅
+    throwExceptionOrNot(
+      newVariant && oldVariant.productId === newVariant.productId,
+      EXCEPTION.CART.NOT_SUPPORT_VARIANT,
+    );
 
     // 4. 장바구니 아이템 옵션 업데이트
     await this.cartItemRepository.update(cartItemId, {
@@ -155,9 +146,7 @@ export class CartService {
 
     // 2. 구매 제한 재고 수량 체크 ✅
     const maxQuantity = existsCartItem.variant.quantity;
-    if (quantity > maxQuantity) {
-      throw new ConflictException(ERROR.CART.OUT_OF_STOCK);
-    }
+    throwExceptionOrNot(quantity <= maxQuantity, EXCEPTION.CART.OUT_OF_STOCK);
 
     // 3. 장바구니 아이템 데이터 업데이트
     const result = await this.cartItemRepository.update(
@@ -171,9 +160,7 @@ export class CartService {
     );
 
     // 4. 업데이트된 레코드 유무 체크 ✅
-    if (result.affected <= 0) {
-      throw new NotFoundException(ERROR.CART.UPDATE_ERROR);
-    }
+    throwExceptionOrNot(result.affected, EXCEPTION.CART.UPDATE_ERROR);
   }
 
   async removeItem(id: number, user: User) {
@@ -184,7 +171,7 @@ export class CartService {
       cart: { id: cart.id },
     });
 
-    this.checkCartExistence(result.affected > 0);
+    throwExceptionOrNot(result.affected, EXCEPTION.CART.NOT_FOUND);
   }
 
   async count(user: User) {
@@ -198,7 +185,7 @@ export class CartService {
       where: { user: { id: user.id } },
     });
 
-    this.checkCartExistence(!!cart);
+    throwExceptionOrNot(cart, EXCEPTION.CART.NOT_FOUND);
 
     return cart;
   }
@@ -214,16 +201,8 @@ export class CartService {
       },
     });
 
-    if (!existsCartItem) {
-      throw new NotFoundException(ERROR.CART.ITEM_NOT_FOUND);
-    }
+    throwExceptionOrNot(existsCartItem, EXCEPTION.CART.ITEM_NOT_FOUND);
 
     return existsCartItem;
-  }
-
-  private checkCartExistence(trueCondition: boolean) {
-    if (!trueCondition) {
-      throw new NotFoundException(ERROR.CART.NOT_FOUND);
-    }
   }
 }
