@@ -97,7 +97,7 @@ export class ProductRepository extends Repository<Product> {
       .where(`${productAlias}.id = :id`, { id: productId })
       .getRawOne();
 
-    return !sum;
+    return sum == 0;
   }
 
   async getProductDetail(productId: number) {
