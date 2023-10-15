@@ -1,9 +1,10 @@
+import { SwaggerDoc } from '@/common';
 import { applyDecorators } from '@nestjs/common';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export const ProductDoc = {
   productId() {
-    return applyDecorators();
+    return applyDecorators(SwaggerDoc.id('상품 식별자'));
   },
 
   name() {
