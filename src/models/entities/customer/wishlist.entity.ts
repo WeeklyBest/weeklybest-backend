@@ -1,4 +1,4 @@
-import { Entity, ManyToOne, Unique } from 'typeorm';
+import { Entity, ManyToOne } from 'typeorm';
 
 import { CommonIdEntity } from '@/common';
 
@@ -6,7 +6,6 @@ import { Product } from '../product';
 
 import { User } from './user.entity';
 
-@Unique('uq_product_user', ['product', 'user'])
 @Entity()
 export class Wishlist extends CommonIdEntity {
   // 관계 설정
