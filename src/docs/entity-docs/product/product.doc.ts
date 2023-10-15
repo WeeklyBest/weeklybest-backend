@@ -19,6 +19,7 @@ export const ProductDoc = {
     return applyDecorators(
       ApiProperty({
         description: '상품 설명',
+        example: '올 겨울을 따뜻하게 보내기 위한 필수템',
       }),
     );
   },
