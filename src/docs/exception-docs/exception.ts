@@ -121,6 +121,10 @@ export const EXCEPTION = {
   },
 
   PRODUCT: {
+    CREATE_ERROR: {
+      status: HttpStatus.INTERNAL_SERVER_ERROR,
+      message: '상품 등록 중 오류가 발생했습니다.',
+    },
     NOT_FOUND: {
       status: HttpStatus.NOT_FOUND,
       message: '상품을 찾을 수 없습니다.',
