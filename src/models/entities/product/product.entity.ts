@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
 import { CommonIdEntity } from '@/common';
-import { PRODUCT, Review, Wishlist } from '@/models';
+import { Review, Wishlist } from '@/models';
 
 import { Category } from './category.entity';
 import { ProductImage } from './product-image.entity';
@@ -9,9 +9,7 @@ import { Variant } from './variant.entity';
 
 @Entity()
 export class Product extends CommonIdEntity {
-  @Column({
-    length: PRODUCT.NAME.MAX_LENGTH,
-  })
+  @Column()
   name: string;
 
   @Column({

@@ -12,13 +12,13 @@ export class Color {
   id: number;
 
   @Column({
-    length: COLOR.LABEL.MAX_LENGTH,
+    length: COLOR.LABEL.MAX,
   })
   label: string;
 
   @Column({
     type: 'char',
-    length: COLOR.HEX_CODE.MAX_LENGTH,
+    length: COLOR.HEX_CODE.MAX,
   })
   hexCode: string;
 

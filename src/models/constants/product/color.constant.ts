@@ -1,8 +1,10 @@
 export const COLOR = {
   LABEL: {
-    MAX_LENGTH: 20,
+    KR: '색상 라벨',
+    MAX: 20,
   },
   HEX_CODE: {
-    MAX_LENGTH: 6,
+    KR: '색상 코드',
+    MAX: 6,
   },
 };
