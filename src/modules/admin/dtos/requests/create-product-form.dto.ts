@@ -1,9 +1,4 @@
-import { ColorRequestDto } from '@/modules/colors';
-import {
-  CategoryRequestDto,
-  ProductRequestDto,
-  VariantRequestDto,
-} from '@/modules/products';
+import { CategoryRequestDto, ProductRequestDto } from '@/modules/products';
 
 export class CreateProductForm {
   @ProductRequestDto.name()
@@ -17,12 +12,6 @@ export class CreateProductForm {
 
   @ProductRequestDto.sellingPrice()
   sellingPrice: number;
-
-  @ColorRequestDto.colorId()
-  colorId: number;
-
-  @VariantRequestDto.quantity()
-  quantity: number;
 
   @CategoryRequestDto.categoryId()
   categoryId: number;
