@@ -1,11 +1,11 @@
 import { applyDecorators } from '@nestjs/common';
 
-import { SwaggerDoc } from '@/common';
+import { SwaggerDoc, SwaggerValidation } from '@/common';
 import { SizeValueDoc } from '@/docs';
 
 export const SizeValueResponseDto = {
   sizeValueId() {
-    return applyDecorators(SizeValueDoc.sizeValueId());
+    return applyDecorators(SizeValueDoc.sizeValueId(), SwaggerValidation.id());
   },
 
   label() {

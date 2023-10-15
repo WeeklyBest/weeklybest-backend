@@ -1,25 +1,15 @@
-import {
-  Column,
-  Entity,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
-import { SIZE_VALUE } from '@/models';
+import { CommonIdEntity } from '@/common';
+import { SIZE_GROUP } from '@/models';
 
 import { SizeGroup } from './size-group.entity';
 import { Variant } from './variant.entity';
 
 @Entity()
-export class SizeValue {
-  @PrimaryGeneratedColumn({
-    unsigned: true,
-  })
-  id: number;
-
+export class SizeValue extends CommonIdEntity {
   @Column({
-    length: SIZE_VALUE.LABEL.MAX_LENGTH,
+    length: SIZE_GROUP.LABEL.MAX_LENGTH,
   })
   label: string;
 
