@@ -3,10 +3,10 @@ export const AUTH = {
 };
 
 export const STRATEGY = {
-  ADMIN: 'ADMIN',
-  LOCAL: 'LOCAL',
-  KAKAO: 'KAKAO',
-  NAVER: 'NAVER',
+  ADMIN: 'admin',
+  LOCAL: 'local',
+  KAKAO: 'kakao',
+  NAVER: 'naver',
   JWT: 'jwt',
   JWT_REFRESH: 'jwt-refresh',
   GUEST: 'guest',
