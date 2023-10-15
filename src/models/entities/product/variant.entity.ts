@@ -1,11 +1,4 @@
-import {
-  Column,
-  Entity,
-  ManyToOne,
-  OneToMany,
-  RelationId,
-  Unique,
-} from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, RelationId } from 'typeorm';
 
 import { CommonIdEntity } from '@/common';
 
@@ -14,7 +7,6 @@ import { Product } from './product.entity';
 import { SizeValue } from './size-value.entity';
 import { OrderDetail } from '../order';
 
-@Unique(['product', 'color', 'sizeValue'])
 @Entity()
 export class Variant extends CommonIdEntity {
   @Column({
