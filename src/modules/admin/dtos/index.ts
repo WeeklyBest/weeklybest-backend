@@ -1,1 +1,1 @@
-export * from './upload-product-form.dto';
+export * from './requests';

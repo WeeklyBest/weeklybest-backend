@@ -1,43 +1,46 @@
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
-import { Product, ProductRepository } from '@/models';
+import { DataSource } from 'typeorm';
 
-import { UploadProductForm } from './dtos';
+import { handleException, throwExceptionOrNot, useTransaction } from '@/common';
+import { Category, Product } from '@/models';
+
+import { CreateProductForm } from './dtos';
 import { EXCEPTION } from '@/docs';
 
 @Injectable()
 export class AdminService {
-  constructor(private readonly productRepository: ProductRepository) {}
+  constructor(private readonly dataSource: DataSource) {}
 
-  async uploadProduct(uploadProductForm: UploadProductForm): Promise<void> {
-    const { name, retailPrice, sellingPrice, display, onSale, category } =
-      uploadProductForm;
-
-    const existsProduct: Product = await this.productRepository.findOne({
-      where: { name },
-    });
-
-    if (existsProduct) {
-      throw new BadRequestException(EXCEPTION.PRODUCT.DUPLICATE_PRODUCT);
-    }
-
+  async createProduct({
+    name,
+    description,
+    retailPrice,
+    sellingPrice,
+    categoryId,
+  }: CreateProductForm) {
     try {
-      await this.productRepository.insert(
-        this.productRepository.create({
-          name,
-          retailPrice,
-          sellingPrice,
-          display,
-          onSale,
-          category,
-        }),
-      );
+      await useTransaction(this.dataSource, async (manager) => {
+        const categoryRepository = manager.getRepository(Category);
+        const productRepository = manager.getRepository(Product);
+
+        const category = await categoryRepository.findOne({
+          where: { id: categoryId },
+        });
+
+        throwExceptionOrNot(category, EXCEPTION.CATEGORY.NOT_FOUND);
+
+        await productRepository.save(
+          productRepository.create({
+            name,
+            description,
+            retailPrice,
+            sellingPrice,
+          }),
+        );
+      });
     } catch (error) {
-      throw new InternalServerErrorException(EXCEPTION.PRODUCT.NOT_FOUND);
+      handleException(EXCEPTION.PRODUCT.CREATE_ERROR, error);
     }
   }
 }

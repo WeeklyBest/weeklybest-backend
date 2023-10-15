@@ -1,22 +1,24 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
+import { AdminAuthGuard } from '../auth';
+
+import { CreateProductForm } from './dtos';
+
 import { AdminService } from './admin.service';
 import { AdminControllerDoc as Doc } from './controller.doc';
-
-import { UploadProductForm } from './dtos';
-
-import { AdminStrategy } from '../auth/strategies/admin.strategy';
 
 @ApiTags('관리자 API')
 @Controller('admin')
 export class AdminController {
-  constructor(private readonly productsService: AdminService) {}
+  constructor(private readonly adminService: AdminService) {}
 
-  @Doc.uploadProduct('상품 업로드')
-  @Post('products/upload')
-  @UseGuards(AdminStrategy)
-  async uploadProduct(@Body() uploadProductForm: UploadProductForm) {
-    return this.productsService.uploadProduct(uploadProductForm);
+  @Doc.createProduct('상품 생성')
+  @Post('product')
+  @UseGuards(AdminAuthGuard)
+  async createProduct(
+    @Body() createProductForm: CreateProductForm,
+  ): Promise<void> {
+    await this.adminService.createProduct(createProductForm);
   }
 }

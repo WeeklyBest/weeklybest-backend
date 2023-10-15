@@ -1,17 +1,17 @@
+import { applyDecorators } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
   ApiOperation,
 } from '@nestjs/swagger';
-import { applyDecorators } from '@nestjs/common';
 
 import { SwaggerMethodDocType } from '@/common';
 
 import { AdminController } from '@/modules/admin';
 
 export const AdminControllerDoc: SwaggerMethodDocType<AdminController> = {
-  uploadProduct(summary: string) {
+  createProduct(summary: string) {
     return applyDecorators(
       ApiOperation({
         summary,
