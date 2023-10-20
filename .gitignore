@@ -38,3 +38,6 @@ lerna-debug.log*
 .env*
 !.env.template
 /temp
+
+# 이미지 소스
+/images
