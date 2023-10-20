@@ -36,6 +36,7 @@ export class AdminService {
             description,
             retailPrice,
             sellingPrice,
+            category
           }),
         );
       });
