@@ -1,4 +1,8 @@
-import { CategoryRequestDto, ProductRequestDto } from '@/modules/products';
+import {
+  CategoryRequestDto,
+  ProductImageRequestDto,
+  ProductRequestDto,
+} from '@/modules/products';
 
 export class CreateProductForm {
   @ProductRequestDto.name()
@@ -15,4 +19,7 @@ export class CreateProductForm {
 
   @CategoryRequestDto.categoryId()
   categoryId: number;
+
+  @ProductImageRequestDto.url()
+  productImageUrl: string;
 }

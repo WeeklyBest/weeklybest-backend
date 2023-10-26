@@ -1,4 +1,12 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
 
 import { AdminAuthGuard } from '../auth';
@@ -16,9 +24,16 @@ export class AdminController {
   @Doc.createProduct('상품 생성')
   @Post('product')
   @UseGuards(AdminAuthGuard)
+  @UseInterceptors(
+    FileInterceptor('image', {
+      dest: './images/product',
+    }),
+  )
   async createProduct(
     @Body() createProductForm: CreateProductForm,
+    @UploadedFile() image,
   ): Promise<void> {
+    createProductForm.productImageUrl = image.filename;
     await this.adminService.createProduct(createProductForm);
   }
 }

@@ -1,5 +1,6 @@
 export * from './category.doc';
 export * from './color.doc';
+export * from './product-image.doc';
 export * from './product.doc';
 export * from './question.doc';
 export * from './size-group.doc';
